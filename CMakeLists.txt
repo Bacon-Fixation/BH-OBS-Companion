@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(bacons-helper-obs VERSION 0.2.6 LANGUAGES CXX)
+project(bacons-helper-obs VERSION 0.2.7 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -49,6 +49,7 @@ endif()
 
 target_compile_definitions(bacons-helper PRIVATE
     BH_OBS_VERSION="${PROJECT_VERSION}"
+    QT_NO_KEYWORDS=1
 )
 
 set_target_properties(bacons-helper PROPERTIES

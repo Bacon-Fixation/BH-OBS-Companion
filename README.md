@@ -138,8 +138,8 @@ The repository-root workflow automatically builds:
 Every successful workflow run uploads platform packages as Actions artifacts. Push a version tag such as:
 
 ```bash
-git tag v0.2.6
-git push origin v0.2.6
+git tag v0.2.7
+git push origin v0.2.7
 ```
 
 to create a GitHub Release containing all three packages.

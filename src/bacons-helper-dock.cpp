@@ -1,3 +1,9 @@
+#ifdef BH_HAVE_LIBSECRET
+// libsecret pulls in GLib/GDBus declarations with a member named `signals`.
+// Include it before Qt so Qt keyword macros can never rewrite GLib headers.
+#include <libsecret/secret.h>
+#endif
+
 #include "bacons-helper-dock.hpp"
 
 #include <obs-module.h>
@@ -24,10 +30,6 @@
 #include <QtNumeric>
 #include <QUrl>
 #include <QVBoxLayout>
-
-#ifdef BH_HAVE_LIBSECRET
-#include <libsecret/secret.h>
-#endif
 
 #ifdef _WIN32
 #include <windows.h>
@@ -487,8 +489,8 @@ QUrl BaconsHelperDock::endpoint(const QString &path) const
 {
 	QUrl base(serverUrl_->text().trimmed());
 	base.setPath(path.startsWith('/') ? path : QStringLiteral("/") + path);
-	base.setQuery({});
-	base.setFragment({});
+	base.setQuery(QString{});
+	base.setFragment(QString{});
 	return base;
 }
 
@@ -622,7 +624,7 @@ void BaconsHelperDock::applySettingsPayload(const QJsonObject &payload)
 	for (auto it = eventToggles_.begin(); it != eventToggles_.end(); ++it) {
 		it.value()->setChecked(events.value(it.key()).toBool());
 		it.value()->setEnabled(true);
-		it.value()->setToolTip({});
+		it.value()->setToolTip(QString{});
 	}
 	for (const auto &value : streamEvents.value(QStringLiteral("definitions")).toArray()) {
 		const QJsonObject definition = value.toObject();
