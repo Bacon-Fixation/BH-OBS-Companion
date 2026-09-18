@@ -50,6 +50,7 @@ jobs:
             pkg-config \
             qt6-base-dev \
             libobs-dev \
+            obs-studio \
             libsecret-1-dev
 
       - name: Build and package native Linux x86_64

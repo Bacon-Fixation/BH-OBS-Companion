@@ -11,9 +11,13 @@ Build locally from the repository root:
 
 ```bash
 flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak install --user -y flathub com.obsproject.Studio//stable org.freedesktop.Sdk//25.08
-flatpak-builder --user --force-clean --repo=flatpak-repo flatpak-build flatpak/com.obsproject.Studio.Plugin.BaconsHelper.yml
-flatpak build-bundle flatpak-repo Bacons-Helper-OBS.flatpak com.obsproject.Studio.Plugin.BaconsHelper stable
+flatpak-builder --user --force-clean --install-deps-from=flathub \
+  --default-branch=stable --repo=flatpak-repo flatpak-build \
+  flatpak/com.obsproject.Studio.Plugin.BaconsHelper.yml
+flatpak build-bundle --runtime --arch=x86_64 \
+  --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo \
+  flatpak-repo Bacons-Helper-OBS.flatpak \
+  com.obsproject.Studio.Plugin.BaconsHelper stable
 ```
 
 ## Credential storage in Flatpak

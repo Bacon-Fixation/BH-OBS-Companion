@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(bacons-helper-obs VERSION 0.2.5 LANGUAGES CXX)
+project(bacons-helper-obs VERSION 0.2.6 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,8 +18,8 @@ if(WIN32 AND (NOT libobs_DIR OR NOT EXISTS "${libobs_DIR}/libobsConfig.cmake"))
     )
 endif()
 
-find_package(libobs REQUIRED)
-find_package(obs-frontend-api REQUIRED)
+find_package(libobs CONFIG REQUIRED)
+find_package(obs-frontend-api CONFIG REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network)
 
 add_library(bacons-helper MODULE
