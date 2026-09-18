@@ -1,0 +1,33 @@
+id: com.obsproject.Studio.Plugin.BaconsHelper
+branch: stable
+runtime: com.obsproject.Studio
+runtime-version: stable
+sdk: org.freedesktop.Sdk//25.08
+build-extension: true
+separate-locales: false
+
+build-options:
+  prefix: /app/plugins/BaconsHelper
+
+modules:
+  - name: bacons-helper-obs
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - -DCMAKE_INSTALL_LIBDIR=lib
+      - -DCMAKE_INSTALL_DATADIR=share
+      - -DBH_LINUX_SECRET_SERVICE=OFF
+    sources:
+      - type: dir
+        path: ..
+        skip:
+          - .deps
+          - .git
+          - build
+          - build_x64
+          - build_x86_64
+          - build_flatpak
+          - dist
+          - flatpak-build
+          - flatpak-repo

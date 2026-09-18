@@ -1,26 +1,22 @@
-# Exclude everything
-/*
+# OBS/CMake dependency and build output
+.deps/
+build/
+build_x64/
+build_x86_64/
+build_flatpak/
+flatpak-build/
+flatpak-repo/
+dist/
 
-# Except for default project files
-!/.github
-!/build-aux
-!/cmake
-!/data
-!/src
-!.clang-format
-!.gersemirc
-!.gitignore
-!buildspec.json
-!CMakeLists.txt
-!CMakePresets.json
-!LICENSE
-!README.md
+# CMake/IDE local state
+CMakeUserPresets.json
+*.user
+.vs/
+.vscode/
+.idea/
 
-# Exclude lock files
-*.lock.json
-
-# Exclude macOS legacy resource forks
+# OS/editor noise
 .DS_Store
-
-# Exclude CMake build number cache
-/cmake/.CMakeBuildNumber
+Thumbs.db
+*.swp
+*.swo

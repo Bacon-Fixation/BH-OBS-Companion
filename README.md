@@ -1,59 +1,163 @@
-# OBS Plugin Template
+# Bacons Helper OBS Companion
 
-## Introduction
+Native OBS Studio dock for controlling supported Bacons Helper channel settings and live tools without leaving OBS.
 
-The plugin template is meant to be used as a starting point for OBS Studio plugin development. It includes:
+## Features
 
-* Boilerplate plugin source code
-* A CMake project file
-* GitHub Actions workflows and repository actions
+- Securely pair OBS with a Bacons Helper channel.
+- Manage supported channel toggles and Stream Events.
+- Start and cancel the existing Bacons Helper countdown.
+- Open the full Dashboard, OBS Overlays, Custom Mini-Game, Timed Actions, Loyalty/Giveaway, and Walk-On editors.
+- Revoke individual OBS installations from the Bacons Helper Dashboard.
 
-## Supported Build Environments
+The plugin does **not** store Twitch OAuth tokens, Twitch refresh tokens, Bacons Helper website sessions, or bot credentials.
 
-| Platform  | Tool   |
-|-----------|--------|
-| Windows   | Visual Studio 17 2022 |
-| macOS     | XCode 16.0 |
-| Windows, macOS  | CMake 3.30.5 |
-| Ubuntu 24.04 | CMake 3.28.3 |
-| Ubuntu 24.04 | `ninja-build` |
-| Ubuntu 24.04 | `pkg-config`
-| Ubuntu 24.04 | `build-essential` |
+## Pairing
 
-## Quick Start
+1. Sign in to Bacons Helper and open **Dashboard -> OBS Plugin**.
+2. Generate a pairing code.
+3. In OBS, open **Docks -> Bacons Helper**.
+4. Enter the code and select **Pair**.
+5. OBS receives a separate `bh_obs_...` credential scoped to that channel.
 
-An absolute bare-bones [Quick Start Guide](https://github.com/obsproject/obs-plugintemplate/wiki/Quick-Start-Guide) is available in the wiki.
+Pairing codes are single-use and expire after a short period. Individual OBS installations can be revoked from the Dashboard.
 
-## Documentation
+## Credential storage
 
-All documentation can be found in the [Plugin Template Wiki](https://github.com/obsproject/obs-plugintemplate/wiki).
+- **Windows:** Windows DPAPI (`CryptProtectData`).
+- **Native Linux:** Secret Service via `libsecret`.
+- **Flatpak:** pairing credentials are intentionally kept in memory for the current OBS process rather than written to reversible local storage. Pair again after restarting OBS.
 
-Suggested reading to get up and running:
+## Repository layout
 
-* [Getting started](https://github.com/obsproject/obs-plugintemplate/wiki/Getting-Started)
-* [Build system requirements](https://github.com/obsproject/obs-plugintemplate/wiki/Build-System-Requirements)
-* [Build system options](https://github.com/obsproject/obs-plugintemplate/wiki/CMake-Build-System-Options)
+```text
+.
+├─ .github/workflows/build.yml
+├─ data/locale/en-US.ini
+├─ flatpak/
+├─ scripts/
+│  ├─ package-windows.ps1
+│  ├─ package-linux.sh
+│  └─ package-flatpak.sh
+├─ src/
+├─ CMakeLists.txt
+├─ CMakePresets.json
+├─ CHANGELOG.md
+└─ README.md
+```
 
-## GitHub Actions & CI
+## Windows x64 build
 
-Default GitHub Actions workflows are available for the following repository actions:
+Requirements:
 
-* `push`: Run for commits or tags pushed to `master` or `main` branches.
-* `pr-pull`: Run when a Pull Request has been pushed or synchronized.
-* `dispatch`: Run when triggered by the workflow dispatch in GitHub's user interface.
-* `build-project`: Builds the actual project and is triggered by other workflows.
-* `check-format`: Checks CMake and plugin source code formatting and is triggered by other workflows.
+- Visual Studio 2022 with **Desktop development with C++**
+- CMake 3.28+
+- Git
 
-The workflows make use of GitHub repository actions (contained in `.github/actions`) and build scripts (contained in `.github/scripts`) which are not needed for local development, but might need to be adjusted if additional/different steps are required to build the plugin.
+Build and package:
 
-### Retrieving build artifacts
+```powershell
+.\scripts\package-windows.ps1
+```
 
-Successful builds on GitHub Actions will produce build artifacts that can be downloaded for testing. These artifacts are commonly simple archives and will not contain package installers or installation programs.
+If `BH_OBS_CMAKE_PREFIX_PATH` is not set, the packaging script uses the official OBS plugin-template bootstrap to prepare `libobs`, `obs-frontend-api`, and an OBS-compatible Qt 6 development environment.
 
-### Building a Release
+If you already have an OBS/Qt development environment:
 
-To create a release, an appropriately named tag needs to be pushed to the `main`/`master` branch using semantic versioning (e.g., `12.3.4`, `23.4.5-beta2`). A draft release will be created on the associated repository with generated installer packages or installation programs attached as release artifacts.
+```powershell
+$env:BH_OBS_CMAKE_PREFIX_PATH = 'C:\path\to\obs-sdk;C:\path\to\qt6'
+.\scripts\package-windows.ps1 -NoBootstrap
+```
 
-## Signing and Notarizing on macOS
+Output:
 
-Basic concepts of codesigning and notarization on macOS are explained in the correspodning [Wiki article](https://github.com/obsproject/obs-plugintemplate/wiki/Codesigning-On-macOS) which has a specific section for the [GitHub Actions setup](https://github.com/obsproject/obs-plugintemplate/wiki/Codesigning-On-macOS#setting-up-code-signing-for-github-actions).
+```text
+dist/bacons-helper-windows-x64.zip
+```
+
+The packaged OBS layout contains:
+
+```text
+obs-plugins/64bit/bacons-helper.dll
+data/obs-plugins/bacons-helper/locale/en-US.ini
+```
+
+Copy those directories into the OBS Studio installation directory.
+
+## Native Linux x86_64 build
+
+Ubuntu/Debian dependencies:
+
+```bash
+sudo apt update
+sudo apt install build-essential cmake ninja-build pkg-config \
+  qt6-base-dev libobs-dev libsecret-1-dev
+```
+
+Build and package:
+
+```bash
+chmod +x scripts/package-linux.sh
+./scripts/package-linux.sh
+```
+
+Output:
+
+```text
+dist/bacons-helper-linux-x86_64.tar.gz
+```
+
+## OBS Flatpak build
+
+Build the OBS extension package with:
+
+```bash
+chmod +x scripts/package-flatpak.sh
+./scripts/package-flatpak.sh
+```
+
+Output:
+
+```text
+dist/bacons-helper-obs-flatpak-x86_64.flatpak
+```
+
+See `flatpak/README.md` for Flatpak-specific details.
+
+## GitHub Actions
+
+The repository-root workflow automatically builds:
+
+- Windows x64
+- Native Linux x86_64
+- OBS Flatpak x86_64
+
+Every successful workflow run uploads platform packages as Actions artifacts. Push a version tag such as:
+
+```bash
+git tag v0.2.4
+git push origin v0.2.4
+```
+
+to create a GitHub Release containing all three packages.
+
+## Troubleshooting
+
+If the dock does not appear, restart OBS and check **Help -> Log Files -> View Current Log**. Search for `bacons-helper`; OBS normally reports why a plugin module failed to load.
+
+If pairing fails, confirm `https://baconshelper.com` is reachable and generate a new pairing code if the previous code expired or was already used.
+
+## Project
+
+Bacons Helper  
+https://baconshelper.com
+
+## Windows CMake dependency note
+
+On Windows, do **not** run `cmake --preset windows-x64` first on a fresh clone. The normal OBS installation does not include the development CMake packages. Run:
+
+```powershell
+.\scripts\package-windows.ps1
+```
+
+The script uses the official OBS plugin-template bootstrap, resolves `libobs_DIR`, `obs-frontend-api_DIR`, and `Qt6_DIR`, configures the project, builds it, and creates `dist\bacons-helper-windows-x64.zip`. After the first successful bootstrap, advanced users may reuse the resolved package directories for manual CMake builds.

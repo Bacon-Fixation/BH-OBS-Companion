@@ -1,0 +1,117 @@
+name: Build Bacons Helper OBS Companion
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+    tags: ['v*', '[0-9]+.[0-9]+.[0-9]+*']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bh-obs-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-x64:
+    name: Windows x64
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify repository layout
+        shell: pwsh
+        run: |
+          Write-Host "Workspace: $env:GITHUB_WORKSPACE"
+          if (-not (Test-Path '.\CMakeLists.txt')) { throw 'CMakeLists.txt is missing from the repository root.' }
+          if (-not (Test-Path '.\scripts\package-windows.ps1')) { throw 'scripts/package-windows.ps1 is missing.' }
+
+      - name: Build and package Windows x64
+        shell: pwsh
+        run: .\scripts\package-windows.ps1
+
+      - name: Upload Windows package
+        uses: actions/upload-artifact@v4
+        with:
+          name: bacons-helper-windows-x64
+          path: dist/bacons-helper-windows-x64.zip
+          if-no-files-found: error
+
+  linux-x86_64:
+    name: Linux x86_64
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            ninja-build \
+            pkg-config \
+            qt6-base-dev \
+            libobs-dev \
+            libsecret-1-dev
+
+      - name: Build and package native Linux x86_64
+        run: |
+          chmod +x scripts/package-linux.sh
+          ./scripts/package-linux.sh
+
+      - name: Upload Linux package
+        uses: actions/upload-artifact@v4
+        with:
+          name: bacons-helper-linux-x86_64
+          path: dist/bacons-helper-linux-x86_64.tar.gz
+          if-no-files-found: error
+
+  flatpak-x86_64:
+    name: OBS Flatpak x86_64
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Flatpak tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder
+
+      - name: Build and package OBS Flatpak extension
+        run: |
+          chmod +x scripts/package-flatpak.sh
+          ./scripts/package-flatpak.sh
+
+      - name: Upload Flatpak package
+        uses: actions/upload-artifact@v4
+        with:
+          name: bacons-helper-flatpak-x86_64
+          path: dist/bacons-helper-obs-flatpak-x86_64.flatpak
+          if-no-files-found: error
+
+  release:
+    name: Publish tagged release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [windows-x64, linux-x86_64, flatpak-x86_64]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: bacons-helper-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: release-assets/*
