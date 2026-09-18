@@ -83,9 +83,17 @@ The packaged OBS layout contains:
 ```text
 obs-plugins/64bit/bacons-helper.dll
 data/obs-plugins/bacons-helper/locale/en-US.ini
+data/obs-plugins/bacons-helper/qt-plugins/tls/qschannelbackend.dll
 ```
 
 Copy those directories into the OBS Studio installation directory.
+
+The Windows package intentionally ships the Schannel TLS plugin from the same
+OBS-compatible Qt dependency tree used to compile the companion. It is kept
+inside the companion's private data tree, which the plugin adds to Qt's search
+paths at runtime, so installing Bacons Helper never overwrites OBS's own Qt
+plugins. Bacons Helper prefers Schannel on Windows so HTTPS works without a
+separate OpenSSL runtime.
 
 ## Native Linux x86_64 build
 
@@ -138,8 +146,8 @@ The repository-root workflow automatically builds:
 Every successful workflow run uploads platform packages as Actions artifacts. Push a version tag such as:
 
 ```bash
-git tag v0.2.7
-git push origin v0.2.7
+git tag v0.2.9
+git push origin v0.2.9
 ```
 
 to create a GitHub Release containing all three packages.

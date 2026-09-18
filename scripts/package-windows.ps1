@@ -156,6 +156,30 @@ if (-not (Test-Path $Locale)) {
     throw "Expected plugin locale file was not staged: $Locale"
 }
 
+# QNetworkAccessManager relies on a Qt TLS backend for HTTPS. OBS supplies the
+# Qt runtime itself, so ship only the matching Schannel plugin from the exact Qt
+# dependency tree used to build this companion. Schannel uses the Windows TLS
+# stack and does not require separate OpenSSL DLLs.
+$QtPrefix = (Resolve-Path (Join-Path $env:BH_OBS_QT6_DIR '..\..\..')).Path
+$SchannelBackend = Join-Path $QtPrefix 'plugins\tls\qschannelbackend.dll'
+if (-not (Test-Path -LiteralPath $SchannelBackend)) {
+    $SchannelBackend = Get-ChildItem -LiteralPath $QtPrefix -Recurse -File -Filter 'qschannelbackend.dll' -ErrorAction SilentlyContinue |
+        Select-Object -First 1 -ExpandProperty FullName
+}
+if ([string]::IsNullOrWhiteSpace($SchannelBackend) -or -not (Test-Path -LiteralPath $SchannelBackend)) {
+    throw "Qt Schannel TLS backend was not found below the resolved Qt prefix: $QtPrefix"
+}
+
+$TlsDist = Join-Path $Dist 'data\obs-plugins\bacons-helper\qt-plugins\tls'
+New-Item -ItemType Directory -Force -Path $TlsDist | Out-Null
+Copy-Item -LiteralPath $SchannelBackend -Destination (Join-Path $TlsDist 'qschannelbackend.dll') -Force
+
+$StagedSchannel = Join-Path $TlsDist 'qschannelbackend.dll'
+if (-not (Test-Path -LiteralPath $StagedSchannel)) {
+    throw "Expected Schannel TLS backend was not staged: $StagedSchannel"
+}
+Write-Host "Staged Qt Schannel TLS backend: $StagedSchannel"
+
 $Zip = Join-Path $DistRoot 'bacons-helper-windows-x64.zip'
 if (Test-Path $Zip) { Remove-Item -Force $Zip }
 Compress-Archive -Path (Join-Path $Dist '*') -DestinationPath $Zip

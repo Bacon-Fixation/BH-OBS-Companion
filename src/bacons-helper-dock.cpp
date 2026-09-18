@@ -10,6 +10,7 @@
 
 #include <QByteArray>
 #include <QCheckBox>
+#include <QCoreApplication>
 #include <QDateTime>
 #include <QDesktopServices>
 #include <QFormLayout>
@@ -25,6 +26,8 @@
 #include <QPushButton>
 #include <QSettings>
 #include <QSpinBox>
+#include <QSslSocket>
+#include <QStringList>
 #include <QSysInfo>
 #include <QTabWidget>
 #include <QtNumeric>
@@ -192,6 +195,33 @@ QCheckBox *addToggle(QVBoxLayout *layout, const QString &label, const QString &k
 
 BaconsHelperDock::BaconsHelperDock(QWidget *parent) : QWidget(parent)
 {
+#ifdef _WIN32
+	// Qt 6 implements TLS through runtime plugins. OBS already owns the Qt
+	// runtime. Add this module's private Qt plugin tree before probing TLS so we
+	// do not have to install or overwrite plugins in OBS's global Qt directory.
+	char *qtPluginPath = obs_module_file("qt-plugins");
+	if (qtPluginPath) {
+		const QString pluginPath = QString::fromUtf8(qtPluginPath);
+		QCoreApplication::addLibraryPath(pluginPath);
+		blog(LOG_INFO, "[Bacons Helper] Added private Qt plugin path: %s", qtPluginPath);
+		bfree(qtPluginPath);
+	}
+
+	// Prefer the native Windows Schannel plugin packaged alongside the
+	// companion instead of depending on a separately installed OpenSSL.
+	const auto tlsBackends = QSslSocket::availableBackends();
+	const QString tlsBackendSummary = QStringList(tlsBackends).join(QStringLiteral(", "));
+	blog(LOG_INFO, "[Bacons Helper] Qt TLS backends: %s",
+		 tlsBackendSummary.isEmpty() ? "none" : tlsBackendSummary.toUtf8().constData());
+	if (tlsBackends.contains(QStringLiteral("schannel"))) {
+		if (QSslSocket::setActiveBackend(QStringLiteral("schannel"))) {
+			blog(LOG_INFO, "[Bacons Helper] Using Qt Schannel TLS backend");
+		} else {
+			blog(LOG_WARNING, "[Bacons Helper] Qt reported Schannel but could not activate it");
+		}
+	}
+#endif
+
 	network_ = new QNetworkAccessManager(this);
 	buildUi();
 	loadLocalSettings();
@@ -528,6 +558,14 @@ void BaconsHelperDock::pair()
 {
 	if (!validateServerUrl())
 		return;
+	if (!QSslSocket::supportsSsl()) {
+		const auto tlsBackends = QSslSocket::availableBackends();
+		const QString available = QStringList(tlsBackends).join(QStringLiteral(", "));
+		setStatus(QStringLiteral("✕ HTTPS is unavailable because Qt has no functional TLS backend. "
+							 "Available backends: %1. Reinstall the Bacons Helper OBS Companion package so its TLS files are included.")
+				  .arg(available.isEmpty() ? QStringLiteral("none") : available), false);
+		return;
+	}
 	const QString code = pairCode_->text().trimmed();
 	if (code.isEmpty()) {
 		setStatus(QStringLiteral("⚠ Enter the pairing code generated on your Bacons Helper dashboard."), false);
