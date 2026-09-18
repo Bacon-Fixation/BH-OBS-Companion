@@ -1,27 +1,20 @@
-name: Pull Request
-run-name: ${{ github.event.pull_request.title }} pull request run 🚀
+name: Bacons Helper OBS Companion Pull Request
+run-name: ${{ github.event.pull_request.title }} build
+
 on:
-  workflow_dispatch:
   pull_request:
-    paths-ignore:
-      - '**.md'
-    branches: [master, main]
-    types: [ opened, synchronize, reopened ]
+    branches: [main, master]
+
 permissions:
   contents: read
-concurrency:
-  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
-  cancel-in-progress: true
-jobs:
-  check-format:
-    name: Check Formatting 🔍
-    uses: ./.github/workflows/check-format.yaml
-    permissions:
-      contents: read
 
-  build-project:
-    name: Build Project 🧱
-    uses: ./.github/workflows/build-project.yaml
-    secrets: inherit
+concurrency:
+  group: bh-obs-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Packages
+    uses: ./.github/workflows/build.yml
     permissions:
       contents: read

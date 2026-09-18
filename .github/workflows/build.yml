@@ -1,18 +1,11 @@
 name: Build Bacons Helper OBS Companion
 
 on:
+  workflow_call:
   workflow_dispatch:
-  push:
-    branches: [main, master]
-    tags: ['v*', '[0-9]+.[0-9]+.[0-9]+*']
-  pull_request:
 
 permissions:
   contents: read
-
-concurrency:
-  group: bh-obs-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   windows-x64:
@@ -20,7 +13,7 @@ jobs:
     runs-on: windows-2022
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Verify repository layout
         shell: pwsh
@@ -34,7 +27,7 @@ jobs:
         run: .\scripts\package-windows.ps1
 
       - name: Upload Windows package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: bacons-helper-windows-x64
           path: dist/bacons-helper-windows-x64.zip
@@ -45,7 +38,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install build dependencies
         run: |
@@ -65,7 +58,7 @@ jobs:
           ./scripts/package-linux.sh
 
       - name: Upload Linux package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: bacons-helper-linux-x86_64
           path: dist/bacons-helper-linux-x86_64.tar.gz
@@ -76,7 +69,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Flatpak tooling
         run: |
@@ -89,29 +82,8 @@ jobs:
           ./scripts/package-flatpak.sh
 
       - name: Upload Flatpak package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: bacons-helper-flatpak-x86_64
           path: dist/bacons-helper-obs-flatpak-x86_64.flatpak
           if-no-files-found: error
-
-  release:
-    name: Publish tagged release
-    if: startsWith(github.ref, 'refs/tags/')
-    needs: [windows-x64, linux-x86_64, flatpak-x86_64]
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: write
-    steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: bacons-helper-*
-          path: release-assets
-          merge-multiple: true
-
-      - name: Publish GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          files: release-assets/*

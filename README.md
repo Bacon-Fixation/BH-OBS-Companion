@@ -32,7 +32,10 @@ Pairing codes are single-use and expire after a short period. Individual OBS ins
 
 ```text
 .
-├─ .github/workflows/build.yml
+├─ .github/workflows/
+│  ├─ build.yml
+│  ├─ push.yaml
+│  └─ pr-pull.yaml
 ├─ data/locale/en-US.ini
 ├─ flatpak/
 ├─ scripts/
@@ -135,11 +138,22 @@ The repository-root workflow automatically builds:
 Every successful workflow run uploads platform packages as Actions artifacts. Push a version tag such as:
 
 ```bash
-git tag v0.2.4
-git push origin v0.2.4
+git tag v0.2.5
+git push origin v0.2.5
 ```
 
 to create a GitHub Release containing all three packages.
+
+
+### If this repository was created from the official OBS plugin template
+
+The OBS template ships its own `push.yaml` and `pr-pull.yaml` workflows that run macOS builds and formatting checks. This project supplies replacement files with the same names, so make sure these files from this repository are committed. If old template jobs such as **Build Project** or **Check Formatting** still appear, run:
+
+```powershell
+.\scripts\reset-template-ci.ps1
+```
+
+Then commit the deletions/replacements with `git add -A`, commit, and push again. Bacons Helper currently publishes Windows x64, native Linux x86_64, and OBS Flatpak x86_64 builds; macOS is not part of this repository's build matrix.
 
 ## Troubleshooting
 
