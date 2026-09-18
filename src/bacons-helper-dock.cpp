@@ -539,9 +539,21 @@ void BaconsHelperDock::pair()
 						{QStringLiteral("deviceName"), QStringLiteral("OBS Studio %1").arg(QSysInfo::prettyProductName())}};
 	auto *reply = sendJson("POST", QStringLiteral("/api/obs-plugin/link"), payload);
 	connect(reply, &QNetworkReply::finished, this, [this, reply] {
-		const QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+		const QByteArray responseBody = reply->readAll();
+		const QJsonDocument doc = QJsonDocument::fromJson(responseBody);
 		if (reply->error() != QNetworkReply::NoError || !doc.object().value(QStringLiteral("ok")).toBool()) {
-			setStatus(QStringLiteral("✕ Pairing failed. Check the code or generate a new one."), false);
+			const int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+			QString serverMessage = doc.object().value(QStringLiteral("error")).toString().trimmed();
+			if (serverMessage.isEmpty())
+				serverMessage = reply->errorString().trimmed();
+			if (serverMessage.isEmpty())
+				serverMessage = QStringLiteral("The server returned an invalid response.");
+
+			if (statusCode > 0) {
+				setStatus(QStringLiteral("✕ Pairing failed (HTTP %1): %2").arg(statusCode).arg(serverMessage), false);
+			} else {
+				setStatus(QStringLiteral("✕ Pairing failed: %1").arg(serverMessage), false);
+			}
 			reply->deleteLater();
 			return;
 		}
