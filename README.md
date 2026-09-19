@@ -6,7 +6,11 @@ Native OBS Studio dock for controlling supported Bacons Helper channel settings 
 
 - Securely pair OBS with a Bacons Helper channel.
 - Manage supported channel toggles and Stream Events.
-- Start and cancel the existing Bacons Helper countdown.
+- Configure Win/Loss, Death Counter, Shot Counter, and Credits overlays directly from OBS.
+- Install or update Bacons Helper Browser Sources in the current OBS scene without copying URLs manually.
+- Send Stream Event test notifications from the native dock.
+- Start and cancel the existing Bacons Helper countdown, including 30-second, 1-minute, 2-minute, and 5-minute presets with a live remaining-time display.
+- Automatically refresh synchronized Bacons Helper settings and existing managed Browser Source URLs.
 - Open the full Dashboard, OBS Overlays, Custom Mini-Game, Timed Actions, Loyalty/Giveaway, and Walk-On editors.
 - Revoke individual OBS installations from the Bacons Helper Dashboard.
 
@@ -146,8 +150,8 @@ The repository-root workflow automatically builds:
 Every successful workflow run uploads platform packages as Actions artifacts. Push a version tag such as:
 
 ```bash
-git tag v0.2.9
-git push origin v0.2.9
+git tag v0.3.0
+git push origin v0.3.0
 ```
 
 to create a GitHub Release containing all three packages.
