@@ -10,11 +10,16 @@ Native OBS Studio dock for controlling supported Bacons Helper channel settings 
 - Install or update Bacons Helper Browser Sources in the current OBS scene without copying URLs manually.
 - Send Stream Event test notifications from the native dock.
 - Start and cancel the existing Bacons Helper countdown, including 30-second, 1-minute, 2-minute, and 5-minute presets with a live remaining-time display.
+- Use **Live Controls** to select and adjust saved per-game Death Counters without leaving OBS.
+- Configure and toggle Loyalty Points, manage Giveaway lifecycle/winner draws, and start or cancel raffles from the dock.
+- Edit configured per-user Walk-On behavior and preview the selected Walk-On overlay from OBS.
 - Automatically refresh synchronized Bacons Helper settings and existing managed Browser Source URLs.
 - Open the full Dashboard, OBS Overlays, Custom Mini-Game, Timed Actions, Loyalty/Giveaway, and Walk-On editors.
-- Revoke individual OBS installations from the Bacons Helper Dashboard.
+- Revoke the current OBS installation directly when disconnecting, or revoke any installation from the Bacons Helper Dashboard.
 
 The plugin does **not** store Twitch OAuth tokens, Twitch refresh tokens, Bacons Helper website sessions, or bot credentials.
+
+Authenticated plugin requests also refuse cross-origin redirects, keeping the OBS bearer credential pinned to the HTTPS origin that was paired. Server URLs containing embedded username/password credentials are rejected.
 
 ## Pairing
 
@@ -24,7 +29,7 @@ The plugin does **not** store Twitch OAuth tokens, Twitch refresh tokens, Bacons
 4. Enter the code and select **Pair**.
 5. OBS receives a separate `bh_obs_...` credential scoped to that channel.
 
-Pairing codes are single-use and expire after a short period. Individual OBS installations can be revoked from the Dashboard.
+Pairing codes are single-use and expire after a short period. Disconnecting from the OBS dock revokes that installation on the server when reachable; individual installations can also be revoked from the Dashboard.
 
 ## Credential storage
 
@@ -150,8 +155,8 @@ The repository-root workflow automatically builds:
 Every successful workflow run uploads platform packages as Actions artifacts. Push a version tag such as:
 
 ```bash
-git tag v0.3.0
-git push origin v0.3.0
+git tag v0.4.0
+git push origin v0.4.0
 ```
 
 to create a GitHub Release containing all three packages.
@@ -187,3 +192,7 @@ On Windows, do **not** run `cmake --preset windows-x64` first on a fresh clone. 
 ```
 
 The script uses the official OBS plugin-template bootstrap, resolves `libobs_DIR`, `obs-frontend-api_DIR`, and `Qt6_DIR`, configures the project, builds it, and creates `dist\bacons-helper-windows-x64.zip`. After the first successful bootstrap, advanced users may reuse the resolved package directories for manual CMake builds.
+
+
+**Much Love,**
+**-Bacon**

@@ -1,4 +1,6 @@
 #ifdef BH_HAVE_LIBSECRET
+// libsecret pulls in GLib/GDBus declarations with a member named `signals`.
+// Include it before Qt so Qt keyword macros can never rewrite GLib headers.
 #include <libsecret/secret.h>
 #endif
 
@@ -27,6 +29,7 @@
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
+#include <QScrollArea>
 #include <QSettings>
 #include <QSpinBox>
 #include <QSslSocket>
@@ -175,6 +178,8 @@ bool secretServiceClear(const QString &server, QString *errorMessage)
 		"server", serverUtf8.constData(),
 		nullptr);
 
+	// A false return without GError only means that no matching secret was
+	// present. That is already the desired state for a clear operation.
 	if (error) {
 		if (errorMessage)
 			*errorMessage = QString::fromUtf8(error->message);
@@ -200,6 +205,9 @@ QCheckBox *addToggle(QVBoxLayout *layout, const QString &label, const QString &k
 BaconsHelperDock::BaconsHelperDock(QWidget *parent) : QWidget(parent)
 {
 #ifdef _WIN32
+	// Qt 6 implements TLS through runtime plugins. OBS already owns the Qt
+	// runtime. Add this module's private Qt plugin tree before probing TLS so we
+	// do not have to install or overwrite plugins in OBS's global Qt directory.
 	char *qtPluginPath = obs_module_file("qt-plugins");
 	if (qtPluginPath) {
 		const QString pluginPath = QString::fromUtf8(qtPluginPath);
@@ -208,6 +216,8 @@ BaconsHelperDock::BaconsHelperDock(QWidget *parent) : QWidget(parent)
 		bfree(qtPluginPath);
 	}
 
+	// Prefer the native Windows Schannel plugin packaged alongside the
+	// companion instead of depending on a separately installed OpenSSL.
 	const auto tlsBackends = QSslSocket::availableBackends();
 	const QString tlsBackendSummary = QStringList(tlsBackends).join(QStringLiteral(", "));
 	blog(LOG_INFO, "[Bacons Helper] Qt TLS backends: %s",
@@ -492,6 +502,142 @@ void BaconsHelperDock::buildUi()
 	countdownLayout->addStretch();
 	tabs->addTab(countdownTab, QStringLiteral("Countdown"));
 
+
+	auto *liveTab = new QWidget();
+	auto *liveOuter = new QVBoxLayout(liveTab);
+	auto *liveScroll = new QScrollArea();
+	liveScroll->setWidgetResizable(true);
+	auto *liveContent = new QWidget();
+	auto *liveLayout = new QVBoxLayout(liveContent);
+
+	auto *deathControls = new QGroupBox(QStringLiteral("Death Counters"));
+	auto *deathControlsLayout = new QVBoxLayout(deathControls);
+	deathCounterSelect_ = new QComboBox();
+	deathCounterValue_ = new QLabel(QStringLiteral("Select a saved game counter."));
+	deathCounterValue_->setWordWrap(true);
+	auto *deathAdjustRow = new QHBoxLayout();
+	deathCounterMinusButton_ = new QPushButton(QStringLiteral("-1"));
+	deathCounterPlusButton_ = new QPushButton(QStringLiteral("+1"));
+	deathCounterResetButton_ = new QPushButton(QStringLiteral("Reset"));
+	deathAdjustRow->addWidget(deathCounterMinusButton_);
+	deathAdjustRow->addWidget(deathCounterPlusButton_);
+	deathAdjustRow->addWidget(deathCounterResetButton_);
+	auto *deathSetRow = new QHBoxLayout();
+	deathCounterSetValue_ = new QSpinBox();
+	deathCounterSetValue_->setRange(0, 999999);
+	deathCounterSetButton_ = new QPushButton(QStringLiteral("Set Count"));
+	deathSetRow->addWidget(deathCounterSetValue_, 1);
+	deathSetRow->addWidget(deathCounterSetButton_);
+	deathControlsLayout->addWidget(deathCounterSelect_);
+	deathControlsLayout->addWidget(deathCounterValue_);
+	deathControlsLayout->addLayout(deathAdjustRow);
+	deathControlsLayout->addLayout(deathSetRow);
+	liveLayout->addWidget(deathControls);
+
+	auto *loyaltyControls = new QGroupBox(QStringLiteral("Loyalty Points"));
+	auto *loyaltyLayout = new QFormLayout(loyaltyControls);
+	loyaltyEnabled_ = new QCheckBox(QStringLiteral("Enable Loyalty Points"));
+	loyaltyCurrency_ = new QLineEdit(QStringLiteral("Points"));
+	loyaltyCurrency_->setMaxLength(40);
+	loyaltyAmount_ = new QSpinBox();
+	loyaltyAmount_->setRange(0, 1000000000);
+	loyaltyInterval_ = new QSpinBox();
+	loyaltyInterval_->setRange(3, 10);
+	loyaltyInterval_->setSuffix(QStringLiteral(" min"));
+	loyaltyTicketCost_ = new QSpinBox();
+	loyaltyTicketCost_->setRange(1, 1000000000);
+	loyaltyMaxTickets_ = new QSpinBox();
+	loyaltyMaxTickets_->setRange(0, 100000);
+	loyaltyMaxTickets_->setSpecialValueText(QStringLiteral("Unlimited"));
+	loyaltyRafflePoints_ = new QSpinBox();
+	loyaltyRafflePoints_->setRange(1, 1000000000);
+	loyaltyRaffleDuration_ = new QSpinBox();
+	loyaltyRaffleDuration_->setRange(10, 3600);
+	loyaltyRaffleDuration_->setSuffix(QStringLiteral(" sec"));
+	loyaltySaveButton_ = new QPushButton(QStringLiteral("Save Loyalty Settings"));
+	loyaltySummary_ = new QLabel(QStringLiteral("Loyalty data will appear after refresh."));
+	loyaltySummary_->setWordWrap(true);
+	loyaltyLayout->addRow(loyaltyEnabled_);
+	loyaltyLayout->addRow(QStringLiteral("Currency"), loyaltyCurrency_);
+	loyaltyLayout->addRow(QStringLiteral("Points / interval"), loyaltyAmount_);
+	loyaltyLayout->addRow(QStringLiteral("Award interval"), loyaltyInterval_);
+	loyaltyLayout->addRow(QStringLiteral("Ticket cost"), loyaltyTicketCost_);
+	loyaltyLayout->addRow(QStringLiteral("Max tickets"), loyaltyMaxTickets_);
+	loyaltyLayout->addRow(QStringLiteral("Raffle award"), loyaltyRafflePoints_);
+	loyaltyLayout->addRow(QStringLiteral("Raffle duration"), loyaltyRaffleDuration_);
+	loyaltyLayout->addRow(loyaltySaveButton_);
+	loyaltyLayout->addRow(loyaltySummary_);
+	liveLayout->addWidget(loyaltyControls);
+
+	auto *giveawayControls = new QGroupBox(QStringLiteral("Giveaway / Raffle"));
+	auto *giveawayLayout = new QVBoxLayout(giveawayControls);
+	giveawayStatus_ = new QLabel(QStringLiteral("No giveaway state loaded."));
+	giveawayStatus_->setWordWrap(true);
+	giveawayName_ = new QLineEdit();
+	giveawayName_->setMaxLength(100);
+	giveawayName_->setPlaceholderText(QStringLiteral("Giveaway name"));
+	auto *giveawayLifecycle = new QHBoxLayout();
+	giveawayStartButton_ = new QPushButton(QStringLiteral("Start"));
+	giveawayPauseButton_ = new QPushButton(QStringLiteral("Pause"));
+	giveawayResumeButton_ = new QPushButton(QStringLiteral("Resume"));
+	giveawayEndButton_ = new QPushButton(QStringLiteral("End"));
+	giveawayLifecycle->addWidget(giveawayStartButton_);
+	giveawayLifecycle->addWidget(giveawayPauseButton_);
+	giveawayLifecycle->addWidget(giveawayResumeButton_);
+	giveawayLifecycle->addWidget(giveawayEndButton_);
+	auto *winnerRow = new QHBoxLayout();
+	giveawayWinnerCount_ = new QSpinBox();
+	giveawayWinnerCount_->setRange(1, 10);
+	giveawayPickButton_ = new QPushButton(QStringLiteral("Pick Winner(s)"));
+	winnerRow->addWidget(giveawayWinnerCount_);
+	winnerRow->addWidget(giveawayPickButton_, 1);
+	auto *raffleRow = new QHBoxLayout();
+	raffleStartButton_ = new QPushButton(QStringLiteral("Start Raffle"));
+	raffleCancelButton_ = new QPushButton(QStringLiteral("Cancel Raffle"));
+	raffleRow->addWidget(raffleStartButton_);
+	raffleRow->addWidget(raffleCancelButton_);
+	giveawayLayout->addWidget(giveawayStatus_);
+	giveawayLayout->addWidget(giveawayName_);
+	giveawayLayout->addLayout(giveawayLifecycle);
+	giveawayLayout->addLayout(winnerRow);
+	giveawayLayout->addLayout(raffleRow);
+	liveLayout->addWidget(giveawayControls);
+
+	auto *walkOnControls = new QGroupBox(QStringLiteral("Walk-Ons"));
+	auto *walkOnLayout = new QFormLayout(walkOnControls);
+	walkOnSelect_ = new QComboBox();
+	walkOnSummary_ = new QLabel(QStringLiteral("Select a configured Walk-On user."));
+	walkOnSummary_->setWordWrap(true);
+	walkOnEnabled_ = new QCheckBox(QStringLiteral("Enabled"));
+	walkOnOverlay_ = new QCheckBox(QStringLiteral("Show Stream Events overlay"));
+	walkOnShoutout_ = new QCheckBox(QStringLiteral("Automatic shoutout"));
+	walkOnAnnouncement_ = new QCheckBox(QStringLiteral("Chat announcement"));
+	walkOnColor_ = new QComboBox();
+	for (const QString &color : {QStringLiteral("primary"), QStringLiteral("blue"), QStringLiteral("green"),
+								QStringLiteral("orange"), QStringLiteral("purple")})
+		walkOnColor_->addItem(color.left(1).toUpper() + color.mid(1), color);
+	walkOnSaveButton_ = new QPushButton(QStringLiteral("Save Walk-On Settings"));
+	walkOnTestButton_ = new QPushButton(QStringLiteral("Preview Overlay"));
+	auto *walkOnButtons = new QWidget();
+	auto *walkOnButtonsLayout = new QHBoxLayout(walkOnButtons);
+	walkOnButtonsLayout->setContentsMargins(0, 0, 0, 0);
+	walkOnButtonsLayout->addWidget(walkOnSaveButton_);
+	walkOnButtonsLayout->addWidget(walkOnTestButton_);
+	walkOnLayout->addRow(QStringLiteral("User"), walkOnSelect_);
+	walkOnLayout->addRow(walkOnSummary_);
+	walkOnLayout->addRow(walkOnEnabled_);
+	walkOnLayout->addRow(walkOnOverlay_);
+	walkOnLayout->addRow(walkOnShoutout_);
+	walkOnLayout->addRow(walkOnAnnouncement_);
+	walkOnLayout->addRow(QStringLiteral("Announcement color"), walkOnColor_);
+	walkOnLayout->addRow(walkOnButtons);
+	liveLayout->addWidget(walkOnControls);
+
+	liveLayout->addStretch();
+	liveScroll->setWidget(liveContent);
+	liveOuter->addWidget(liveScroll);
+	tabs->addTab(liveTab, QStringLiteral("Live Controls"));
+
 	auto *toolsTab = new QWidget();
 	auto *toolsLayout = new QVBoxLayout(toolsTab);
 	const QList<QPair<QString, QString>> tools = {
@@ -520,6 +666,25 @@ void BaconsHelperDock::buildUi()
 	connect(countdownPreset120_, &QPushButton::clicked, this, [this] { startCountdownPreset(120); });
 	connect(countdownPreset300_, &QPushButton::clicked, this, [this] { startCountdownPreset(300); });
 	connect(testEventButton_, &QPushButton::clicked, this, &BaconsHelperDock::testStreamEvent);
+	connect(deathCounterSelect_, &QComboBox::currentIndexChanged, this, [this](int) { updateDeathCounterSelection(); });
+	connect(deathCounterMinusButton_, &QPushButton::clicked, this, [this] { runDeathCounterAction(QStringLiteral("decrement")); });
+	connect(deathCounterPlusButton_, &QPushButton::clicked, this, [this] { runDeathCounterAction(QStringLiteral("increment")); });
+	connect(deathCounterResetButton_, &QPushButton::clicked, this, [this] { runDeathCounterAction(QStringLiteral("reset")); });
+	connect(deathCounterSetButton_, &QPushButton::clicked, this, [this] { runDeathCounterAction(QStringLiteral("set"), deathCounterSetValue_->value()); });
+	connect(loyaltyEnabled_, &QCheckBox::toggled, this, [this](bool enabled) {
+		if (!applyingState_) setLoyaltyActive(enabled);
+	});
+	connect(loyaltySaveButton_, &QPushButton::clicked, this, &BaconsHelperDock::saveLoyaltySettings);
+	connect(giveawayStartButton_, &QPushButton::clicked, this, [this] { runGiveawayAction(QStringLiteral("start")); });
+	connect(giveawayPauseButton_, &QPushButton::clicked, this, [this] { runGiveawayAction(QStringLiteral("pause")); });
+	connect(giveawayResumeButton_, &QPushButton::clicked, this, [this] { runGiveawayAction(QStringLiteral("resume")); });
+	connect(giveawayEndButton_, &QPushButton::clicked, this, [this] { runGiveawayAction(QStringLiteral("end")); });
+	connect(giveawayPickButton_, &QPushButton::clicked, this, [this] { runGiveawayAction(QStringLiteral("pick-winners")); });
+	connect(raffleStartButton_, &QPushButton::clicked, this, [this] { runGiveawayAction(QStringLiteral("start-raffle")); });
+	connect(raffleCancelButton_, &QPushButton::clicked, this, [this] { runGiveawayAction(QStringLiteral("cancel-raffle")); });
+	connect(walkOnSelect_, &QComboBox::currentIndexChanged, this, [this](int) { updateWalkOnSelection(); });
+	connect(walkOnSaveButton_, &QPushButton::clicked, this, &BaconsHelperDock::saveWalkOnSettings);
+	connect(walkOnTestButton_, &QPushButton::clicked, this, &BaconsHelperDock::testWalkOn);
 
 	for (auto it = channelToggles_.begin(); it != channelToggles_.end(); ++it) {
 		const QString key = it.key();
@@ -600,9 +765,13 @@ void BaconsHelperDock::loadLocalSettings()
 	if (!lookupError.isEmpty())
 		credentialStorageWarning_ = lookupError;
 
+	// Migrate credentials written by the early Linux prototype. "scoped:" was
+	// only Base64 and therefore was not encrypted at rest.
 	const QString legacy = settings.value(QStringLiteral("credential")).toString();
 	if (legacy.startsWith(QStringLiteral("scoped:"))) {
 		const QString migrated = QString::fromUtf8(QByteArray::fromBase64(legacy.mid(7).toLatin1()));
+		// Never leave the reversible legacy value on disk, even when a Secret
+		// Service entry already exists or the legacy value is malformed.
 		settings.remove(QStringLiteral("credential"));
 		settings.sync();
 		if (token_.isEmpty() && !migrated.isEmpty()) {
@@ -613,6 +782,8 @@ void BaconsHelperDock::loadLocalSettings()
 				settings.setValue(QStringLiteral("credential"), QStringLiteral("secret-service"));
 				settings.sync();
 			} else {
+				// Keep it in memory for this OBS session so the user can repair
+				// their keyring or re-pair; it is no longer persisted insecurely.
 				token_ = migrated;
 				credentialStorageWarning_ = migrationError;
 			}
@@ -623,6 +794,8 @@ void BaconsHelperDock::loadLocalSettings()
 #ifdef _WIN32
 	token_ = unprotectToken(storedCredential);
 #else
+	// Session-only Linux/Flatpak builds must not retain the reversible Base64
+	// credential used by the early prototype. Remove it on sight.
 	if (storedCredential.startsWith(QStringLiteral("scoped:"))) {
 		settings.remove(QStringLiteral("credential"));
 		settings.sync();
@@ -660,8 +833,10 @@ bool BaconsHelperDock::saveLocalSettings(QString *credentialError)
 		QString storeError;
 		credentialSaved = secretServiceStore(server, token_, &storeError);
 		if (credentialSaved) {
+			// Marker only; the credential itself lives in Secret Service.
 			settings.setValue(QStringLiteral("credential"), QStringLiteral("secret-service"));
 		} else {
+			// Fail closed: do not put a reversible credential in QSettings.
 			settings.remove(QStringLiteral("credential"));
 			if (credentialError)
 				*credentialError = storeError;
@@ -693,6 +868,9 @@ void BaconsHelperDock::setStatus(const QString &message, bool connected)
 
 void BaconsHelperDock::setControlsEnabled(bool enabled)
 {
+	// A paired credential is scoped to the server it came from. Lock the
+	// endpoint while paired so the bearer credential cannot be redirected to a
+	// different HTTPS host. Forget the pairing before changing servers.
 	serverUrl_->setEnabled(!enabled);
 	pairCode_->setEnabled(!enabled);
 	pairButton_->setEnabled(!enabled);
@@ -709,6 +887,16 @@ void BaconsHelperDock::setControlsEnabled(bool enabled)
 	for (auto *button : {countdownStartButton_, countdownCancelButton_, countdownPreset30_,
 					 countdownPreset60_, countdownPreset120_, countdownPreset300_})
 		button->setEnabled(enabled);
+	const QList<QWidget *> liveControls = {
+		deathCounterSelect_, deathCounterSetValue_, deathCounterMinusButton_, deathCounterPlusButton_,
+		deathCounterSetButton_, deathCounterResetButton_, loyaltyEnabled_, loyaltyCurrency_, loyaltyAmount_,
+		loyaltyInterval_, loyaltyTicketCost_, loyaltyMaxTickets_, loyaltyRafflePoints_, loyaltyRaffleDuration_,
+		loyaltySaveButton_, giveawayName_, giveawayWinnerCount_, giveawayStartButton_, giveawayPauseButton_,
+		giveawayResumeButton_, giveawayEndButton_, giveawayPickButton_, raffleStartButton_, raffleCancelButton_,
+		walkOnSelect_, walkOnEnabled_, walkOnOverlay_, walkOnShoutout_, walkOnAnnouncement_, walkOnColor_,
+		walkOnSaveButton_, walkOnTestButton_};
+	for (QWidget *control : liveControls)
+		control->setEnabled(enabled);
 	const QList<QWidget *> overlayControls = {
 			 winLossColor_, winLossSize_, winLossGameTitle_, winLossRatio_, winLossWinPercent_,
 			 winLossLossPercent_, winLossLastGame_, deathColor_, deathSize_, deathShowTitle_,
@@ -720,6 +908,8 @@ void BaconsHelperDock::setControlsEnabled(bool enabled)
 	}
 	if (enabled)
 		deathCustomText_->setEnabled(deathUseCustomText_->isChecked());
+	updateDeathCounterSelection();
+	updateWalkOnSelection();
 	refreshButton_->setEnabled(enabled);
 	disconnectButton_->setEnabled(enabled);
 }
@@ -748,6 +938,9 @@ QUrl BaconsHelperDock::endpoint(const QString &path) const
 QNetworkReply *BaconsHelperDock::sendJson(const QByteArray &method, const QString &path, const QJsonObject &payload)
 {
 	QNetworkRequest request(endpoint(path));
+	// Never allow an authenticated request to follow a redirect to another
+	// origin. This keeps the channel-scoped bearer credential pinned to the
+	// server the user paired with.
 	request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::SameOriginRedirectPolicy);
 	request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
 	request.setRawHeader("Accept", "application/json");
@@ -840,6 +1033,9 @@ void BaconsHelperDock::pair()
 
 void BaconsHelperDock::disconnectAccount()
 {
+	// Ask Bacons Helper to revoke this installation before forgetting the local
+	// token. The request already owns a copy of the Authorization header, so the
+	// local credential can be cleared immediately even if the network is slow.
 	QNetworkReply *revokeReply = nullptr;
 	const QUrl currentServer(serverUrl_->text().trimmed());
 	if (!token_.isEmpty() && currentServer.isValid() &&
@@ -851,6 +1047,11 @@ void BaconsHelperDock::disconnectAccount()
 	token_.clear();
 	dashboardLinks_.clear();
 	browserSourceUrls_.clear();
+	deathCounters_.clear();
+	walkOns_.clear();
+	loyaltyState_ = QJsonObject{};
+	deathCounterSelect_->clear();
+	walkOnSelect_->clear();
 	countdownEndTime_ = 0;
 	updateCountdownStatus();
 	if (sourceStatus_)
@@ -991,6 +1192,50 @@ void BaconsHelperDock::applySettingsPayload(const QJsonObject &payload)
 	const QJsonObject countdown = payload.value(QStringLiteral("countdown")).toObject();
 	countdownEndTime_ = qRound64(countdown.value(QStringLiteral("endTime")).toDouble());
 	updateCountdownStatus();
+
+	const QJsonObject liveControls = payload.value(QStringLiteral("liveControls")).toObject();
+	botIsModerator_ = liveControls.value(QStringLiteral("capabilities")).toObject()
+		.value(QStringLiteral("botIsModerator")).toBool(false);
+	loyaltyEnabled_->setToolTip(botIsModerator_ ? QString{}
+		: QStringLiteral("Bacons Helper must be a moderator before Loyalty Points can be enabled."));
+	const QString previousDeathCounter = deathCounterSelect_->currentData().toString();
+	deathCounters_.clear();
+	deathCounterSelect_->clear();
+	for (const auto &value : liveControls.value(QStringLiteral("deathCounters")).toArray()) {
+		const QJsonObject counter = value.toObject();
+		const QString counterId = counter.value(QStringLiteral("counterId")).toString();
+		if (counterId.isEmpty())
+			continue;
+		deathCounters_.insert(counterId, counter);
+		deathCounterSelect_->addItem(
+			QStringLiteral("%1 — %2").arg(counter.value(QStringLiteral("gameName")).toString(QStringLiteral("Unknown game")))
+				.arg(counter.value(QStringLiteral("total")).toInt()),
+			counterId);
+	}
+	const int previousDeathIndex = deathCounterSelect_->findData(previousDeathCounter);
+	if (previousDeathIndex >= 0)
+		deathCounterSelect_->setCurrentIndex(previousDeathIndex);
+	updateDeathCounterSelection();
+
+	applyLoyaltyState(liveControls.value(QStringLiteral("loyalty")).toObject());
+
+	const QString previousWalkOn = walkOnSelect_->currentData().toString();
+	walkOns_.clear();
+	walkOnSelect_->clear();
+	for (const auto &value : liveControls.value(QStringLiteral("walkOns")).toArray()) {
+		const QJsonObject walkOn = value.toObject();
+		const QString userId = walkOn.value(QStringLiteral("userId")).toString();
+		if (userId.isEmpty())
+			continue;
+		walkOns_.insert(userId, walkOn);
+		const QString displayName = walkOn.value(QStringLiteral("displayName")).toString(
+			walkOn.value(QStringLiteral("login")).toString(userId));
+		walkOnSelect_->addItem(displayName, userId);
+	}
+	const int previousWalkOnIndex = walkOnSelect_->findData(previousWalkOn);
+	if (previousWalkOnIndex >= 0)
+		walkOnSelect_->setCurrentIndex(previousWalkOnIndex);
+	updateWalkOnSelection();
 
 	browserSourceUrls_.clear();
 	const QJsonObject browserSources = payload.value(QStringLiteral("browserSources")).toObject();
@@ -1180,6 +1425,340 @@ void BaconsHelperDock::syncExistingBrowserSources()
 		obs_source_release(source);
 	}
 }
+
+void BaconsHelperDock::updateDeathCounterSelection()
+{
+	const QString counterId = deathCounterSelect_ ? deathCounterSelect_->currentData().toString() : QString{};
+	const bool available = !token_.isEmpty() && deathCounters_.contains(counterId);
+	for (QWidget *control : {static_cast<QWidget *>(deathCounterMinusButton_), static_cast<QWidget *>(deathCounterPlusButton_),
+						 static_cast<QWidget *>(deathCounterResetButton_), static_cast<QWidget *>(deathCounterSetValue_),
+						 static_cast<QWidget *>(deathCounterSetButton_)})
+		control->setEnabled(available);
+	if (!available) {
+		if (deathCounterValue_)
+			deathCounterValue_->setText(deathCounters_.isEmpty()
+				? QStringLiteral("No saved death counters were found for this channel.")
+				: QStringLiteral("Select a death counter."));
+		return;
+	}
+	const QJsonObject counter = deathCounters_.value(counterId);
+	const int total = counter.value(QStringLiteral("total")).toInt();
+	deathCounterSetValue_->setValue(total);
+	deathCounterValue_->setText(QStringLiteral("%1 — %2 death%3")
+		.arg(counter.value(QStringLiteral("gameName")).toString(QStringLiteral("Unknown game")))
+		.arg(total)
+		.arg(total == 1 ? QString{} : QStringLiteral("s")));
+}
+
+void BaconsHelperDock::runDeathCounterAction(const QString &action, int value)
+{
+	if (token_.isEmpty())
+		return;
+	const QString counterId = deathCounterSelect_->currentData().toString();
+	if (counterId.isEmpty() || !deathCounters_.contains(counterId)) {
+		setStatus(QStringLiteral("⚠ Select a death counter first."), false);
+		return;
+	}
+	QJsonObject payload{{QStringLiteral("action"), action}};
+	if (action == QStringLiteral("set"))
+		payload.insert(QStringLiteral("value"), value);
+	const QString encodedId = QString::fromUtf8(QUrl::toPercentEncoding(counterId));
+	auto *reply = sendJson("POST", QStringLiteral("/api/obs-plugin/death-counters/%1").arg(encodedId), payload);
+	connect(reply, &QNetworkReply::finished, this, [this, reply, counterId] {
+		const QByteArray bytes = reply->readAll();
+		const QJsonObject response = QJsonDocument::fromJson(bytes).object();
+		if (reply->error() != QNetworkReply::NoError || !response.value(QStringLiteral("ok")).toBool()) {
+			handleAuthFailure(reply);
+			if (!token_.isEmpty())
+				setStatus(QStringLiteral("⚠ Death counter update failed: %1")
+					.arg(response.value(QStringLiteral("error")).toString(reply->errorString())), false);
+			reply->deleteLater();
+			return;
+		}
+		const QJsonObject counter = response.value(QStringLiteral("counter")).toObject();
+		deathCounters_.insert(counterId, counter);
+		const int index = deathCounterSelect_->findData(counterId);
+		if (index >= 0) {
+			deathCounterSelect_->setItemText(index, QStringLiteral("%1 — %2")
+				.arg(counter.value(QStringLiteral("gameName")).toString(QStringLiteral("Unknown game")))
+				.arg(counter.value(QStringLiteral("total")).toInt()));
+		}
+		updateDeathCounterSelection();
+		setStatus(QStringLiteral("✓ Death counter updated."), true);
+		reply->deleteLater();
+	});
+}
+
+void BaconsHelperDock::applyLoyaltyState(const QJsonObject &loyalty)
+{
+	const bool previousApplying = applyingState_;
+	applyingState_ = true;
+	loyaltyState_ = loyalty;
+	const QJsonObject settings = loyalty.value(QStringLiteral("settings")).toObject();
+	loyaltyEnabled_->setChecked(settings.value(QStringLiteral("active")).toBool());
+	loyaltyCurrency_->setText(settings.value(QStringLiteral("currencyName")).toString(QStringLiteral("Points")));
+	loyaltyAmount_->setValue(settings.value(QStringLiteral("amount")).toInt());
+	loyaltyInterval_->setValue(settings.value(QStringLiteral("timerInterval")).toInt(5));
+	loyaltyTicketCost_->setValue(settings.value(QStringLiteral("ticketCost")).toInt(1));
+	loyaltyMaxTickets_->setValue(settings.value(QStringLiteral("maxTickets")).toInt());
+	loyaltyRafflePoints_->setValue(settings.value(QStringLiteral("rafflePoints")).toInt(100));
+	loyaltyRaffleDuration_->setValue(settings.value(QStringLiteral("raffleDuration")).toInt(60));
+	const QJsonObject summary = loyalty.value(QStringLiteral("summary")).toObject();
+	loyaltySummary_->setText(QStringLiteral("%1 users • %2 total %3 • %4 active giveaway participant%5 • %6 ticket%7")
+		.arg(summary.value(QStringLiteral("loyaltyUsers")).toInt())
+		.arg(summary.value(QStringLiteral("loyaltyPoints")).toDouble(), 0, 'f', 0)
+		.arg(settings.value(QStringLiteral("currencyName")).toString(QStringLiteral("Points")))
+		.arg(summary.value(QStringLiteral("participants")).toInt())
+		.arg(summary.value(QStringLiteral("participants")).toInt() == 1 ? QString{} : QStringLiteral("s"))
+		.arg(summary.value(QStringLiteral("tickets")).toDouble(), 0, 'f', 0)
+		.arg(summary.value(QStringLiteral("tickets")).toInt() == 1 ? QString{} : QStringLiteral("s")));
+
+	const bool hasGiveaway = !settings.value(QStringLiteral("giveawayId")).isNull() &&
+		!settings.value(QStringLiteral("giveawayId")).toString().isEmpty();
+	const bool giveawayActive = settings.value(QStringLiteral("giveawayActive")).toBool();
+	const QJsonObject raffle = loyalty.value(QStringLiteral("raffle")).toObject();
+	const bool raffleRunning = raffle.value(QStringLiteral("running")).toBool();
+	QString giveawayText = hasGiveaway
+		? QStringLiteral("Giveaway: %1 — %2").arg(settings.value(QStringLiteral("giveawayName")).toString(QStringLiteral("Untitled")),
+			giveawayActive ? QStringLiteral("active") : QStringLiteral("paused"))
+		: QStringLiteral("No giveaway is configured.");
+	if (raffleRunning)
+		giveawayText += QStringLiteral(" • Raffle running for %1 %2")
+			.arg(raffle.value(QStringLiteral("points")).toInt())
+			.arg(settings.value(QStringLiteral("currencyName")).toString(QStringLiteral("Points")));
+	const QJsonArray prizes = loyalty.value(QStringLiteral("prizes")).toArray();
+	if (!prizes.isEmpty())
+		giveawayText += QStringLiteral(" • %1 prize%2 configured").arg(prizes.size()).arg(prizes.size() == 1 ? QString{} : QStringLiteral("s"));
+	giveawayStatus_->setText(giveawayText);
+	if (hasGiveaway)
+		giveawayName_->setText(settings.value(QStringLiteral("giveawayName")).toString());
+
+	const bool connected = !token_.isEmpty();
+	const bool loyaltyActive = settings.value(QStringLiteral("active")).toBool();
+	loyaltyEnabled_->setEnabled(connected && (botIsModerator_ || loyaltyActive));
+	giveawayStartButton_->setEnabled(connected && loyaltyActive && !hasGiveaway);
+	giveawayPauseButton_->setEnabled(connected && hasGiveaway && giveawayActive);
+	giveawayResumeButton_->setEnabled(connected && hasGiveaway && !giveawayActive && loyaltyActive);
+	giveawayEndButton_->setEnabled(connected && hasGiveaway);
+	giveawayPickButton_->setEnabled(connected && hasGiveaway);
+	raffleStartButton_->setEnabled(connected && hasGiveaway && giveawayActive && loyaltyActive && !raffleRunning);
+	raffleCancelButton_->setEnabled(connected && raffleRunning);
+	applyingState_ = previousApplying;
+}
+
+void BaconsHelperDock::saveLoyaltySettings()
+{
+	if (token_.isEmpty())
+		return;
+	QJsonObject settings{
+		{QStringLiteral("currency_name"), loyaltyCurrency_->text().trimmed()},
+		{QStringLiteral("amount"), loyaltyAmount_->value()},
+		{QStringLiteral("timer_interval"), loyaltyInterval_->value()},
+		{QStringLiteral("ticket_cost"), loyaltyTicketCost_->value()},
+		{QStringLiteral("max_tickets"), loyaltyMaxTickets_->value()},
+		{QStringLiteral("raffle_points"), loyaltyRafflePoints_->value()},
+		{QStringLiteral("raffle_duration"), loyaltyRaffleDuration_->value()}};
+	auto *reply = sendJson("PUT", QStringLiteral("/api/obs-plugin/loyalty/settings"),
+		QJsonObject{{QStringLiteral("settings"), settings}});
+	connect(reply, &QNetworkReply::finished, this, [this, reply] {
+		const QByteArray bytes = reply->readAll();
+		const QJsonObject response = QJsonDocument::fromJson(bytes).object();
+		if (reply->error() != QNetworkReply::NoError || !response.value(QStringLiteral("ok")).toBool()) {
+			handleAuthFailure(reply);
+			if (!token_.isEmpty())
+				setStatus(QStringLiteral("⚠ Loyalty settings were not saved: %1")
+					.arg(response.value(QStringLiteral("error")).toString(reply->errorString())), false);
+		} else {
+			applyLoyaltyState(response.value(QStringLiteral("loyalty")).toObject());
+			setStatus(QStringLiteral("✓ Loyalty settings saved."), true);
+		}
+		reply->deleteLater();
+	});
+}
+
+void BaconsHelperDock::setLoyaltyActive(bool enabled)
+{
+	if (token_.isEmpty())
+		return;
+	auto *reply = sendJson("POST", QStringLiteral("/api/obs-plugin/loyalty/active"),
+		QJsonObject{{QStringLiteral("enabled"), enabled}});
+	connect(reply, &QNetworkReply::finished, this, [this, reply] {
+		const QByteArray bytes = reply->readAll();
+		const QJsonObject response = QJsonDocument::fromJson(bytes).object();
+		if (reply->error() != QNetworkReply::NoError || !response.value(QStringLiteral("ok")).toBool()) {
+			handleAuthFailure(reply);
+			if (!token_.isEmpty()) {
+				setStatus(QStringLiteral("⚠ Loyalty Points state was not changed: %1")
+					.arg(response.value(QStringLiteral("error")).toString(reply->errorString())), false);
+				applyLoyaltyState(loyaltyState_);
+			}
+		} else {
+			applyLoyaltyState(response.value(QStringLiteral("loyalty")).toObject());
+			setStatus(QStringLiteral("✓ Loyalty Points state updated."), true);
+		}
+		reply->deleteLater();
+	});
+}
+
+void BaconsHelperDock::runGiveawayAction(const QString &action)
+{
+	if (token_.isEmpty())
+		return;
+	QJsonObject payload{{QStringLiteral("action"), action}};
+	if (action == QStringLiteral("start"))
+		payload.insert(QStringLiteral("name"), giveawayName_->text().trimmed());
+	else if (action == QStringLiteral("pick-winners"))
+		payload.insert(QStringLiteral("count"), giveawayWinnerCount_->value());
+	else if (action == QStringLiteral("start-raffle")) {
+		payload.insert(QStringLiteral("points"), loyaltyRafflePoints_->value());
+		payload.insert(QStringLiteral("duration"), loyaltyRaffleDuration_->value());
+	}
+	auto *reply = sendJson("POST", QStringLiteral("/api/obs-plugin/giveaway/action"), payload);
+	connect(reply, &QNetworkReply::finished, this, [this, reply, action] {
+		const QByteArray bytes = reply->readAll();
+		const QJsonObject response = QJsonDocument::fromJson(bytes).object();
+		if (reply->error() != QNetworkReply::NoError || !response.value(QStringLiteral("ok")).toBool()) {
+			handleAuthFailure(reply);
+			if (!token_.isEmpty())
+				setStatus(QStringLiteral("⚠ Giveaway action failed: %1")
+					.arg(response.value(QStringLiteral("error")).toString(reply->errorString())), false);
+			reply->deleteLater();
+			return;
+		}
+		applyLoyaltyState(response.value(QStringLiteral("loyalty")).toObject());
+		const QJsonArray winners = response.value(QStringLiteral("winners")).toArray();
+		if (!winners.isEmpty()) {
+			QStringList names;
+			for (const auto &value : winners) {
+				const QJsonObject winner = value.toObject();
+				names << winner.value(QStringLiteral("user_name")).toString(
+					winner.value(QStringLiteral("user_login")).toString(QStringLiteral("Unknown")));
+			}
+			setStatus(QStringLiteral("✓ Winner%1: %2").arg(winners.size() == 1 ? QString{} : QStringLiteral("s"), names.join(QStringLiteral(", "))), true);
+		} else {
+			setStatus(QStringLiteral("✓ Giveaway action completed: %1").arg(action), true);
+		}
+		reply->deleteLater();
+	});
+}
+
+void BaconsHelperDock::updateWalkOnSelection()
+{
+	const QString userId = walkOnSelect_ ? walkOnSelect_->currentData().toString() : QString{};
+	const bool available = !token_.isEmpty() && walkOns_.contains(userId);
+	for (QWidget *control : {static_cast<QWidget *>(walkOnEnabled_), static_cast<QWidget *>(walkOnOverlay_),
+						 static_cast<QWidget *>(walkOnColor_), static_cast<QWidget *>(walkOnSaveButton_),
+						 static_cast<QWidget *>(walkOnTestButton_)})
+		control->setEnabled(available);
+	walkOnShoutout_->setEnabled(available && botIsModerator_);
+	walkOnAnnouncement_->setEnabled(available && botIsModerator_);
+	if (!available) {
+		walkOnSummary_->setText(walkOns_.isEmpty()
+			? QStringLiteral("No Walk-On users are configured for this channel.")
+			: QStringLiteral("Select a Walk-On user."));
+		return;
+	}
+	const bool previousApplying = applyingState_;
+	applyingState_ = true;
+	const QJsonObject walkOn = walkOns_.value(userId);
+	walkOnEnabled_->setChecked(walkOn.value(QStringLiteral("enabled")).toBool(true));
+	walkOnOverlay_->setChecked(walkOn.value(QStringLiteral("overlayEnabled")).toBool(true));
+	walkOnShoutout_->setChecked(walkOn.value(QStringLiteral("shoutout")).toBool());
+	walkOnAnnouncement_->setChecked(walkOn.value(QStringLiteral("announcement")).toBool());
+	const int colorIndex = walkOnColor_->findData(walkOn.value(QStringLiteral("announcementColor")).toString(QStringLiteral("primary")));
+	walkOnColor_->setCurrentIndex(colorIndex >= 0 ? colorIndex : 0);
+	QString summary = QStringLiteral("@%1 • %2 message%3")
+		.arg(walkOn.value(QStringLiteral("login")).toString())
+		.arg(walkOn.value(QStringLiteral("messageCount")).toInt())
+		.arg(walkOn.value(QStringLiteral("messageCount")).toInt() == 1 ? QString{} : QStringLiteral("s"));
+	if (walkOn.value(QStringLiteral("audioConfigured")).toBool())
+		summary += QStringLiteral(" • audio configured");
+	const QString preview = walkOn.value(QStringLiteral("previewMessage")).toString();
+	if (!preview.isEmpty())
+		summary += QStringLiteral("\nPreview: %1").arg(preview);
+	if (!botIsModerator_)
+		summary += QStringLiteral("\nModerator status is required to enable shoutouts or announcements.");
+	walkOnSummary_->setText(summary);
+	applyingState_ = previousApplying;
+}
+
+void BaconsHelperDock::saveWalkOnSettings()
+{
+	if (token_.isEmpty())
+		return;
+	const QString userId = walkOnSelect_->currentData().toString();
+	if (userId.isEmpty() || !walkOns_.contains(userId)) {
+		setStatus(QStringLiteral("⚠ Select a Walk-On user first."), false);
+		return;
+	}
+	QJsonObject settings{
+		{QStringLiteral("enabled"), walkOnEnabled_->isChecked()},
+		{QStringLiteral("overlayEnabled"), walkOnOverlay_->isChecked()},
+		{QStringLiteral("shoutout"), walkOnShoutout_->isChecked()},
+		{QStringLiteral("announcement"), walkOnAnnouncement_->isChecked()},
+		{QStringLiteral("announcementColor"), walkOnColor_->currentData().toString()}};
+	const QString encodedId = QString::fromUtf8(QUrl::toPercentEncoding(userId));
+	auto *reply = sendJson("PUT", QStringLiteral("/api/obs-plugin/walk-ons/%1").arg(encodedId),
+		QJsonObject{{QStringLiteral("settings"), settings}});
+	connect(reply, &QNetworkReply::finished, this, [this, reply, userId] {
+		const QByteArray bytes = reply->readAll();
+		const QJsonObject response = QJsonDocument::fromJson(bytes).object();
+		if (reply->error() != QNetworkReply::NoError || !response.value(QStringLiteral("ok")).toBool()) {
+			handleAuthFailure(reply);
+			if (!token_.isEmpty())
+				setStatus(QStringLiteral("⚠ Walk-On settings were not saved: %1")
+					.arg(response.value(QStringLiteral("error")).toString(reply->errorString())), false);
+			reply->deleteLater();
+			return;
+		}
+		walkOns_.clear();
+		const QString selectedId = userId;
+		walkOnSelect_->clear();
+		for (const auto &value : response.value(QStringLiteral("walkOns")).toArray()) {
+			const QJsonObject walkOn = value.toObject();
+			const QString id = walkOn.value(QStringLiteral("userId")).toString();
+			if (id.isEmpty())
+				continue;
+			walkOns_.insert(id, walkOn);
+			walkOnSelect_->addItem(walkOn.value(QStringLiteral("displayName")).toString(
+				walkOn.value(QStringLiteral("login")).toString(id)), id);
+		}
+		const int index = walkOnSelect_->findData(selectedId);
+		if (index >= 0)
+			walkOnSelect_->setCurrentIndex(index);
+		updateWalkOnSelection();
+		setStatus(QStringLiteral("✓ Walk-On settings saved."), true);
+		reply->deleteLater();
+	});
+}
+
+void BaconsHelperDock::testWalkOn()
+{
+	if (token_.isEmpty())
+		return;
+	const QString userId = walkOnSelect_->currentData().toString();
+	if (userId.isEmpty() || !walkOns_.contains(userId)) {
+		setStatus(QStringLiteral("⚠ Select a Walk-On user first."), false);
+		return;
+	}
+	const QString encodedId = QString::fromUtf8(QUrl::toPercentEncoding(userId));
+	auto *reply = sendJson("POST", QStringLiteral("/api/obs-plugin/walk-ons/%1/test").arg(encodedId));
+	connect(reply, &QNetworkReply::finished, this, [this, reply] {
+		const QByteArray bytes = reply->readAll();
+		const QJsonObject response = QJsonDocument::fromJson(bytes).object();
+		if (reply->error() != QNetworkReply::NoError || !response.value(QStringLiteral("ok")).toBool()) {
+			handleAuthFailure(reply);
+			if (!token_.isEmpty())
+				setStatus(QStringLiteral("⚠ Walk-On preview failed: %1")
+					.arg(response.value(QStringLiteral("error")).toString(reply->errorString())), false);
+		} else {
+			setStatus(QStringLiteral("✓ Walk-On preview sent to %1 local overlay client(s).")
+				.arg(response.value(QStringLiteral("delivered")).toInt()), true);
+		}
+		reply->deleteLater();
+	});
+}
+
 
 void BaconsHelperDock::saveOverlaySettings(const QString &key)
 {
