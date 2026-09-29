@@ -33,13 +33,12 @@
     },
     "platformConfig": {
         "macos": {
-            "bundleId": "com.example.plugintemplate-for-obs"
+            "bundleId": "com.baconshelper.obs-companion"
         }
     },
-    "name": "plugintemplate-for-obs",
-    "displayName": "Plugin Template for OBS",
-    "version": "1.0.0",
-    "author": "Your Name Here",
-    "website": "https://example.com",
-    "email": "me@example.com"
+    "name": "bacons-helper-obs",
+    "displayName": "Bacons Helper OBS Companion",
+    "version": "0.3.1",
+    "author": "Bacon_Fixation",
+    "website": "https://baconshelper.com"
 }

@@ -1,15 +1,12 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(bacons-helper-obs VERSION 0.3.0 LANGUAGES CXX)
+project(bacons-helper-obs VERSION 0.3.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_AUTOMOC ON)
 
-# On Windows, libobs and obs-frontend-api are development packages, not part of
-# the normal OBS installation. The packaging script bootstraps them from the
-# official OBS plugin template and passes their package directories here.
 if(WIN32 AND (NOT libobs_DIR OR NOT EXISTS "${libobs_DIR}/libobsConfig.cmake"))
     message(FATAL_ERROR
         "OBS development packages are not configured. "
@@ -57,9 +54,6 @@ set_target_properties(bacons-helper PROPERTIES
     OUTPUT_NAME "bacons-helper"
 )
 
-# OBS treats plugin MODULE libraries as LIBRARY artifacts on all platforms,
-# including Windows. Keep platform-specific install layouts so a staged
-# prefix can be copied directly into an OBS installation.
 if(WIN32)
     install(TARGETS bacons-helper LIBRARY DESTINATION obs-plugins/64bit)
     install(DIRECTORY data/ DESTINATION data/obs-plugins/bacons-helper)

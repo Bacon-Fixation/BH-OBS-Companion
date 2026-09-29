@@ -1,6 +1,4 @@
 #ifdef BH_HAVE_LIBSECRET
-// libsecret pulls in GLib/GDBus declarations with a member named `signals`.
-// Include it before Qt so Qt keyword macros can never rewrite GLib headers.
 #include <libsecret/secret.h>
 #endif
 
@@ -177,8 +175,6 @@ bool secretServiceClear(const QString &server, QString *errorMessage)
 		"server", serverUtf8.constData(),
 		nullptr);
 
-	// A false return without GError only means that no matching secret was
-	// present. That is already the desired state for a clear operation.
 	if (error) {
 		if (errorMessage)
 			*errorMessage = QString::fromUtf8(error->message);
@@ -204,9 +200,6 @@ QCheckBox *addToggle(QVBoxLayout *layout, const QString &label, const QString &k
 BaconsHelperDock::BaconsHelperDock(QWidget *parent) : QWidget(parent)
 {
 #ifdef _WIN32
-	// Qt 6 implements TLS through runtime plugins. OBS already owns the Qt
-	// runtime. Add this module's private Qt plugin tree before probing TLS so we
-	// do not have to install or overwrite plugins in OBS's global Qt directory.
 	char *qtPluginPath = obs_module_file("qt-plugins");
 	if (qtPluginPath) {
 		const QString pluginPath = QString::fromUtf8(qtPluginPath);
@@ -215,8 +208,6 @@ BaconsHelperDock::BaconsHelperDock(QWidget *parent) : QWidget(parent)
 		bfree(qtPluginPath);
 	}
 
-	// Prefer the native Windows Schannel plugin packaged alongside the
-	// companion instead of depending on a separately installed OpenSSL.
 	const auto tlsBackends = QSslSocket::availableBackends();
 	const QString tlsBackendSummary = QStringList(tlsBackends).join(QStringLiteral(", "));
 	blog(LOG_INFO, "[Bacons Helper] Qt TLS backends: %s",
@@ -271,7 +262,7 @@ void BaconsHelperDock::buildUi()
 	auto *connectionButtonsLayout = new QHBoxLayout(connectionButtons);
 	connectionButtonsLayout->setContentsMargins(0, 0, 0, 0);
 	pairButton_ = new QPushButton(QStringLiteral("Pair"));
-	disconnectButton_ = new QPushButton(QStringLiteral("Forget this pairing"));
+	disconnectButton_ = new QPushButton(QStringLiteral("Disconnect & revoke"));
 	refreshButton_ = new QPushButton(QStringLiteral("Refresh"));
 	connectionButtonsLayout->addWidget(pairButton_);
 	connectionButtonsLayout->addWidget(refreshButton_);
@@ -609,13 +600,9 @@ void BaconsHelperDock::loadLocalSettings()
 	if (!lookupError.isEmpty())
 		credentialStorageWarning_ = lookupError;
 
-	// Migrate credentials written by the early Linux prototype. "scoped:" was
-	// only Base64 and therefore was not encrypted at rest.
 	const QString legacy = settings.value(QStringLiteral("credential")).toString();
 	if (legacy.startsWith(QStringLiteral("scoped:"))) {
 		const QString migrated = QString::fromUtf8(QByteArray::fromBase64(legacy.mid(7).toLatin1()));
-		// Never leave the reversible legacy value on disk, even when a Secret
-		// Service entry already exists or the legacy value is malformed.
 		settings.remove(QStringLiteral("credential"));
 		settings.sync();
 		if (token_.isEmpty() && !migrated.isEmpty()) {
@@ -626,8 +613,6 @@ void BaconsHelperDock::loadLocalSettings()
 				settings.setValue(QStringLiteral("credential"), QStringLiteral("secret-service"));
 				settings.sync();
 			} else {
-				// Keep it in memory for this OBS session so the user can repair
-				// their keyring or re-pair; it is no longer persisted insecurely.
 				token_ = migrated;
 				credentialStorageWarning_ = migrationError;
 			}
@@ -638,8 +623,6 @@ void BaconsHelperDock::loadLocalSettings()
 #ifdef _WIN32
 	token_ = unprotectToken(storedCredential);
 #else
-	// Session-only Linux/Flatpak builds must not retain the reversible Base64
-	// credential used by the early prototype. Remove it on sight.
 	if (storedCredential.startsWith(QStringLiteral("scoped:"))) {
 		settings.remove(QStringLiteral("credential"));
 		settings.sync();
@@ -677,10 +660,8 @@ bool BaconsHelperDock::saveLocalSettings(QString *credentialError)
 		QString storeError;
 		credentialSaved = secretServiceStore(server, token_, &storeError);
 		if (credentialSaved) {
-			// Marker only; the credential itself lives in Secret Service.
 			settings.setValue(QStringLiteral("credential"), QStringLiteral("secret-service"));
 		} else {
-			// Fail closed: do not put a reversible credential in QSettings.
 			settings.remove(QStringLiteral("credential"));
 			if (credentialError)
 				*credentialError = storeError;
@@ -712,9 +693,6 @@ void BaconsHelperDock::setStatus(const QString &message, bool connected)
 
 void BaconsHelperDock::setControlsEnabled(bool enabled)
 {
-	// A paired credential is scoped to the server it came from. Lock the
-	// endpoint while paired so the bearer credential cannot be redirected to a
-	// different HTTPS host. Forget the pairing before changing servers.
 	serverUrl_->setEnabled(!enabled);
 	pairCode_->setEnabled(!enabled);
 	pairButton_->setEnabled(!enabled);
@@ -749,8 +727,9 @@ void BaconsHelperDock::setControlsEnabled(bool enabled)
 bool BaconsHelperDock::validateServerUrl()
 {
 	QUrl url(serverUrl_->text().trimmed());
-	if (!url.isValid() || url.scheme().toLower() != QStringLiteral("https") || url.host().isEmpty()) {
-		setStatus(QStringLiteral("⚠ Server URL must be a valid HTTPS address."), false);
+	if (!url.isValid() || url.scheme().toLower() != QStringLiteral("https") || url.host().isEmpty() ||
+		!url.userInfo().isEmpty()) {
+		setStatus(QStringLiteral("⚠ Server URL must be a valid HTTPS address without embedded credentials."), false);
 		return false;
 	}
 	serverUrl_->setText(url.adjusted(QUrl::RemovePath | QUrl::RemoveQuery | QUrl::RemoveFragment | QUrl::StripTrailingSlash).toString());
@@ -769,6 +748,7 @@ QUrl BaconsHelperDock::endpoint(const QString &path) const
 QNetworkReply *BaconsHelperDock::sendJson(const QByteArray &method, const QString &path, const QJsonObject &payload)
 {
 	QNetworkRequest request(endpoint(path));
+	request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::SameOriginRedirectPolicy);
 	request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
 	request.setRawHeader("Accept", "application/json");
 	request.setRawHeader("User-Agent", "Bacons-Helper-OBS/" BH_OBS_VERSION);
@@ -860,6 +840,14 @@ void BaconsHelperDock::pair()
 
 void BaconsHelperDock::disconnectAccount()
 {
+	QNetworkReply *revokeReply = nullptr;
+	const QUrl currentServer(serverUrl_->text().trimmed());
+	if (!token_.isEmpty() && currentServer.isValid() &&
+		currentServer.scheme().toLower() == QStringLiteral("https") &&
+		!currentServer.host().isEmpty() && currentServer.userInfo().isEmpty()) {
+		revokeReply = sendJson("DELETE", QStringLiteral("/api/obs-plugin/credential"));
+	}
+
 	token_.clear();
 	dashboardLinks_.clear();
 	browserSourceUrls_.clear();
@@ -872,7 +860,27 @@ void BaconsHelperDock::disconnectAccount()
 	credentialStorageWarning_ = cleared ? QString() : credentialError;
 	setControlsEnabled(false);
 	channel_->setText(QStringLiteral("Channel: not paired"));
-	setStatus(QStringLiteral("✕ Pairing forgotten on this computer. Revoke it on the dashboard if this machine is no longer trusted."), false);
+
+	if (!revokeReply) {
+		setStatus(QStringLiteral("✕ Pairing forgotten locally. The server credential could not be contacted; revoke it from the dashboard if needed."), false);
+		return;
+	}
+
+	setStatus(QStringLiteral("… Pairing forgotten locally; revoking this OBS credential on Bacons Helper…"), false);
+	connect(revokeReply, &QNetworkReply::finished, this, [this, revokeReply, cleared, credentialError] {
+		const QByteArray bytes = revokeReply->readAll();
+		const QJsonObject response = QJsonDocument::fromJson(bytes).object();
+		const bool revoked = revokeReply->error() == QNetworkReply::NoError &&
+			response.value(QStringLiteral("ok")).toBool();
+		if (revoked && cleared) {
+			setStatus(QStringLiteral("✓ Pairing revoked on Bacons Helper and forgotten on this computer."), false);
+		} else if (revoked) {
+			setStatus(QStringLiteral("⚠ Server pairing was revoked, but local credential cleanup reported: %1").arg(credentialError), false);
+		} else {
+			setStatus(QStringLiteral("⚠ Pairing was forgotten locally, but server revocation could not be confirmed. Revoke it from the dashboard if needed."), false);
+		}
+		revokeReply->deleteLater();
+	});
 }
 
 void BaconsHelperDock::refresh()
@@ -1017,8 +1025,10 @@ void BaconsHelperDock::saveChannelToggle(const QString &key, bool checked)
 	connect(reply, &QNetworkReply::finished, this, [this, reply, key] {
 		if (reply->error() != QNetworkReply::NoError) {
 			handleAuthFailure(reply);
-			setStatus(QStringLiteral("⚠ Could not save %1; refreshing its server value.").arg(key), false);
-			if (!token_.isEmpty()) refresh();
+			if (!token_.isEmpty()) {
+				setStatus(QStringLiteral("⚠ Could not save %1; refreshing its server value.").arg(key), false);
+				refresh();
+			}
 		} else {
 			setStatus(QStringLiteral("✓ Channel setting saved."), true);
 		}
@@ -1035,8 +1045,10 @@ void BaconsHelperDock::saveStreamEvent(const QString &key, bool checked)
 	connect(reply, &QNetworkReply::finished, this, [this, reply] {
 		if (reply->error() != QNetworkReply::NoError) {
 			handleAuthFailure(reply);
-			setStatus(QStringLiteral("⚠ Stream Event setting was not saved; refreshing."), false);
-			if (!token_.isEmpty()) refresh();
+			if (!token_.isEmpty()) {
+				setStatus(QStringLiteral("⚠ Stream Event setting was not saved; refreshing."), false);
+				refresh();
+			}
 		} else {
 			setStatus(QStringLiteral("✓ Stream Event setting saved."), true);
 		}
@@ -1057,7 +1069,8 @@ void BaconsHelperDock::testStreamEvent()
 		testEventButton_->setEnabled(!token_.isEmpty());
 		if (reply->error() != QNetworkReply::NoError) {
 			handleAuthFailure(reply);
-			setStatus(QStringLiteral("⚠ Stream Event test could not be sent."), false);
+			if (!token_.isEmpty())
+				setStatus(QStringLiteral("⚠ Stream Event test could not be sent."), false);
 		} else {
 			const QJsonObject response = QJsonDocument::fromJson(bytes).object();
 			const int delivered = response.value(QStringLiteral("delivered")).toInt();
@@ -1261,7 +1274,8 @@ void BaconsHelperDock::startCountdown()
 		const QByteArray bytes = reply->readAll();
 		if (reply->error() != QNetworkReply::NoError) {
 			handleAuthFailure(reply);
-			setStatus(QStringLiteral("⚠ Countdown could not be started."), false);
+			if (!token_.isEmpty())
+				setStatus(QStringLiteral("⚠ Countdown could not be started."), false);
 		} else {
 			const QJsonObject response = QJsonDocument::fromJson(bytes).object();
 			countdownEndTime_ = qRound64(response.value(QStringLiteral("endTime")).toDouble());
@@ -1288,7 +1302,8 @@ void BaconsHelperDock::cancelCountdown()
 	connect(reply, &QNetworkReply::finished, this, [this, reply] {
 		if (reply->error() != QNetworkReply::NoError) {
 			handleAuthFailure(reply);
-			setStatus(QStringLiteral("⚠ Countdown could not be cancelled."), false);
+			if (!token_.isEmpty())
+				setStatus(QStringLiteral("⚠ Countdown could not be cancelled."), false);
 		} else {
 			countdownEndTime_ = 0;
 			updateCountdownStatus();
