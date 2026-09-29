@@ -54,7 +54,6 @@ Pairing codes are single-use and expire after a short period. Disconnecting from
 ├─ src/
 ├─ CMakeLists.txt
 ├─ CMakePresets.json
-├─ CHANGELOG.md
 └─ README.md
 ```
 
@@ -195,4 +194,5 @@ The script uses the official OBS plugin-template bootstrap, resolves `libobs_DIR
 
 
 **Much Love,**
+
 **-Bacon**
