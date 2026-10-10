@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QString>
 #include <QMap>
@@ -15,6 +16,7 @@ class QNetworkReply;
 class QPushButton;
 class QSpinBox;
 class QTimer;
+class QTreeWidget;
 
 class BaconsHelperDock final : public QWidget {
 	Q_OBJECT
@@ -110,12 +112,20 @@ private:
 	QComboBox *testEventType_ = nullptr;
 	QPushButton *testEventButton_ = nullptr;
 	QLabel *sourceStatus_ = nullptr;
+	QComboBox *historyFilter_ = nullptr;
+	QLineEdit *historySearch_ = nullptr;
+	QPushButton *historyRefreshButton_ = nullptr;
+	QTreeWidget *historyTree_ = nullptr;
+	QLabel *historyStatus_ = nullptr;
+	QCheckBox *historyPaused_ = nullptr;
 	QMap<QString, QPushButton *> sourceInstallButtons_;
 	QString token_;
 	QString credentialStorageWarning_;
 	qint64 countdownEndTime_ = 0;
 	bool applyingState_ = false;
 	bool botIsModerator_ = false;
+	bool refreshInFlight_ = false;
+	bool historyRefreshInFlight_ = false;
 
 	void buildUi();
 	void loadLocalSettings();
@@ -130,6 +140,9 @@ private:
 	void pair();
 	void disconnectAccount();
 	void refresh();
+	void refreshEventHistory();
+	void applyEventHistory(const QJsonArray &events);
+	void filterEventHistory();
 	void applySettingsPayload(const QJsonObject &payload);
 	void saveChannelToggle(const QString &key, bool checked);
 	void saveStreamEvent(const QString &key, bool checked);

@@ -9,7 +9,13 @@
 #include <obs-frontend-api.h>
 #include <obs-module.h>
 
+#include <QAbstractItemView>
 #include <QByteArray>
+#include <QApplication>
+#include <QClipboard>
+#include <QFileDialog>
+#include <QSaveFile>
+#include <QMessageBox>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCoreApplication>
@@ -17,6 +23,7 @@
 #include <QDesktopServices>
 #include <QFormLayout>
 #include <QGroupBox>
+#include <QHeaderView>
 #include <QHBoxLayout>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -30,6 +37,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QSettings>
 #include <QSpinBox>
 #include <QSslSocket>
@@ -37,6 +45,8 @@
 #include <QSysInfo>
 #include <QTabWidget>
 #include <QTimer>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 #include <QtNumeric>
 #include <QUrl>
 #include <QVBoxLayout>
@@ -238,10 +248,10 @@ BaconsHelperDock::BaconsHelperDock(QWidget *parent) : QWidget(parent)
 	if (!token_.isEmpty()) {
 		refresh();
 	} else if (!credentialStorageWarning_.isEmpty()) {
-		setStatus(QStringLiteral("⚠ Not paired — secure credential storage is unavailable: %1")
+		setStatus(QStringLiteral("⚠ Not paired - secure credential storage is unavailable: %1")
 				  .arg(credentialStorageWarning_), false);
 	} else {
-		setStatus(QStringLiteral("✕ Not paired — generate a code in the Bacons Helper dashboard."), false);
+		setStatus(QStringLiteral("✕ Not paired - generate a code in the Bacons Helper dashboard."), false);
 	}
 }
 
@@ -348,6 +358,76 @@ void BaconsHelperDock::buildUi()
 	eventsLayout->addLayout(testRow);
 	eventsLayout->addStretch();
 	tabs->addTab(eventsTab, QStringLiteral("Stream Events"));
+
+	auto *historyTab = new QWidget();
+	auto *historyLayout = new QVBoxLayout(historyTab);
+	auto *historyHelp = new QLabel(QStringLiteral(
+		"Recent Bacons Helper activity for this channel. History is stored server-side so it remains available after OBS restarts."));
+	historyHelp->setWordWrap(true);
+	historyLayout->addWidget(historyHelp);
+	auto *historyToolbar = new QHBoxLayout();
+	historyFilter_ = new QComboBox();
+	historyFilter_->addItem(QStringLiteral("All events"), QStringLiteral("all"));
+	historyFilter_->addItem(QStringLiteral("Moderation"), QStringLiteral("moderation"));
+	historyFilter_->addItem(QStringLiteral("Subscriptions"), QStringLiteral("subscriptions"));
+	historyFilter_->addItem(QStringLiteral("Raids"), QStringLiteral("raids"));
+	historyFilter_->addItem(QStringLiteral("Follows"), QStringLiteral("follows"));
+	historyFilter_->addItem(QStringLiteral("Engagement"), QStringLiteral("engagement"));
+	historyFilter_->addItem(QStringLiteral("Other"), QStringLiteral("other"));
+	historySearch_ = new QLineEdit();
+	historySearch_->setPlaceholderText(QStringLiteral("Search event history"));
+	historySearch_->setClearButtonEnabled(true);
+	historyRefreshButton_ = new QPushButton(QStringLiteral("Refresh History"));
+	historyToolbar->addWidget(historyFilter_);
+	historyToolbar->addWidget(historySearch_, 1);
+	historyToolbar->addWidget(historyRefreshButton_);
+	historyLayout->addLayout(historyToolbar);
+	auto *historyActions = new QHBoxLayout();
+	historyPaused_ = new QCheckBox(QStringLiteral("Pause automatic refresh"));
+	auto *historyCopy = new QPushButton(QStringLiteral("Copy selected"));
+	auto *historyExport = new QPushButton(QStringLiteral("Export visible (JSON)"));
+	historyLayout->addWidget(historyPaused_);
+	historyActions->addStretch();
+	historyActions->addWidget(historyCopy);
+	historyActions->addWidget(historyExport);
+	historyLayout->addLayout(historyActions);
+	connect(historyCopy, &QPushButton::clicked, this, [this] {
+		const auto *item = historyTree_->currentItem();
+		if (!item || item->isHidden()) return;
+		QStringList cells;
+		for (int column = 0; column < 4; ++column) cells << item->text(column);
+		QApplication::clipboard()->setText(cells.join(QStringLiteral(" | ")));
+	});
+	connect(historyExport, &QPushButton::clicked, this, [this] {
+		QJsonArray rows;
+		for (int index = 0; index < historyTree_->topLevelItemCount(); ++index) {
+			const auto *item = historyTree_->topLevelItem(index);
+			if (!item->isHidden()) rows.append(item->data(0, Qt::UserRole + 2).toJsonObject());
+		}
+		const QString path = QFileDialog::getSaveFileName(this, QStringLiteral("Export visible events"),
+			QStringLiteral("bacons-helper-events.json"), QStringLiteral("JSON (*.json)"));
+		if (path.isEmpty()) return;
+		QSaveFile file(path);
+		const QByteArray bytes = QJsonDocument(rows).toJson(QJsonDocument::Indented);
+		if (!file.open(QIODevice::WriteOnly) || file.write(bytes) != bytes.size() || !file.commit())
+			QMessageBox::warning(this, QStringLiteral("Export failed"), file.errorString());
+	});
+	historyTree_ = new QTreeWidget();
+	historyTree_->setColumnCount(4);
+	historyTree_->setHeaderLabels({QStringLiteral("Time"), QStringLiteral("Event"), QStringLiteral("User"), QStringLiteral("Details")});
+	historyTree_->setRootIsDecorated(false);
+	historyTree_->setAlternatingRowColors(true);
+	historyTree_->setUniformRowHeights(true);
+	historyTree_->setSelectionMode(QAbstractItemView::SingleSelection);
+	historyTree_->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+	historyTree_->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+	historyTree_->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+	historyTree_->header()->setSectionResizeMode(3, QHeaderView::Stretch);
+	historyStatus_ = new QLabel(QStringLiteral("Pair and refresh to load recent events."));
+	historyStatus_->setWordWrap(true);
+	historyLayout->addWidget(historyTree_, 1);
+	historyLayout->addWidget(historyStatus_);
+	tabs->addTab(historyTab, QStringLiteral("Event History"));
 
 	auto *overlaysTab = new QWidget();
 	auto *overlaysLayout = new QVBoxLayout(overlaysTab);
@@ -666,6 +746,9 @@ void BaconsHelperDock::buildUi()
 	connect(countdownPreset120_, &QPushButton::clicked, this, [this] { startCountdownPreset(120); });
 	connect(countdownPreset300_, &QPushButton::clicked, this, [this] { startCountdownPreset(300); });
 	connect(testEventButton_, &QPushButton::clicked, this, &BaconsHelperDock::testStreamEvent);
+	connect(historyRefreshButton_, &QPushButton::clicked, this, &BaconsHelperDock::refreshEventHistory);
+	connect(historyFilter_, &QComboBox::currentIndexChanged, this, [this](int) { filterEventHistory(); });
+	connect(historySearch_, &QLineEdit::textChanged, this, [this](const QString &) { filterEventHistory(); });
 	connect(deathCounterSelect_, &QComboBox::currentIndexChanged, this, [this](int) { updateDeathCounterSelection(); });
 	connect(deathCounterMinusButton_, &QPushButton::clicked, this, [this] { runDeathCounterAction(QStringLiteral("decrement")); });
 	connect(deathCounterPlusButton_, &QPushButton::clicked, this, [this] { runDeathCounterAction(QStringLiteral("increment")); });
@@ -881,6 +964,9 @@ void BaconsHelperDock::setControlsEnabled(bool enabled)
 		toggle->setEnabled(enabled);
 	testEventType_->setEnabled(enabled);
 	testEventButton_->setEnabled(enabled);
+	historyFilter_->setEnabled(enabled);
+	historySearch_->setEnabled(enabled);
+	historyRefreshButton_->setEnabled(enabled);
 	for (auto *button : sourceInstallButtons_)
 		button->setEnabled(enabled);
 	countdownSeconds_->setEnabled(enabled);
@@ -938,6 +1024,7 @@ QUrl BaconsHelperDock::endpoint(const QString &path) const
 QNetworkReply *BaconsHelperDock::sendJson(const QByteArray &method, const QString &path, const QJsonObject &payload)
 {
 	QNetworkRequest request(endpoint(path));
+	request.setTransferTimeout(15000);
 	// Never allow an authenticated request to follow a redirect to another
 	// origin. This keeps the channel-scoped bearer credential pinned to the
 	// server the user paired with.
@@ -1052,6 +1139,8 @@ void BaconsHelperDock::disconnectAccount()
 	loyaltyState_ = QJsonObject{};
 	deathCounterSelect_->clear();
 	walkOnSelect_->clear();
+	if (historyTree_) historyTree_->clear();
+	if (historyStatus_) historyStatus_->setText(QStringLiteral("Pair again to load event history."));
 	countdownEndTime_ = 0;
 	updateCountdownStatus();
 	if (sourceStatus_)
@@ -1086,11 +1175,13 @@ void BaconsHelperDock::disconnectAccount()
 
 void BaconsHelperDock::refresh()
 {
-	if (token_.isEmpty() || !validateServerUrl())
+	if (token_.isEmpty() || !validateServerUrl() || refreshInFlight_)
 		return;
+	refreshInFlight_ = true;
 	setStatus(QStringLiteral("… Refreshing Bacons Helper settings…"), true);
 	auto *reply = sendJson("GET", QStringLiteral("/api/obs-plugin/settings"));
 	connect(reply, &QNetworkReply::finished, this, [this, reply] {
+		refreshInFlight_ = false;
 		const QByteArray bytes = reply->readAll();
 		if (reply->error() != QNetworkReply::NoError) {
 			handleAuthFailure(reply);
@@ -1106,14 +1197,162 @@ void BaconsHelperDock::refresh()
 			return;
 		}
 		applySettingsPayload(doc.object());
+		if (!historyPaused_->isChecked()) refreshEventHistory();
 		if (!credentialStorageWarning_.isEmpty()) {
 			setStatus(QStringLiteral("⚠ Connected for this OBS session, but the pairing cannot be stored securely: %1")
 					  .arg(credentialStorageWarning_), false);
 		} else {
-			setStatus(QStringLiteral("✓ Connected — settings are synchronized with Bacons Helper."), true);
+			setStatus(QStringLiteral("✓ Connected - settings are synchronized with Bacons Helper."), true);
 		}
 		reply->deleteLater();
 	});
+}
+
+void BaconsHelperDock::refreshEventHistory()
+{
+	if (token_.isEmpty() || !validateServerUrl() || historyRefreshInFlight_)
+		return;
+	historyRefreshInFlight_ = true;
+	if (historyRefreshButton_)
+		historyRefreshButton_->setEnabled(false);
+	if (historyStatus_)
+		historyStatus_->setText(QStringLiteral("Refreshing recent events…"));
+
+	const QString requestToken = token_;
+	auto *reply = sendJson("GET", QStringLiteral("/api/obs-plugin/event-history"));
+	connect(reply, &QNetworkReply::finished, this, [this, reply, requestToken] {
+		historyRefreshInFlight_ = false;
+		if (historyRefreshButton_)
+			historyRefreshButton_->setEnabled(!token_.isEmpty());
+		if (requestToken != token_) { reply->deleteLater(); return; }
+		const QByteArray bytes = reply->readAll();
+		if (reply->error() != QNetworkReply::NoError) {
+			handleAuthFailure(reply);
+			if (!token_.isEmpty() && historyStatus_)
+				historyStatus_->setText(QStringLiteral("Could not refresh event history. Existing rows remain visible."));
+			reply->deleteLater();
+			return;
+		}
+
+		const QJsonDocument doc = QJsonDocument::fromJson(bytes);
+		if (!doc.isObject() || !doc.object().value(QStringLiteral("ok")).toBool()) {
+			if (historyStatus_)
+				historyStatus_->setText(QStringLiteral("Bacons Helper returned an unexpected history response."));
+			reply->deleteLater();
+			return;
+		}
+
+		applyEventHistory(doc.object().value(QStringLiteral("events")).toArray());
+		reply->deleteLater();
+	});
+}
+
+void BaconsHelperDock::applyEventHistory(const QJsonArray &events)
+{
+	if (!historyTree_)
+		return;
+
+	const QString selectedId = historyTree_->currentItem()
+		? historyTree_->currentItem()->data(0, Qt::UserRole + 2).toJsonObject().value(QStringLiteral("id")).toString() : QString();
+	const int scrollPosition = historyTree_->verticalScrollBar()->value();
+	historyTree_->clear();
+	const auto eventLabel = [](const QString &eventName) {
+		const QMap<QString, QString> labels = {
+			{QStringLiteral("follow_bot_ad_removed"), QStringLiteral("Follow-bot Ad")},
+			{QStringLiteral("raid"), QStringLiteral("Raid")},
+			{QStringLiteral("sub"), QStringLiteral("Subscription")},
+			{QStringLiteral("subscription"), QStringLiteral("Subscription")},
+			{QStringLiteral("resub"), QStringLiteral("Resub / Milestone")},
+			{QStringLiteral("sub_gift"), QStringLiteral("Gift Subscription")},
+			{QStringLiteral("community_sub_gift"), QStringLiteral("Community Gift")},
+			{QStringLiteral("gift_subscription"), QStringLiteral("Gift Subscription")},
+			{QStringLiteral("follow"), QStringLiteral("Follow")},
+			{QStringLiteral("cheer"), QStringLiteral("Cheer / Bits")},
+			{QStringLiteral("bits_badge_tier"), QStringLiteral("Bits Milestone")},
+			{QStringLiteral("redemption"), QStringLiteral("Redemption")},
+			{QStringLiteral("donation"), QStringLiteral("Donation")},
+			{QStringLiteral("shoutout_receive"), QStringLiteral("Received Shoutout")},
+			{QStringLiteral("walk_on"), QStringLiteral("Walk-On")},
+			{QStringLiteral("custom_mini_game_winner"), QStringLiteral("Mini-Game Winner")},
+			{QStringLiteral("giveaway_winner"), QStringLiteral("Giveaway Winner")},
+			{QStringLiteral("auto_live"), QStringLiteral("Auto Live")}
+		};
+		return labels.value(eventName, eventName.isEmpty() ? QStringLiteral("Event") : eventName);
+	};
+	const auto categoryFor = [](const QString &eventName) {
+		if (eventName == QStringLiteral("follow_bot_ad_removed")) return QStringLiteral("moderation");
+		if (eventName == QStringLiteral("raid")) return QStringLiteral("raids");
+		if (eventName == QStringLiteral("follow")) return QStringLiteral("follows");
+		if (eventName == QStringLiteral("sub") || eventName == QStringLiteral("subscription") ||
+			eventName == QStringLiteral("resub") || eventName == QStringLiteral("sub_gift") ||
+			eventName == QStringLiteral("community_sub_gift") || eventName == QStringLiteral("gift_subscription"))
+			return QStringLiteral("subscriptions");
+		if (eventName == QStringLiteral("cheer") || eventName == QStringLiteral("bits_badge_tier") ||
+			eventName == QStringLiteral("redemption") ||
+			eventName == QStringLiteral("donation") || eventName == QStringLiteral("shoutout_receive") ||
+			eventName == QStringLiteral("walk_on") || eventName == QStringLiteral("custom_mini_game_winner") ||
+			eventName == QStringLiteral("giveaway_winner"))
+			return QStringLiteral("engagement");
+		return QStringLiteral("other");
+	};
+
+	for (const auto &value : events) {
+		const QJsonObject event = value.toObject();
+		const QString eventName = event.value(QStringLiteral("eventName")).toString().toLower();
+		const QString username = event.value(QStringLiteral("username")).toString();
+		const QString title = event.value(QStringLiteral("title")).toString();
+		const QString message = event.value(QStringLiteral("message")).toString();
+		const QString amount = event.value(QStringLiteral("amount")).toString();
+		QString details;
+		if (!title.isEmpty()) details += title;
+		if (!message.isEmpty()) details += (details.isEmpty() ? QString{} : QStringLiteral(" - ")) + message;
+		if (!amount.isEmpty()) details += (details.isEmpty() ? QString{} : QStringLiteral(" • ")) + amount;
+
+		QDateTime timestamp = QDateTime::fromString(event.value(QStringLiteral("occurredAt")).toString(), Qt::ISODateWithMs);
+		if (!timestamp.isValid())
+			timestamp = QDateTime::fromString(event.value(QStringLiteral("occurredAt")).toString(), Qt::ISODate);
+		const QString timeText = timestamp.isValid()
+			? timestamp.toLocalTime().toString(QStringLiteral("MMM d HH:mm:ss"))
+			: QStringLiteral("-");
+
+		auto *item = new QTreeWidgetItem(historyTree_);
+		item->setText(0, timeText);
+		item->setText(1, eventLabel(eventName));
+		item->setText(2, username.isEmpty() ? QStringLiteral("-") : username);
+		item->setText(3, details.isEmpty() ? QStringLiteral("-") : details);
+		item->setData(0, Qt::UserRole, categoryFor(eventName));
+		item->setData(0, Qt::UserRole + 2, event);
+		item->setToolTip(3, details);
+		if (!selectedId.isEmpty() && event.value(QStringLiteral("id")).toString() == selectedId)
+			historyTree_->setCurrentItem(item);
+		item->setData(0, Qt::UserRole + 1,
+			QStringLiteral("%1 %2 %3 %4 %5").arg(eventName, username, title, message, amount).toLower());
+	}
+
+	historyTree_->verticalScrollBar()->setValue(scrollPosition);
+	filterEventHistory();
+	if (historyStatus_) {
+		historyStatus_->setText(events.isEmpty()
+			? QStringLiteral("No recent events have been recorded for this channel yet.")
+			: QStringLiteral("Loaded %1 recent event(s). History is retained for up to 7 days.").arg(events.size()));
+	}
+}
+
+void BaconsHelperDock::filterEventHistory()
+{
+	if (!historyTree_ || !historyFilter_ || !historySearch_)
+		return;
+	const QString category = historyFilter_->currentData().toString();
+	const QString search = historySearch_->text().trimmed().toLower();
+	for (int index = 0; index < historyTree_->topLevelItemCount(); ++index) {
+		QTreeWidgetItem *item = historyTree_->topLevelItem(index);
+		if (!item) continue;
+		const QString itemCategory = item->data(0, Qt::UserRole).toString();
+		const QString haystack = item->data(0, Qt::UserRole + 1).toString();
+		const bool categoryMatches = category == QStringLiteral("all") || itemCategory == category;
+		const bool searchMatches = search.isEmpty() || haystack.contains(search);
+		item->setHidden(!(categoryMatches && searchMatches));
+	}
 }
 
 void BaconsHelperDock::applySettingsPayload(const QJsonObject &payload)
@@ -1208,7 +1447,7 @@ void BaconsHelperDock::applySettingsPayload(const QJsonObject &payload)
 			continue;
 		deathCounters_.insert(counterId, counter);
 		deathCounterSelect_->addItem(
-			QStringLiteral("%1 — %2").arg(counter.value(QStringLiteral("gameName")).toString(QStringLiteral("Unknown game")))
+			QStringLiteral("%1 - %2").arg(counter.value(QStringLiteral("gameName")).toString(QStringLiteral("Unknown game")))
 				.arg(counter.value(QStringLiteral("total")).toInt()),
 			counterId);
 	}
@@ -1319,7 +1558,7 @@ void BaconsHelperDock::testStreamEvent()
 		} else {
 			const QJsonObject response = QJsonDocument::fromJson(bytes).object();
 			const int delivered = response.value(QStringLiteral("delivered")).toInt();
-			setStatus(QStringLiteral("✓ Test event sent — %1 local overlay client(s) received it.").arg(delivered), true);
+			setStatus(QStringLiteral("✓ Test event sent - %1 local overlay client(s) received it.").arg(delivered), true);
 		}
 		reply->deleteLater();
 	});
@@ -1444,7 +1683,7 @@ void BaconsHelperDock::updateDeathCounterSelection()
 	const QJsonObject counter = deathCounters_.value(counterId);
 	const int total = counter.value(QStringLiteral("total")).toInt();
 	deathCounterSetValue_->setValue(total);
-	deathCounterValue_->setText(QStringLiteral("%1 — %2 death%3")
+	deathCounterValue_->setText(QStringLiteral("%1 - %2 death%3")
 		.arg(counter.value(QStringLiteral("gameName")).toString(QStringLiteral("Unknown game")))
 		.arg(total)
 		.arg(total == 1 ? QString{} : QStringLiteral("s")));
@@ -1479,7 +1718,7 @@ void BaconsHelperDock::runDeathCounterAction(const QString &action, int value)
 		deathCounters_.insert(counterId, counter);
 		const int index = deathCounterSelect_->findData(counterId);
 		if (index >= 0) {
-			deathCounterSelect_->setItemText(index, QStringLiteral("%1 — %2")
+			deathCounterSelect_->setItemText(index, QStringLiteral("%1 - %2")
 				.arg(counter.value(QStringLiteral("gameName")).toString(QStringLiteral("Unknown game")))
 				.arg(counter.value(QStringLiteral("total")).toInt()));
 		}
@@ -1519,7 +1758,7 @@ void BaconsHelperDock::applyLoyaltyState(const QJsonObject &loyalty)
 	const QJsonObject raffle = loyalty.value(QStringLiteral("raffle")).toObject();
 	const bool raffleRunning = raffle.value(QStringLiteral("running")).toBool();
 	QString giveawayText = hasGiveaway
-		? QStringLiteral("Giveaway: %1 — %2").arg(settings.value(QStringLiteral("giveawayName")).toString(QStringLiteral("Untitled")),
+		? QStringLiteral("Giveaway: %1 - %2").arg(settings.value(QStringLiteral("giveawayName")).toString(QStringLiteral("Untitled")),
 			giveawayActive ? QStringLiteral("active") : QStringLiteral("paused"))
 		: QStringLiteral("No giveaway is configured.");
 	if (raffleRunning)
