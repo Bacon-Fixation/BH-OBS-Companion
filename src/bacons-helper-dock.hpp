@@ -117,7 +117,6 @@ private:
 	QPushButton *historyRefreshButton_ = nullptr;
 	QTreeWidget *historyTree_ = nullptr;
 	QLabel *historyStatus_ = nullptr;
-	QCheckBox *historyPaused_ = nullptr;
 	QMap<QString, QPushButton *> sourceInstallButtons_;
 	QString token_;
 	QString credentialStorageWarning_;

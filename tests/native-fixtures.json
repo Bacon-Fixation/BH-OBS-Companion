@@ -1,0 +1,2482 @@
+[
+  {
+    "job": {
+      "id": "0",
+      "text": "hey chat whats up everyone",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "hey chat whats up everyone",
+      "language": "en",
+      "confidence": 0.9215,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "1",
+      "text": "im gonna be right back",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "im gonna be right back",
+      "language": "en",
+      "confidence": 0.7314999999999999,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "2",
+      "text": "that's actually pretty funny lol",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "that's actually pretty funny lol",
+      "language": "en",
+      "confidence": 0.7866,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "3",
+      "text": "idk why the bot keeps doing that",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "idk why the bot keeps doing that",
+      "language": "en",
+      "confidence": 0.8729452713055903,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "4",
+      "text": "tbh i dont think thats the issue",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "tbh i dont think thats the issue",
+      "language": "en",
+      "confidence": 0.8445233742728162,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "5",
+      "text": "brb restarting the server",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "brb restarting the server",
+      "language": "en",
+      "confidence": 0.776625,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "6",
+      "text": "omg that was close",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "omg that was close",
+      "language": "en",
+      "confidence": 0.681625,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "7",
+      "text": "nah im good thanks",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "nah im good thanks",
+      "language": "en",
+      "confidence": 0.824125,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "8",
+      "text": "youre kidding me right",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "youre kidding me right",
+      "language": "en",
+      "confidence": 0.62225,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "9",
+      "text": "lets gooooo that worked",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "lets gooooo that worked",
+      "language": "en",
+      "confidence": 0.752875,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "10",
+      "text": "can you hear me now",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "can you hear me now",
+      "language": "en",
+      "confidence": 0.6174999999999999,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "11",
+      "text": "thanks for the raid everyone",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "thanks for the raid everyone",
+      "language": "en",
+      "confidence": 0.9448708618253163,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "12",
+      "text": "the api returned a 401 again",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "the api returned a 401 again",
+      "language": "en",
+      "confidence": 0.752875,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "13",
+      "text": "redis disconnected for a second",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "redis disconnected for a second",
+      "language": "en",
+      "confidence": 0.62225,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "14",
+      "text": "the database looks healthy",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "the database looks healthy",
+      "language": "en",
+      "confidence": 0.3326988317417442,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "15",
+      "text": "restart the process and check the logs",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "restart the process and check the logs",
+      "language": "en",
+      "confidence": 0.789495434488425,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "16",
+      "text": "this should not trigger the translator",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "this should not trigger the translator",
+      "language": "en",
+      "confidence": 0.9241828623138807,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "17",
+      "text": "dont translate this message please",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "dont translate this message please",
+      "language": "en",
+      "confidence": 0.7605692115640671,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "18",
+      "text": "pretty sure thats a username",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "pretty sure thats a username",
+      "language": "en",
+      "confidence": 0.681625,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "19",
+      "text": "someone dropped a url in chat",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "someone dropped a url in chat",
+      "language": "en",
+      "confidence": 0.6251,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "20",
+      "text": "gimme a second ill fix it",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "gimme a second ill fix it",
+      "language": "en",
+      "confidence": 0.7049,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "21",
+      "text": "lemme test that real quick",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "lemme test that real quick",
+      "language": "en",
+      "confidence": 0.7524,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "22",
+      "text": "wanna play another game",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "wanna play another game",
+      "language": "en",
+      "confidence": 0.752875,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "23",
+      "text": "dunno what happened there",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "dunno what happened there",
+      "language": "en",
+      "confidence": 0.8122499999999999,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "24",
+      "text": "wassup dude how have you been",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "wassup dude how have you been",
+      "language": "en",
+      "confidence": 0.8312499999999999,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "25",
+      "text": "yeah nope that still didnt work",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "yeah nope that still didnt work",
+      "language": "en",
+      "confidence": 0.8755833333333333,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "26",
+      "text": "we're trying a new model today",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "we're trying a new model today",
+      "language": "en",
+      "confidence": 0.9405,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "27",
+      "text": "you've already seen this error",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "you've already seen this error",
+      "language": "en",
+      "confidence": 0.8835,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "28",
+      "text": "isn't that the old version",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "isn't that the old version",
+      "language": "en",
+      "confidence": 0.95,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "29",
+      "text": "couldn't we cache the result instead",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "couldn't we cache the result instead",
+      "language": "en",
+      "confidence": 0.6555,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "30",
+      "text": "wouldn't that break the other command",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "wouldn't that break the other command",
+      "language": "en",
+      "confidence": 0.95,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "31",
+      "text": "doesnt seem like a big deal",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "doesnt seem like a big deal",
+      "language": "en",
+      "confidence": 0.6174999999999999,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "32",
+      "text": "havent tried that yet",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "havent tried that yet",
+      "language": "en",
+      "confidence": 0.8352582924542046,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "33",
+      "text": "the backup completed without errors",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "the backup completed without errors",
+      "language": "en",
+      "confidence": 0.6330944122850923,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "34",
+      "text": "the service is running on the local network",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "the service is running on the local network",
+      "language": "en",
+      "confidence": 0.9013903099982825,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "35",
+      "text": "can we add another option to the dashboard",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "can we add another option to the dashboard",
+      "language": "en",
+      "confidence": 0.819375,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "36",
+      "text": "keep the module separate from the web interface",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "keep the module separate from the web interface",
+      "language": "en",
+      "confidence": 0.8416224593646087,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "37",
+      "text": "i only want to translate when it is needed",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "i only want to translate when it is needed",
+      "language": "en",
+      "confidence": 0.7072222222222222,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "38",
+      "text": "english spelling in chat can be messy",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "english spelling in chat can be messy",
+      "language": "en",
+      "confidence": 0.7979999999999998,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "39",
+      "text": "lmao bro that was wild",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "lmao bro that was wild",
+      "language": "en",
+      "confidence": 0.8347321901558539,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "40",
+      "text": "mañana seguimos jugando porque esta partida estuvo increíble",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "mañana seguimos jugando porque esta partida estuvo increíble",
+      "language": "es",
+      "confidence": 0.9045324887408136,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "41",
+      "text": "dónde puedo cambiar la configuración del juego",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "dónde puedo cambiar la configuración del juego",
+      "language": "es",
+      "confidence": 0.8416215965658286,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "42",
+      "text": "amanhã continuamos jogando porque esta partida foi incrível",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "amanhã continuamos jogando porque esta partida foi incrível",
+      "language": "pt",
+      "confidence": 0.9414117575192268,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "43",
+      "text": "onde posso mudar as configurações do jogo",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "onde posso mudar as configurações do jogo",
+      "language": "pt",
+      "confidence": 0.8812106012033034,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "44",
+      "text": "mañá seguimos xogando porque esta partida foi incrible",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "mañá seguimos xogando porque esta partida foi incrible",
+      "language": "gl",
+      "confidence": 0.915991438091766,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "45",
+      "text": "onde podo cambiar a configuración do xogo",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "onde podo cambiar a configuración do xogo",
+      "language": "gl",
+      "confidence": 0.7563391200164509,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "46",
+      "text": "demà continuem jugant perquè aquesta partida ha estat increïble",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "demà continuem jugant perquè aquesta partida ha estat increïble",
+      "language": "ca",
+      "confidence": 0.9498869089228694,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "47",
+      "text": "on puc canviar la configuració del joc",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "on puc canviar la configuració del joc",
+      "language": "ca",
+      "confidence": 0.6062991346071389,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "48",
+      "text": "besok kita lanjut bermain karena pertandingan ini sangat seru",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "besok kita lanjut bermain karena pertandingan ini sangat seru",
+      "language": "id",
+      "confidence": 0.8987276366727679,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "49",
+      "text": "di mana saya bisa mengubah pengaturan permainan",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "di mana saya bisa mengubah pengaturan permainan",
+      "language": "id",
+      "confidence": 0.8578010915916899,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "50",
+      "text": "esok kita sambung bermain kerana permainan ini sangat menyeronokkan",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "esok kita sambung bermain kerana permainan ini sangat menyeronokkan",
+      "language": "ms",
+      "confidence": 0.9533621426749199,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "51",
+      "text": "di mana saya boleh menukar tetapan permainan",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "di mana saya boleh menukar tetapan permainan",
+      "language": "ms",
+      "confidence": 0.9144194649885471,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "52",
+      "text": "vi fortsätter spela i morgon eftersom den här matchen var fantastisk",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "vi fortsätter spela i morgon eftersom den här matchen var fantastisk",
+      "language": "sv",
+      "confidence": 0.857025826790345,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "53",
+      "text": "var kan jag ändra inställningarna i spelet",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "var kan jag ändra inställningarna i spelet",
+      "language": "sv",
+      "confidence": 0.904660401923552,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "54",
+      "text": "vi fortsetter å spille i morgen fordi denne runden var fantastisk",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "vi fortsetter å spille i morgen fordi denne runden var fantastisk",
+      "language": "no",
+      "confidence": 0.9371831811269973,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "55",
+      "text": "hvor kan jeg endre innstillingene i spillet",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "hvor kan jeg endre innstillingene i spillet",
+      "language": "no",
+      "confidence": 0.9184924351020158,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "56",
+      "text": "vi fortsætter med at spille i morgen fordi denne runde var fantastisk",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "vi fortsætter med at spille i morgen fordi denne runde var fantastisk",
+      "language": "da",
+      "confidence": 0.9554658888146415,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "57",
+      "text": "hvor kan jeg ændre indstillingerne i spillet",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "hvor kan jeg ændre indstillingerne i spillet",
+      "language": "da",
+      "confidence": 0.9502556648008265,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "58",
+      "text": "zítra budeme pokračovat protože tahle hra byla skvělá",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "zítra budeme pokračovat protože tahle hra byla skvělá",
+      "language": "cs",
+      "confidence": 0.8048714790307139,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "59",
+      "text": "kde můžu změnit nastavení této hry",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "kde můžu změnit nastavení této hry",
+      "language": "cs",
+      "confidence": 0.7703194769799575,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "60",
+      "text": "zajtra budeme pokračovať pretože táto hra bola skvelá",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "zajtra budeme pokračovať pretože táto hra bola skvelá",
+      "language": "sk",
+      "confidence": 0.8078210452997071,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "61",
+      "text": "kde môžem zmeniť nastavenia tejto hry",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "kde môžem zmeniť nastavenia tejto hry",
+      "language": "sk",
+      "confidence": 0.8702827279888041,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "62",
+      "text": "завтра продолжим играть потому что эта партия была отличной",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "завтра продолжим играть потому что эта партия была отличной",
+      "language": "ru",
+      "confidence": 0.7507078790695393,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "63",
+      "text": "где я могу изменить настройки этой игры",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "где я могу изменить настройки этой игры",
+      "language": "ru",
+      "confidence": 0.7334497830049904,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "64",
+      "text": "завтра продовжимо грати тому що ця гра була чудовою",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "завтра продовжимо грати тому що ця гра була чудовою",
+      "language": "uk",
+      "confidence": 0.7536188981076374,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "65",
+      "text": "де я можу змінити налаштування цієї гри",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "де я можу змінити налаштування цієї гри",
+      "language": "uk",
+      "confidence": 0.8572497001172917,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "66",
+      "text": "заўтра працягнем гуляць таму што гэтая гульня была выдатнай",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "заўтра працягнем гуляць таму што гэтая гульня была выдатнай",
+      "language": "be",
+      "confidence": 0.9386029097730606,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "67",
+      "text": "дзе я магу змяніць налады гэтай гульні",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "дзе я магу змяніць налады гэтай гульні",
+      "language": "be",
+      "confidence": 0.8476955638802737,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "68",
+      "text": "سنواصل اللعب غدا لأن هذه الجولة كانت رائعة",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "سنواصل اللعب غدا لأن هذه الجولة كانت رائعة",
+      "language": "ar",
+      "confidence": 0.8920790029984849,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "69",
+      "text": "أين يمكنني تغيير إعدادات هذه اللعبة",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "أين يمكنني تغيير إعدادات هذه اللعبة",
+      "language": "ar",
+      "confidence": 0.8815411329561059,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "70",
+      "text": "فردا بازی را ادامه می‌دهیم چون این دور عالی بود",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "فردا بازی را ادامه میدهیم چون این دور عالی بود",
+      "language": "fa",
+      "confidence": 0.920481425022935,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "71",
+      "text": "از کجا می‌توانم تنظیمات این بازی را تغییر دهم",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "از کجا میتوانم تنظیمات این بازی را تغییر دهم",
+      "language": "fa",
+      "confidence": 0.9576359549064895,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "72",
+      "text": "ہم کل کھیل جاری رکھیں گے کیونکہ یہ راؤنڈ بہت اچھا تھا",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "ہم کل کھیل جاری رکھیں گے کیونکہ یہ راؤنڈ بہت اچھا تھا",
+      "language": "ur",
+      "confidence": 0.9966981416989458,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "73",
+      "text": "میں اس کھیل کی ترتیبات کہاں تبدیل کر سکتا ہوں",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "میں اس کھیل کی ترتیبات کہاں تبدیل کر سکتا ہوں",
+      "language": "ur",
+      "confidence": 0.9677779330472216,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "74",
+      "text": "हम कल खेलना जारी रखेंगे क्योंकि यह मुकाबला शानदार था",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "हम कल खेलना जारी रखेंगे क्योंकि यह मुकाबला शानदार था",
+      "language": "hi",
+      "confidence": 0.8021853195703819,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "75",
+      "text": "मैं इस खेल की सेटिंग कहाँ बदल सकता हूँ",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "मैं इस खेल की सेटिंग कहाँ बदल सकता हूँ",
+      "language": "hi",
+      "confidence": 0.9436846972578932,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "76",
+      "text": "आपण उद्या खेळत राहू कारण हा सामना खूप छान होता",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "आपण उद्या खेळत राहू कारण हा सामना खूप छान होता",
+      "language": "mr",
+      "confidence": 0.97771224657256,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "77",
+      "text": "मी या खेळाची सेटिंग कुठे बदलू शकतो",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "मी या खेळाची सेटिंग कुठे बदलू शकतो",
+      "language": "mr",
+      "confidence": 0.9315126372954136,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "78",
+      "text": "हामी भोलि खेलिरहनेछौँ किनकि यो खेल निकै राम्रो थियो",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "हामी भोलि खेलिरहनेछौँ किनकि यो खेल निकै राम्रो थियो",
+      "language": "ne",
+      "confidence": 0.8829540901094516,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "79",
+      "text": "म यो खेलको सेटिङ कहाँ परिवर्तन गर्न सक्छु",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "म यो खेलको सेटिङ कहाँ परिवर्तन गर्न सक्छु",
+      "language": "ne",
+      "confidence": 0.9560277222423356,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "80",
+      "text": "明天我们继续玩因为这一局真的很精彩",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "明天我们继续玩因为这一局真的很精彩",
+      "language": "zh",
+      "confidence": 0.9997071115560452,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "81",
+      "text": "我在哪里可以修改这个游戏的设置",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "我在哪里可以修改这个游戏的设置",
+      "language": "zh",
+      "confidence": 0.9999080300640886,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "82",
+      "text": "聽日我哋繼續玩因為呢一局真係好精彩",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "聽日我哋繼續玩因為呢一局真係好精彩",
+      "language": "yue",
+      "confidence": 0.9998701496910738,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "83",
+      "text": "我可以喺邊度改呢個遊戲嘅設定",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "我可以喺邊度改呢個遊戲嘅設定",
+      "language": "yue",
+      "confidence": 0.9998996117748822,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "84",
+      "text": "góða kvöldið vinir takk kærlega fyrir að horfa með mér í kvöld",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "góða kvöldið vinir takk kærlega fyrir að horfa með mér í kvöld",
+      "language": "is",
+      "confidence": 0.9821857584261218,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "85",
+      "text": "tráthnóna maith a chairde go raibh maith agaibh as féachaint liom anocht",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "tráthnóna maith a chairde go raibh maith agaibh as féachaint liom anocht",
+      "language": "ga",
+      "confidence": 0.9785039767415907,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "86",
+      "text": "noswaith dda ffrindiau diolch yn fawr am wylio gyda mi heno",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "noswaith dda ffrindiau diolch yn fawr am wylio gyda mi heno",
+      "language": "cy",
+      "confidence": 0.9611996149490682,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "87",
+      "text": "il lejla t tajba ħbieb grazzi ħafna talli qed taraw miegħi",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "il lejla t tajba ħbieb grazzi ħafna talli qed taraw miegħi",
+      "language": "mt",
+      "confidence": 0.891026402829161,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "88",
+      "text": "dobro veče prijatelji hvala vam puno što gledate sa mnom večeras",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "dobro veče prijatelji hvala vam puno što gledate sa mnom večeras",
+      "language": "bs",
+      "confidence": 0.7427673305456703,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "89",
+      "text": "добры вечар сябры вялікі дзякуй што глядзіце разам са мной",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "добры вечар сябры вялікі дзякуй што глядзіце разам са мной",
+      "language": "be",
+      "confidence": 0.9614094131669867,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "90",
+      "text": "қайырлы кеш достар менімен бірге көріп отырғандарыңа көп рақмет",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "қайырлы кеш достар менімен бірге көріп отырғандарыңа көп рақмет",
+      "language": "kk",
+      "confidence": 0.978994107725925,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "91",
+      "text": "кутман кеч достор мени менен көрүп жатканыңарга чоң рахмат",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "кутман кеч достор мени менен көрүп жатканыңарга чоң рахмат",
+      "language": "ky",
+      "confidence": 0.9415161887725692,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "92",
+      "text": "xayrli kech do'stlar men bilan tomosha qilayotganingiz uchun katta rahmat",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "xayrli kech do'stlar men bilan tomosha qilayotganingiz uchun katta rahmat",
+      "language": "uz",
+      "confidence": 0.9361469223142308,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "93",
+      "text": "оройн мэнд найзууд аа надтай хамт үзэж байгаад маш их баярлалаа",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "оройн мэнд найзууд аа надтай хамт үзэж байгаад маш их баярлалаа",
+      "language": "mn",
+      "confidence": 0.9953833665335492,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "94",
+      "text": "ماښام مو پخیر ملګرو له ما سره د کتلو لپاره ډېره مننه",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "ماښام مو پخیر ملګرو له ما سره د کتلو لپاره ډېره مننه",
+      "language": "ps",
+      "confidence": 0.999183121848146,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "95",
+      "text": "শুভ সন্ধিয়া বন্ধুসকল মোৰ সৈতে চাই থকাৰ বাবে বহুত ধন্যবাদ",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "শুভ সন্ধিয়া বন্ধুসকল মোৰ সৈতে চাই থকাৰ বাবে বহুত ধন্যবাদ",
+      "language": "as",
+      "confidence": 0.9991641754641588,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "96",
+      "text": "ಶುಭ ಸಂಜೆ ಸ್ನೇಹಿತರೇ ನನ್ನ ಜೊತೆ ನೋಡುತ್ತಿರುವುದಕ್ಕೆ ತುಂಬಾ ಧನ್ಯವಾದಗಳು",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "ಶುಭ ಸಂಜೆ ಸ್ನೇಹಿತರೇ ನನ್ನ ಜೊತೆ ನೋಡುತ್ತಿರುವುದಕ್ಕೆ ತುಂಬಾ ಧನ್ಯವಾದಗಳು",
+      "language": "kn",
+      "confidence": 1,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "97",
+      "text": "ശുഭ സായാഹ്നം സുഹൃത്തുക്കളേ എന്നോടൊപ്പം കാണുന്നതിന് വളരെ നന്ദി",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "ശുഭ സായാഹ്നം സുഹൃത്തുക്കളേ എന്നോടൊപ്പം കാണുന്നതിന് വളരെ നന്ദി",
+      "language": "ml",
+      "confidence": 1,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "98",
+      "text": "සුභ සන්ධ්‍යාවක් යාළුවනේ මාත් එක්ක බලන එකට ගොඩක් ස්තූතියි",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "සුභ සන්ධ්යාවක් යාළුවනේ මාත් එක්ක බලන එකට ගොඩක් ස්තූතියි",
+      "language": "si",
+      "confidence": 1,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "99",
+      "text": "ଶୁଭ ସନ୍ଧ୍ୟା ସାଙ୍ଗମାନେ ମୋ ସହିତ ଦେଖୁଥିବାରୁ ବହୁତ ଧନ୍ୟବାଦ",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "ଶୁଭ ସନ୍ଧ୍ୟା ସାଙ୍ଗମାନେ ମୋ ସହିତ ଦେଖୁଥିବାରୁ ବହୁତ ଧନ୍ୟବାଦ",
+      "language": "or",
+      "confidence": 1,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "100",
+      "text": "မင်္ဂလာညနေခင်းပါ သူငယ်ချင်းတို့ ကျွန်တော်နဲ့အတူ ကြည့်ပေးလို့ အများကြီး ကျေးဇူးတင်ပါတယ်",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "မင်္ဂလာညနေခင်းပါ သူငယ်ချင်းတို့ ကျွန်တော်နဲ့အတူ ကြည့်ပေးလို့ အများကြီး ကျေးဇူးတင်ပါတယ်",
+      "language": "my",
+      "confidence": 1,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "101",
+      "text": "សួស្តីពេលល្ងាចមិត្តភក្តិ អរគុណច្រើនដែលបានមើលជាមួយខ្ញុំ",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "សួស្តីពេលល្ងាចមិត្តភក្តិ អរគុណច្រើនដែលបានមើលជាមួយខ្ញុំ",
+      "language": "km",
+      "confidence": 1,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "102",
+      "text": "ສະບາຍດີຕອນແລງໝູ່ໆ ຂອບໃຈຫຼາຍທີ່ເບິ່ງກັບຂ້ອຍ",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "ສະບາຍດີຕອນແລງຫມູ່ໆ ຂອບໃຈຫຼາຍທີ່ເບິ່ງກັບຂ້ອຍ",
+      "language": "lo",
+      "confidence": 1,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "103",
+      "text": "መልካም ምሽት ጓደኞች ከእኔ ጋር ስለተመለከታችሁ በጣም አመሰግናለሁ",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "መልካም ምሽት ጓደኞች ከእኔ ጋር ስለተመለከታችሁ በጣም አመሰግናለሁ",
+      "language": "am",
+      "confidence": 0.9993674696511892,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "104",
+      "text": "bonswa zanmi mèsi anpil paske nou ap gade ansanm avè m",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "bonswa zanmi mèsi anpil paske nou ap gade ansanm avè m",
+      "language": "ht",
+      "confidence": 0.6259560765604393,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "105",
+      "text": "fiid wanaagsan saaxiibayaal aad baad ugu mahadsan tihiin inaad ila daawanaysaan",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "fiid wanaagsan saaxiibayaal aad baad ugu mahadsan tihiin inaad ila daawanaysaan",
+      "language": "so",
+      "confidence": 0.9571350142058337,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "106",
+      "text": "barka da yamma abokai na gode sosai da kuke kallo tare da ni",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "barka da yamma abokai na gode sosai da kuke kallo tare da ni",
+      "language": "ha",
+      "confidence": 0.9513051110884164,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "107",
+      "text": "ẹ káalẹ́ ẹ̀yin ọ̀rẹ́ ẹ ṣé púpọ̀ pé ẹ ń wò pẹ̀lú mi",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "ẹ káalẹ́ ẹ̀yin ọ̀rẹ́ ẹ ṣé púpọ̀ pé ẹ ń wò pẹ̀lú mi",
+      "language": "yo",
+      "confidence": 0.9777110502031114,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "108",
+      "text": "sawubona kusihlwa bangani ngiyabonga kakhulu ngokubuka nami",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "sawubona kusihlwa bangani ngiyabonga kakhulu ngokubuka nami",
+      "language": "zu",
+      "confidence": 0.9560750156669643,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "109",
+      "text": "molo ngokuhlwa bahlobo enkosi kakhulu ngokubukela kunye nam",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "molo ngokuhlwa bahlobo enkosi kakhulu ngokubukela kunye nam",
+      "language": "xh",
+      "confidence": 0.9389082983416888,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "110",
+      "text": "mwiriwe nshuti murakoze cyane kurebera hamwe nanjye",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "mwiriwe nshuti murakoze cyane kurebera hamwe nanjye",
+      "language": "rw",
+      "confidence": 0.8965447031946377,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "111",
+      "text": "manao ahoana hariva ry namana misaotra betsaka mijery miaraka amiko",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "manao ahoana hariva ry namana misaotra betsaka mijery miaraka amiko",
+      "language": "mg",
+      "confidence": 0.9561573048653453,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "112",
+      "text": "bonan vesperon amikoj koran dankon pro spekti kun mi",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "bonan vesperon amikoj koran dankon pro spekti kun mi",
+      "language": "eo",
+      "confidence": 0.9155251045113334,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "113",
+      "text": "sugeng sonten kanca matur nuwun banget wis nonton bareng aku",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "sugeng sonten kanca matur nuwun banget wis nonton bareng aku",
+      "language": "jv",
+      "confidence": 0.9282730625248097,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "114",
+      "text": "wilujeng sonten rerencangan hatur nuhun pisan parantos nonton sareng abdi",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "wilujeng sonten rerencangan hatur nuhun pisan parantos nonton sareng abdi",
+      "language": "su",
+      "confidence": 0.9825013244783545,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "115",
+      "text": "madainn mhath a chàirdean tha mi toilichte ur faicinn an seo",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "madainn mhath a chàirdean tha mi toilichte ur faicinn an seo",
+      "language": "gd",
+      "confidence": 0.6092717888188451,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "116",
+      "text": "noz vat d'an holl mignoned ha trugarez evit bezañ ganeomp",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "noz vat d'an holl mignoned ha trugarez evit bezañ ganeomp",
+      "language": "br",
+      "confidence": 0.9343510173317505,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "117",
+      "text": "gudde moien alleguer ech freeë mech datt dir hei sidd",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "gudde moien alleguer ech freeë mech datt dir hei sidd",
+      "language": "lb",
+      "confidence": 0.6801234216711352,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "118",
+      "text": "дӯстони азиз шоми хуб ба ҳама ва барои дастгирӣ ташаккур",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "дӯстони азиз шоми хуб ба ҳама ва барои дастгирӣ ташаккур",
+      "language": "tg",
+      "confidence": 0.9841085144045306,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "119",
+      "text": "dostlar hemmäňize agşamyňyz haýyrly bolsun goldawyňyz üçin sag boluň",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "dostlar hemmäňize agşamyňyz haýyrly bolsun goldawyňyz üçin sag boluň",
+      "language": "tk",
+      "confidence": 0.9249731107780896,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "120",
+      "text": "дуслар барыгызга хәерле кич һәм ярдәмегез өчен зур рәхмәт",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "дуслар барыгызга хәерле кич һәм ярдәмегез өчен зур рәхмәт",
+      "language": "tt",
+      "confidence": 0.9949254195309757,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "121",
+      "text": "دوستلار ھەممىڭلارغا كەچلىك سالام قوللىغانلىقىڭلارغا كۆپ رەھمەت",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "دوستلار ھەممىڭلارغا كەچلىك سالام قوللىغانلىقىڭلارغا كۆپ رەھمەت",
+      "language": "ug",
+      "confidence": 0.9556465062426603,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "122",
+      "text": "دوستو سڀني کي شام جو سلام توهان جي مدد لاءِ تمام گهڻي مهرباني",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "دوستو سڀني کي شام جو سلام توهان جي مدد لاءِ تمام گهڻي مهرباني",
+      "language": "sd",
+      "confidence": 0.9976133584847935,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "123",
+      "text": "tēnā koutou e hoa mā he pai ki te kite i a koutou i konei",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "tēnā koutou e hoa mā he pai ki te kite i a koutou i konei",
+      "language": "mi",
+      "confidence": 0.6795759558937552,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "124",
+      "text": "manuia le afiafi uo faafetai tele mo lo outou lagolago",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "manuia le afiafi uo faafetai tele mo lo outou lagolago",
+      "language": "sm",
+      "confidence": 0.7145642001211097,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "125",
+      "text": "ndị enyi ndeewo unu daalụ nke ukwuu maka nkwado unu taa",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "ndị enyi ndeewo unu daalụ nke ukwuu maka nkwado unu taa",
+      "language": "ig",
+      "confidence": 0.9142631486376734,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "126",
+      "text": "manheru akanaka shamwari ndatenda zvikuru nerutsigiro rwenyu",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "manheru akanaka shamwari ndatenda zvikuru nerutsigiro rwenyu",
+      "language": "sn",
+      "confidence": 0.9526905790808889,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "127",
+      "text": "goeie jûn freonen tige tank foar it sjen fan de stream",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "goeie jûn freonen tige tank foar it sjen fan de stream",
+      "language": "fy",
+      "confidence": 0.8568519295093212,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "128",
+      "text": "gott kvøld vinir takk fyri hjálpina í dag",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "gott kvøld vinir takk fyri hjálpina í dag",
+      "language": "fo",
+      "confidence": 0.9070845583373688,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "129",
+      "text": "amici bonam noctem vobis gratias ago pro auxilio",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "amici bonam noctem vobis gratias ago pro auxilio",
+      "language": "la",
+      "confidence": 0.6350890648523236,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "130",
+      "text": "bona serada amics mercés fòrça per vòstra ajuda",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "bona serada amics mercés fòrça per vòstra ajuda",
+      "language": "oc",
+      "confidence": 0.7069294482874097,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "131",
+      "text": "bona sera amichi grazie mille per u vostru aiutu",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "bona sera amichi grazie mille per u vostru aiutu",
+      "language": "co",
+      "confidence": 0.6277311029964415,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "132",
+      "text": "buna saira amis grazia fitg per vossa agid",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "buna saira amis grazia fitg per vossa agid",
+      "language": "rm",
+      "confidence": 0.6367323956456961,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "133",
+      "text": "hevalno êvara we baş spas dikim ji bo alîkariya we",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "hevalno êvara we baş spas dikim ji bo alîkariya we",
+      "language": "ku",
+      "confidence": 0.6423748405667049,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "134",
+      "text": "allin tuta masikuna ancha sulpayki yanapawaykichik",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "allin tuta masikuna ancha sulpayki yanapawaykichik",
+      "language": "qu",
+      "confidence": 0.6847988999753215,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "135",
+      "text": "suma arumakipan masinaka wali yuspajara yanapt awinakata",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "suma arumakipan masinaka wali yuspajara yanapt awinakata",
+      "language": "ay",
+      "confidence": 0.6693848077297327,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "136",
+      "text": "mba eichapa angirunguera aguyjevete peeme pene pytyvore",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "mba eichapa angirunguera aguyjevete peeme pene pytyvore",
+      "language": "gn",
+      "confidence": 0.8770584024956737,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "137",
+      "text": "madzulo abwino anzanga zikomo kwambiri chifukwa cha thandizo lanu",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "madzulo abwino anzanga zikomo kwambiri chifukwa cha thandizo lanu",
+      "language": "ny",
+      "confidence": 0.7633251127243114,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "138",
+      "text": "mantsiboya metswalle kea leboha haholo ka thuso ya lona",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "mantsiboya metswalle kea leboha haholo ka thuso ya lona",
+      "language": "st",
+      "confidence": 0.8800444082656327,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "139",
+      "text": "maitseboa ditsala ke leboga thata ka thuso ya lona",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "maitseboa ditsala ke leboga thata ka thuso ya lona",
+      "language": "tn",
+      "confidence": 0.7042620435081163,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "140",
+      "text": "ririle vanghana ndza khensa swinene hi nseketelo wa n wena",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "ririle vanghana ndza khensa swinene hi nseketelo wa n wena",
+      "language": "ts",
+      "confidence": 0.7151649715751607,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "141",
+      "text": "madekwana khonani ndo livhuwa nga maanda thikhedzo yanu",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "madekwana khonani ndo livhuwa nga maanda thikhedzo yanu",
+      "language": "ve",
+      "confidence": 0.7357123914233159,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "142",
+      "text": "ኣዕሩኽተይ ጽቡቕ ምሸት ንደገፍኩም ብጣዕሚ የቐንየለይ",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "ኣዕሩኽተይ ጽቡቕ ምሸት ንደገፍኩም ብጣዕሚ የቐንየለይ",
+      "language": "ti",
+      "confidence": 0.999673253323879,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "143",
+      "text": "གྲོགས་པོ་ཚོ་དགོང་མོ་བདེ་ལེགས་རོགས་རམ་གནང་བར་ཐུགས་རྗེ་ཆེ",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "གྲོགས པོ ཚོ དགོང མོ བདེ ལེགས རོགས རམ གནང བར ཐུགས རྗེ ཆེ",
+      "language": "bo",
+      "confidence": 1,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "144",
+      "text": "גוטן אוונט פריינט א גרויסן דאנק פאר אייער הילף היינט",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "גוטן אוונט פריינט א גרויסן דאנק פאר אייער הילף היינט",
+      "language": "yi",
+      "confidence": 1,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "145",
+      "text": "ރައްޓެހިން ރޭގަނޑު ތިޔަ ދެއްވާ އެހީއަށް ޝުކުރިއްޔާ",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "ރައްޓެހިން ރޭގަނޑު ތިޔަ ދެއްވާ އެހީއަށް ޝުކުރިއްޔާ",
+      "language": "dv",
+      "confidence": 1,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "146",
+      "text": "ᖁᔭᓐᓇᒦᒃ ᐱᖃᓐᓇᕆᔭᒃᑲ ᐅᓪᓗᒥ ᐃᑲᔪᕐᓂᔅᓯᓐᓄᑦ",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "ᖁᔭᓐᓇᒦᒃ ᐱᖃᓐᓇᕆᔭᒃᑲ ᐅᓪᓗᒥ ᐃᑲᔪᕐᓂᔅᓯᓐᓄᑦ",
+      "language": "iu",
+      "confidence": 1,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "147",
+      "text": "maayong adlaw kumusta ka karon salamat sa pagtan aw sa stream",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "maayong adlaw kumusta ka karon salamat sa pagtan aw sa stream",
+      "language": "ceb",
+      "confidence": 0.9926566495657367,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "148",
+      "text": "aloha pehea ʻoe i kēia lā mahalo no kou nānā ʻana i ke kahawai",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "aloha pehea ʻoe i kēia lā mahalo no kou nānā ʻana i ke kahawai",
+      "language": "haw",
+      "confidence": 0.9954591814174862,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "149",
+      "text": "nyob zoo hnub no koj nyob li cas ua tsaug uas tuaj saib peb",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "nyob zoo hnub no koj nyob li cas ua tsaug uas tuaj saib peb",
+      "language": "hmn",
+      "confidence": 0.9958481647265617,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "150",
+      "text": "naka nga def tey jërëjëf ci sa ñëw seetaan stream bi",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "naka nga def tey jërëjëf ci sa ñëw seetaan stream bi",
+      "language": "wo",
+      "confidence": 0.989823569711816,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "151",
+      "text": "mbote ozali malamu lelo matondo mingi mpo na kotala stream",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "mbote ozali malamu lelo matondo mingi mpo na kotala stream",
+      "language": "ln",
+      "confidence": 0.9924904104191068,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "152",
+      "text": "gyebale ko oli otya leero webale nnyo okujja okulaba stream",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "gyebale ko oli otya leero webale nnyo okujja okulaba stream",
+      "language": "lg",
+      "confidence": 0.9900424059557862,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "153",
+      "text": "akkam jirtu har'a galatoomi tamsaasa kana ilaaluuf waan dhuftaniif",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "akkam jirtu har'a galatoomi tamsaasa kana ilaaluuf waan dhuftaniif",
+      "language": "om",
+      "confidence": 0.9929843243154125,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "154",
+      "text": "i ni ce bi i ka kɛnɛ wa i ni baraji ka na nin stream lajɛ",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "i ni ce bi i ka kɛnɛ wa i ni baraji ka na nin stream lajɛ",
+      "language": "bm",
+      "confidence": 0.9806356226167292,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "155",
+      "text": "wòezɔ egbe èfɔ̃a nyuie loo akpe na wò be èva kpɔ stream la",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "wòezɔ egbe èfɔ̃a nyuie loo akpe na wò be èva kpɔ stream la",
+      "language": "ee",
+      "confidence": 0.9862406114139318,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "156",
+      "text": "akwaaba wo ho te sɛn nnɛ medaase sɛ wobɛhwɛ stream no",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "akwaaba wo ho te sɛn nnɛ medaase sɛ wobɛhwɛ stream no",
+      "language": "ak",
+      "confidence": 0.9946830200996727,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "157",
+      "text": "bula vinaka o vakacava nikua vinaka vakalevu ni o mai sarava na stream",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "bula vinaka o vakacava nikua vinaka vakalevu ni o mai sarava na stream",
+      "language": "fj",
+      "confidence": 0.9960618463065759,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "158",
+      "text": "mālō e lelei fēfē hake he ʻahó ni mālō ʻaupito hoʻo sio ki he stream",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "mālō e lelei fēfē hake he ʻahó ni mālō ʻaupito hoʻo sio ki he stream",
+      "language": "to",
+      "confidence": 0.9946228600609587,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "159",
+      "text": "hello everyone thanks for joining the stream",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "hello everyone thanks for joining the stream",
+      "language": "en",
+      "confidence": 0.9405237108104834,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "160",
+      "text": "hola a todos gracias por venir al directo",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "hola a todos gracias por venir al directo",
+      "language": "es",
+      "confidence": 0.8715454892219857,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "161",
+      "text": "bonjour tout le monde merci d être venu",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "bonjour tout le monde merci d être venu",
+      "language": "fr",
+      "confidence": 0.6365484496389487,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "162",
+      "text": "hallo zusammen danke dass ihr heute dabei seid",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "hallo zusammen danke dass ihr heute dabei seid",
+      "language": "de",
+      "confidence": 0.4809616824953844,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "163",
+      "text": "привет всем спасибо что пришли сегодня",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "привет всем спасибо что пришли сегодня",
+      "language": "ru",
+      "confidence": 0.9968454248830032,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "164",
+      "text": "こんにちはみんな来てくれてありがとう",
+      "target": "en"
+    },
+    "expected": {
+      "normalized": "こんにちはみんな来てくれてありがとう",
+      "language": "ja",
+      "confidence": 0.9999961017713414,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "165",
+      "text": "Hola amigos como estan todos hoy",
+      "target": "en",
+      "knownEmotes": [
+        "Kappa"
+      ]
+    },
+    "expected": {
+      "normalized": "hola amigos como estan todos hoy",
+      "language": "es",
+      "confidence": 0.8869681213674808,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "166",
+      "text": "今日はとても楽しい配信ですね",
+      "target": "en",
+      "knownEmotes": [
+        "Kappa"
+      ]
+    },
+    "expected": {
+      "normalized": "今日はとても楽しい配信ですね",
+      "language": "ja",
+      "confidence": 0.999970700748621,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "167",
+      "text": "h3ll0 my fr13nds how ar3 you",
+      "target": "en",
+      "knownEmotes": [
+        "Kappa"
+      ]
+    },
+    "expected": {
+      "normalized": "hello my friends how are you",
+      "language": "en",
+      "confidence": 0.8075,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "168",
+      "text": "hewwo fwiends pwease help me today",
+      "target": "en",
+      "knownEmotes": [
+        "Kappa"
+      ]
+    },
+    "expected": {
+      "normalized": "hello friends please help me today",
+      "language": "en",
+      "confidence": 0.7631666666666665,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "169",
+      "text": "This is my pаypаl account today",
+      "target": "en",
+      "knownEmotes": [
+        "Kappa"
+      ]
+    },
+    "expected": {
+      "normalized": "this is my paypal account today",
+      "language": "en",
+      "confidence": 0.6491666666666667,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "170",
+      "text": "https://example.com @viewer <3 :D",
+      "target": "en",
+      "knownEmotes": [
+        "Kappa"
+      ]
+    },
+    "expected": {
+      "normalized": "",
+      "language": "unknown",
+      "confidence": 0,
+      "automationReliable": false,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "171",
+      "text": "Kappa, hello everyone how are you doing",
+      "target": "en",
+      "knownEmotes": [
+        "Kappa"
+      ]
+    },
+    "expected": {
+      "normalized": "hello everyone how are you doing",
+      "language": "en",
+      "confidence": 0.8550000000000001,
+      "automationReliable": true,
+      "translate": false
+    }
+  },
+  {
+    "job": {
+      "id": "172",
+      "text": "Привет друзья как ваши дела сегодня",
+      "target": "en",
+      "knownEmotes": [
+        "Kappa"
+      ]
+    },
+    "expected": {
+      "normalized": "привет друзья как ваши дела сегодня",
+      "language": "ru",
+      "confidence": 0.9645648657705842,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "173",
+      "text": "مرحبا كيف حالك اليوم يا صديقي",
+      "target": "en",
+      "knownEmotes": [
+        "Kappa"
+      ]
+    },
+    "expected": {
+      "normalized": "مرحبا كيف حالك اليوم يا صديقي",
+      "language": "ar",
+      "confidence": 0.9891491129208884,
+      "automationReliable": true,
+      "translate": true
+    }
+  },
+  {
+    "job": {
+      "id": "174",
+      "text": "今日は ☺ とても楽しい配信ですね",
+      "target": "en",
+      "knownEmotes": [
+        "Kappa"
+      ]
+    },
+    "expected": {
+      "normalized": "今日は とても楽しい配信ですね",
+      "language": "ja",
+      "confidence": 0.9999775358792778,
+      "automationReliable": true,
+      "translate": true
+    }
+  }
+]

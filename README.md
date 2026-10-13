@@ -2,6 +2,12 @@
 
 Native OBS Studio dock for controlling supported Bacons Helper channel settings and live tools without leaving OBS.
 
+## 0.7.0 Proto: native model management and tuning
+
+Language detection runs locally on a background thread with the model bundled in the plugin data. Translation requests go only to Bacons Helper server. 
+
+Import/export native models, preview and apply labeled corrections, undo changes, ignore repeated phrases, and tune minimum score, word count and candidate separation. See [MODEL_TUNING.md](MODEL_TUNING.md) for the workflow and score limitations.
+
 ## Features
 
 - Securely pair OBS with a Bacons Helper channel.
@@ -9,6 +15,7 @@ Native OBS Studio dock for controlling supported Bacons Helper channel settings 
 - Configure Win/Loss, Death Counter, Shot Counter, and Credits overlays directly from OBS.
 - Install or update Bacons Helper Browser Sources in the current OBS scene without copying URLs manually.
 - Send Stream Event test notifications from the native dock.
+- Review recent channel activity in a searchable **Event History** tab, including raids, subs/resub milestones, follows, cheers, redemptions, winners, Walk-Ons, and successful follow-bot moderation.
 - Start and cancel the existing Bacons Helper countdown, including 30-second, 1-minute, 2-minute, and 5-minute presets with a live remaining-time display.
 - Use **Live Controls** to select and adjust saved per-game Death Counters without leaving OBS.
 - Configure and toggle Loyalty Points, manage Giveaway lifecycle/winner draws, and start or cancel raffles from the dock.
@@ -154,8 +161,8 @@ The repository-root workflow automatically builds:
 Every successful workflow run uploads platform packages as Actions artifacts. Push a version tag such as:
 
 ```bash
-git tag v0.4.0
-git push origin v0.4.0
+git tag v0.5.0
+git push origin v0.5.0
 ```
 
 to create a GitHub Release containing all three packages.
@@ -192,7 +199,5 @@ On Windows, do **not** run `cmake --preset windows-x64` first on a fresh clone. 
 
 The script uses the official OBS plugin-template bootstrap, resolves `libobs_DIR`, `obs-frontend-api_DIR`, and `Qt6_DIR`, configures the project, builds it, and creates `dist\bacons-helper-windows-x64.zip`. After the first successful bootstrap, advanced users may reuse the resolved package directories for manual CMake builds.
 
-
 **Much Love,**
-
 **-Bacon**

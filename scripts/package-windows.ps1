@@ -151,6 +151,9 @@ if (-not (Test-Path $Dll)) {
     throw "Expected plugin DLL was not staged: $Dll"
 }
 
+$Detector = Join-Path $Dist 'data\obs-plugins\bacons-helper\language-guesser\model.json'
+if (-not (Test-Path $Detector)) { throw "Local language detector was not staged: $Detector" }
+
 $Locale = Join-Path $Dist 'data\obs-plugins\bacons-helper\locale\en-US.ini'
 if (-not (Test-Path $Locale)) {
     throw "Expected plugin locale file was not staged: $Locale"

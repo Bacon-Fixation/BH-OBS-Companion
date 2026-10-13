@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(bacons-helper-obs VERSION 0.5.0 LANGUAGES CXX)
+project(bacons-helper-obs VERSION 0.7.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -26,6 +26,12 @@ add_library(bacons-helper MODULE
     src/plugin-main.cpp
     src/bacons-helper-dock.cpp
     src/bacons-helper-dock.hpp
+    src/language-panel.cpp
+    src/language-panel.hpp
+    src/native-language-detector.cpp
+    src/native-language-detector.hpp
+    src/native-language-worker.cpp
+    src/native-language-worker.hpp
 )
 
 target_link_libraries(bacons-helper PRIVATE

@@ -5,17 +5,13 @@
 #endif
 
 #include "bacons-helper-dock.hpp"
+#include "language-panel.hpp"
 
 #include <obs-frontend-api.h>
 #include <obs-module.h>
 
 #include <QAbstractItemView>
 #include <QByteArray>
-#include <QApplication>
-#include <QClipboard>
-#include <QFileDialog>
-#include <QSaveFile>
-#include <QMessageBox>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCoreApplication>
@@ -37,13 +33,15 @@
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 #include <QScrollArea>
-#include <QScrollBar>
 #include <QSettings>
 #include <QSpinBox>
 #include <QSslSocket>
 #include <QStringList>
 #include <QSysInfo>
 #include <QTabWidget>
+#include <QTabBar>
+#include <QFileDialog>
+#include <QSaveFile>
 #include <QTimer>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
@@ -267,6 +265,13 @@ void BaconsHelperDock::buildUi()
 	outer->addWidget(channel_);
 
 	auto *tabs = new QTabWidget();
+	tabs->setDocumentMode(true);
+	tabs->setUsesScrollButtons(true);
+	tabs->setElideMode(Qt::ElideRight);
+	tabs->tabBar()->hide();
+	auto *navigationSelector = new QComboBox();
+	navigationSelector->setAccessibleName(QStringLiteral("Companion section"));
+	outer->addWidget(navigationSelector);
 	outer->addWidget(tabs, 1);
 
 	auto *connection = new QWidget();
@@ -314,6 +319,16 @@ void BaconsHelperDock::buildUi()
 	addToggle(channelLayout, QStringLiteral("Song notifications"), QStringLiteral("song_notification"), channelToggles_);
 	channelLayout->addStretch();
 	tabs->addTab(channelTab, QStringLiteral("Channel"));
+	auto *languagePanel = new LanguagePanel(
+		[this](const QString &path, const QJsonObject &payload) {
+			const QString requestToken = token_;
+			auto *reply = sendJson("POST", path, payload);
+			connect(reply, &QNetworkReply::finished, this, [this, reply, requestToken] {
+				if (token_ == requestToken) handleAuthFailure(reply);
+			});
+			return reply;
+		}, [this] { return token_; }, configPath(), tabs);
+	tabs->addTab(languagePanel, QStringLiteral("Translation"));
 
 	auto *eventsTab = new QWidget();
 	auto *eventsLayout = new QVBoxLayout(eventsTab);
@@ -382,36 +397,6 @@ void BaconsHelperDock::buildUi()
 	historyToolbar->addWidget(historySearch_, 1);
 	historyToolbar->addWidget(historyRefreshButton_);
 	historyLayout->addLayout(historyToolbar);
-	auto *historyActions = new QHBoxLayout();
-	historyPaused_ = new QCheckBox(QStringLiteral("Pause automatic refresh"));
-	auto *historyCopy = new QPushButton(QStringLiteral("Copy selected"));
-	auto *historyExport = new QPushButton(QStringLiteral("Export visible (JSON)"));
-	historyLayout->addWidget(historyPaused_);
-	historyActions->addStretch();
-	historyActions->addWidget(historyCopy);
-	historyActions->addWidget(historyExport);
-	historyLayout->addLayout(historyActions);
-	connect(historyCopy, &QPushButton::clicked, this, [this] {
-		const auto *item = historyTree_->currentItem();
-		if (!item || item->isHidden()) return;
-		QStringList cells;
-		for (int column = 0; column < 4; ++column) cells << item->text(column);
-		QApplication::clipboard()->setText(cells.join(QStringLiteral(" | ")));
-	});
-	connect(historyExport, &QPushButton::clicked, this, [this] {
-		QJsonArray rows;
-		for (int index = 0; index < historyTree_->topLevelItemCount(); ++index) {
-			const auto *item = historyTree_->topLevelItem(index);
-			if (!item->isHidden()) rows.append(item->data(0, Qt::UserRole + 2).toJsonObject());
-		}
-		const QString path = QFileDialog::getSaveFileName(this, QStringLiteral("Export visible events"),
-			QStringLiteral("bacons-helper-events.json"), QStringLiteral("JSON (*.json)"));
-		if (path.isEmpty()) return;
-		QSaveFile file(path);
-		const QByteArray bytes = QJsonDocument(rows).toJson(QJsonDocument::Indented);
-		if (!file.open(QIODevice::WriteOnly) || file.write(bytes) != bytes.size() || !file.commit())
-			QMessageBox::warning(this, QStringLiteral("Export failed"), file.errorString());
-	});
 	historyTree_ = new QTreeWidget();
 	historyTree_->setColumnCount(4);
 	historyTree_->setHeaderLabels({QStringLiteral("Time"), QStringLiteral("Event"), QStringLiteral("User"), QStringLiteral("Details")});
@@ -427,6 +412,22 @@ void BaconsHelperDock::buildUi()
 	historyStatus_->setWordWrap(true);
 	historyLayout->addWidget(historyTree_, 1);
 	historyLayout->addWidget(historyStatus_);
+	auto *exportHistory = new QPushButton(QStringLiteral("Export visible history…"));
+	historyLayout->addWidget(exportHistory);
+	connect(exportHistory, &QPushButton::clicked, this, [this] {
+		const QString path = QFileDialog::getSaveFileName(this, QStringLiteral("Export visible event history"), QStringLiteral("bacons-helper-events.json"), QStringLiteral("JSON (*.json)"));
+		if (path.isEmpty()) return;
+		QJsonArray rows;
+		for (int index = 0; index < historyTree_->topLevelItemCount(); ++index) {
+			auto *item = historyTree_->topLevelItem(index);
+			if (item->isHidden()) continue;
+			rows.append(QJsonObject{{QStringLiteral("time"), item->text(0)}, {QStringLiteral("event"), item->text(1)}, {QStringLiteral("user"), item->text(2)}, {QStringLiteral("details"), item->text(3)}});
+		}
+		QSaveFile file(path);
+		const QByteArray bytes = QJsonDocument(rows).toJson(QJsonDocument::Indented);
+		const bool saved = file.open(QIODevice::WriteOnly) && file.write(bytes) == bytes.size() && file.commit();
+		historyStatus_->setText(saved ? QStringLiteral("Visible event history exported.") : QStringLiteral("Unable to save event history."));
+	});
 	tabs->addTab(historyTab, QStringLiteral("Event History"));
 
 	auto *overlaysTab = new QWidget();
@@ -824,6 +825,16 @@ void BaconsHelperDock::buildUi()
 		if (!applyingState_) saveOverlaySettings(QStringLiteral("credits"));
 	});
 
+	for (int index = 0; index < tabs->count(); ++index)
+		navigationSelector->addItem(tabs->tabText(index));
+	connect(navigationSelector, qOverload<int>(&QComboBox::currentIndexChanged), tabs, &QTabWidget::setCurrentIndex);
+	connect(tabs, &QTabWidget::currentChanged, navigationSelector, &QComboBox::setCurrentIndex);
+	QSettings navigation(configPath(), QSettings::IniFormat);
+	tabs->setCurrentIndex(qBound(0, navigation.value(QStringLiteral("ui/tab"), 0).toInt(), tabs->count() - 1));
+	connect(tabs, &QTabWidget::currentChanged, this, [](int index) {
+		QSettings settings(configPath(), QSettings::IniFormat);
+		settings.setValue(QStringLiteral("ui/tab"), index);
+	});
 	refreshTimer_ = new QTimer(this);
 	refreshTimer_->setInterval(30000);
 	connect(refreshTimer_, &QTimer::timeout, this, [this] {
@@ -1197,7 +1208,7 @@ void BaconsHelperDock::refresh()
 			return;
 		}
 		applySettingsPayload(doc.object());
-		if (!historyPaused_->isChecked()) refreshEventHistory();
+		refreshEventHistory();
 		if (!credentialStorageWarning_.isEmpty()) {
 			setStatus(QStringLiteral("⚠ Connected for this OBS session, but the pairing cannot be stored securely: %1")
 					  .arg(credentialStorageWarning_), false);
@@ -1218,13 +1229,11 @@ void BaconsHelperDock::refreshEventHistory()
 	if (historyStatus_)
 		historyStatus_->setText(QStringLiteral("Refreshing recent events…"));
 
-	const QString requestToken = token_;
 	auto *reply = sendJson("GET", QStringLiteral("/api/obs-plugin/event-history"));
-	connect(reply, &QNetworkReply::finished, this, [this, reply, requestToken] {
+	connect(reply, &QNetworkReply::finished, this, [this, reply] {
 		historyRefreshInFlight_ = false;
 		if (historyRefreshButton_)
 			historyRefreshButton_->setEnabled(!token_.isEmpty());
-		if (requestToken != token_) { reply->deleteLater(); return; }
 		const QByteArray bytes = reply->readAll();
 		if (reply->error() != QNetworkReply::NoError) {
 			handleAuthFailure(reply);
@@ -1252,9 +1261,6 @@ void BaconsHelperDock::applyEventHistory(const QJsonArray &events)
 	if (!historyTree_)
 		return;
 
-	const QString selectedId = historyTree_->currentItem()
-		? historyTree_->currentItem()->data(0, Qt::UserRole + 2).toJsonObject().value(QStringLiteral("id")).toString() : QString();
-	const int scrollPosition = historyTree_->verticalScrollBar()->value();
 	historyTree_->clear();
 	const auto eventLabel = [](const QString &eventName) {
 		const QMap<QString, QString> labels = {
@@ -1321,15 +1327,10 @@ void BaconsHelperDock::applyEventHistory(const QJsonArray &events)
 		item->setText(2, username.isEmpty() ? QStringLiteral("-") : username);
 		item->setText(3, details.isEmpty() ? QStringLiteral("-") : details);
 		item->setData(0, Qt::UserRole, categoryFor(eventName));
-		item->setData(0, Qt::UserRole + 2, event);
-		item->setToolTip(3, details);
-		if (!selectedId.isEmpty() && event.value(QStringLiteral("id")).toString() == selectedId)
-			historyTree_->setCurrentItem(item);
 		item->setData(0, Qt::UserRole + 1,
 			QStringLiteral("%1 %2 %3 %4 %5").arg(eventName, username, title, message, amount).toLower());
 	}
 
-	historyTree_->verticalScrollBar()->setValue(scrollPosition);
 	filterEventHistory();
 	if (historyStatus_) {
 		historyStatus_->setText(events.isEmpty()

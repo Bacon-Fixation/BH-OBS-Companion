@@ -1,0 +1,13 @@
+name: Native language detector tests
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  native-detector:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y qt6-base-dev cmake ninja-build
+      - run: cmake -S tests -B build-native-tests -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build-native-tests
+      - run: ctest --test-dir build-native-tests --output-on-failure
