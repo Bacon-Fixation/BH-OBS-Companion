@@ -4,15 +4,35 @@ permissions:
   contents: read
 jobs:
   native-detector:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
         # Tolerate previously committed malformed symlink blobs during migration.
         env:
           GIT_CONFIG_COUNT: "1"
           GIT_CONFIG_KEY_0: core.symlinks
           GIT_CONFIG_VALUE_0: "false"
-      - run: sudo apt-get update && sudo apt-get install -y qt6-base-dev cmake ninja-build
-      - run: cmake -S tests -B build-native-tests -G Ninja -DCMAKE_BUILD_TYPE=Release
-      - run: cmake --build build-native-tests
-      - run: ctest --test-dir build-native-tests --output-on-failure
+      - name: Install test dependencies
+        run: sudo apt-get update && sudo apt-get install -y qt6-base-dev cmake ninja-build
+      - name: Show toolchain versions
+        run: |
+          cmake --version
+          c++ --version
+          qmake6 --version
+      - name: Configure native tests
+        run: cmake -S tests -B build-native-tests -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Build native tests
+        run: cmake --build build-native-tests --parallel 2
+      - name: Run native tests
+        run: ctest --test-dir build-native-tests --output-on-failure --output-junit native-tests.xml --no-tests=error
+      - name: Upload native test diagnostics
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: native-test-diagnostics
+          path: |
+            build-native-tests/Testing/Temporary/*.log
+            build-native-tests/Testing/Temporary/LastTestsFailed.log
+            build-native-tests/native-tests.xml
+          if-no-files-found: warn

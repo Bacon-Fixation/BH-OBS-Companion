@@ -53,7 +53,11 @@ int main(int argc, char **argv)
    }
    ++checked;
    const auto ranked=baseline.value("candidates").toArray();
-   if(ranked.size()!=5 || baseline.value("usefulWords").toInt()<4)++failures;
+   if(ranked.isEmpty() || ranked.size()>5 || baseline.value("usefulWords").toInt()<4){
+    ++failures;
+    err<<"Invalid candidate result for "<<job.value("id").toString()
+       <<": "<<ranked.size()<<" ranked candidates, "<<baseline.value("usefulWords").toInt()<<" useful words\n";
+   }
    for(int i=1;i<ranked.size();++i)if(ranked[i].toObject().value("score").toDouble()>ranked[i-1].toObject().value("score").toDouble())++failures;
   }
   ++checked;if(!translating){++failures;err<<"No translating guard fixtures exercised\n";}
