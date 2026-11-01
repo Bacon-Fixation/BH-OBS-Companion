@@ -1047,13 +1047,30 @@ QNetworkReply *BaconsHelperDock::sendJson(const QByteArray &method, const QStrin
 		request.setRawHeader("Authorization", QByteArray("Bearer ") + token_.toUtf8());
 
 	const QByteArray body = payload.isEmpty() ? QByteArray() : QJsonDocument(payload).toJson(QJsonDocument::Compact);
+	QNetworkReply *reply = nullptr;
 	if (method == "GET")
-		return network_->get(request);
-	if (method == "POST")
-		return network_->post(request, body);
-	if (method == "PUT")
-		return network_->put(request, body);
-	return network_->sendCustomRequest(request, method, body);
+		reply = network_->get(request);
+	else if (method == "POST")
+		reply = network_->post(request, body);
+	else if (method == "PUT")
+		reply = network_->put(request, body);
+	else
+		reply = network_->sendCustomRequest(request, method, body);
+
+	// These endpoints return small JSON documents. Bound unread data, including
+	// chunked replies, while the caller waits for finished before parsing.
+	constexpr qint64 maxResponseBytes = 1024 * 1024;
+	reply->setReadBufferSize(maxResponseBytes + 1);
+	connect(reply, &QIODevice::readyRead, reply, [reply] {
+		if (reply->bytesAvailable() > 1024 * 1024)
+			reply->abort();
+	});
+	auto *deadline = new QTimer(reply);
+	deadline->setSingleShot(true);
+	connect(deadline, &QTimer::timeout, reply, &QNetworkReply::abort);
+	connect(reply, &QNetworkReply::finished, deadline, &QTimer::stop);
+	deadline->start(15000);
+	return reply;
 }
 
 void BaconsHelperDock::handleAuthFailure(QNetworkReply *reply)
@@ -1070,6 +1087,8 @@ void BaconsHelperDock::handleAuthFailure(QNetworkReply *reply)
 
 void BaconsHelperDock::pair()
 {
+	if (pairReply_ && !pairReply_->isFinished())
+		return;
 	if (!validateServerUrl())
 		return;
 	if (!QSslSocket::supportsSsl()) {
@@ -1090,6 +1109,7 @@ void BaconsHelperDock::pair()
 	QJsonObject payload{{QStringLiteral("code"), code},
 						{QStringLiteral("deviceName"), QStringLiteral("OBS Studio %1").arg(QSysInfo::prettyProductName())}};
 	auto *reply = sendJson("POST", QStringLiteral("/api/obs-plugin/link"), payload);
+	pairReply_ = reply;
 	connect(reply, &QNetworkReply::finished, this, [this, reply] {
 		const QByteArray responseBody = reply->readAll();
 		const QJsonDocument doc = QJsonDocument::fromJson(responseBody);
@@ -1143,6 +1163,20 @@ void BaconsHelperDock::disconnectAccount()
 	}
 
 	token_.clear();
+	for (auto *timer : overlaySaveTimers_)
+		timer->stop();
+	// Keep the revocation request alive. Abort other requests only after clearing
+	// the session, so the translation panel also rejects their stale callbacks.
+	for (auto *reply : network_->findChildren<QNetworkReply *>()) {
+		if (reply == revokeReply) continue;
+		QObject::disconnect(reply, nullptr, this, nullptr);
+		if (!reply->isFinished()) reply->abort();
+		reply->deleteLater();
+	}
+	pairReply_.clear();
+	refreshInFlight_ = false;
+	historyRefreshInFlight_ = false;
+	overlaySettings_.clear();
 	dashboardLinks_.clear();
 	browserSourceUrls_.clear();
 	deathCounters_.clear();
@@ -2001,6 +2035,20 @@ void BaconsHelperDock::testWalkOn()
 
 
 void BaconsHelperDock::saveOverlaySettings(const QString &key)
+{
+	if (applyingState_ || token_.isEmpty()) return;
+	auto *timer = overlaySaveTimers_.value(key, nullptr);
+	if (!timer) {
+		timer = new QTimer(this);
+		timer->setSingleShot(true);
+		overlaySaveTimers_.insert(key, timer);
+		connect(timer, &QTimer::timeout, this, [this, key] { submitOverlaySettings(key); });
+	}
+	// Spin-box and checkbox bursts share one timer per overlay and save the latest UI values.
+	timer->start(300);
+}
+
+void BaconsHelperDock::submitOverlaySettings(const QString &key)
 {
 	if (token_.isEmpty())
 		return;

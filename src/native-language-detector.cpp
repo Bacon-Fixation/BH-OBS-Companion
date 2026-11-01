@@ -316,6 +316,7 @@ QJsonObject NativeLanguageDetector::detect(const QJsonObject &job) const
  const auto tokenList = text.split(' ',Qt::SkipEmptyParts); const int tokens = tokenList.size();
  const int words = matches(text,rx(R"(\p{Han}|[\p{Hiragana}\p{Katakana}]|\p{L}[\p{L}\p{M}]*)"));
  QJsonObject result{{"id",job.value("id")},{"target",target},{"text",job.value("text")},{"normalized",text},{"_generation",job.value("_generation")},{"backend","native-cpp"},{"modelVersion","0.11.3"}};
+ result.insert("usefulLetters",useful); result.insert("usefulWords",words);
  if (useful < 4) {
   result.insert("language","unknown"); result.insert("confidence",0); result.insert("automationReliable",false); result.insert("translate",false); result.insert("reason","insufficient-evidence"); return result;
  }
@@ -387,9 +388,9 @@ QJsonObject NativeLanguageDetector::detect(const QJsonObject &job) const
  }else if(language==target){translationConfidence=std::max(preferredMass,top.confidence);reason="matches-preferred-language";}
  else if(target=="en" && (scripts.dominant=="Latin" || scripts.dominant=="Other" || scripts.dominant.isEmpty()) && englishStrong && (englishCandidate>=.08 || top.confidence<.93)){translationConfidence=std::max(english,englishCandidate);reason="english-guard";}
  else{needed=true;translationConfidence=std::max(top.confidence,foreignMass);reason="reliable-language-mismatch";}
- const bool automation=reliableResult || (needed && translationConfidence>=.50);
+ const bool automation=reliableResult || (needed && translationConfidence>=.82);
  const double automationConfidence=reliableResult?std::max(confidence,translationConfidence):translationConfidence;
- const double threshold=std::clamp(job.value("threshold").toDouble(.85),.50,1.0);
+ const double threshold=std::clamp(job.value("threshold").toDouble(.85),.82,1.0);
  result.insert("language",language.isEmpty()?d.languages[top.index].code:language);
  result.insert("confidence",automationConfidence);result.insert("automationReliable",automation);
  const int minimumWords=std::clamp(job.value("minimumWords").toInt(4),4,20);
@@ -397,11 +398,40 @@ QJsonObject NativeLanguageDetector::detect(const QJsonObject &job) const
  const bool exactEnough=job.value("allowClusters").toBool(true) || reliableResult;
  const bool marginEnough=top.confidence-second.confidence>=minimumMargin;
  const bool ignored=d.ignored.contains(QString::fromLatin1(QCryptographicHash::hash(text.toUtf8(),QCryptographicHash::Sha256).toHex()));
- result.insert("translate",words>=minimumWords && needed && automation && automationConfidence>=threshold && exactEnough && marginEnough && !ignored);
+ const int minimumLetters=std::clamp(job.value("minimumLetters").toInt(0),0,200);
+ const double maximumTargetMass=std::clamp(job.value("maximumTargetMass").toDouble(1),0.0,1.0);
+ const bool targetAmbiguous=needed && preferredMass>maximumTargetMass;
+ QSet<QString> suppressed;
+ for(const auto &value:job.value("suppressedLanguages").toArray()){
+  QString code=value.toString().trimmed().toLower().replace('_','-').section('-',0,0);
+  if(!knownLanguage(code))code=d.aliases.value(code).toString(code);
+  suppressed.insert(code);
+ }
+ const bool suppressedLanguage=suppressed.contains(result.value("language").toString());
+ QJsonArray ranked;
+ for(int i=0;i<std::min(5,int(candidates.size()));++i){
+  const auto &c=candidates[i];
+  ranked.append(QJsonObject{{"language",d.languages[c.index].code},{"score",c.confidence}});
+ }
+ result.insert("candidates",ranked);
+ result.insert("targetCandidateScore",preferredMass);
+ QJsonArray blockers;
+ if(ignored)blockers.append("locally-ignored-text");
+ if(words<minimumWords)blockers.append("below-minimum-words");
+ if(useful<minimumLetters)blockers.append("below-minimum-letters");
+ if(suppressedLanguage)blockers.append("language-suppressed");
+ if(targetAmbiguous)blockers.append("target-language-plausible");
+ if(!exactEnough)blockers.append("exact-language-required");
+ if(!marginEnough)blockers.append("candidate-margin-too-small");
+ if(!automation)blockers.append("insufficient-model-evidence");
+ if(automationConfidence<threshold)blockers.append("below-score-threshold");
+ if(!needed)blockers.append("translation-not-needed");
+ result.insert("blockers",blockers);
+ result.insert("translate",useful>=minimumLetters && !suppressedLanguage && !targetAmbiguous && words>=minimumWords && needed && automation && automationConfidence>=threshold && exactEnough && marginEnough && !ignored);
  result.insert("candidateMargin",top.confidence-second.confidence);
  result.insert("rawTopConfidence",top.confidence);
  result.insert("modelReliable",reliableResult);
- result.insert("reason",ignored?QStringLiteral("locally-ignored-text"):words<minimumWords?QStringLiteral("below-minimum-words"):!exactEnough?QStringLiteral("exact-language-required"):!marginEnough?QStringLiteral("candidate-margin-too-small"):reason);
+ result.insert("reason",blockers.isEmpty()?reason:blockers.first().toString());
  result.insert("elapsedMs",timer.nsecsElapsed()/1000000.0);
  return result;
 }
@@ -433,6 +463,7 @@ QJsonObject NativeLanguageDetector::correctedPackage(const QString &input, const
  norm=std::sqrt(norm);if(!norm)throw std::runtime_error("No useful correction features");
  auto profile=profiles.value(code).toObject();const auto prior=profile.value("vector").toObject();
  Numbers combined;
+ // A small normalized prototype update, not a confidence override.
  for(auto it=prior.begin();it!=prior.end();++it)combined[it.key()]=it.value().toDouble()*.92;
  for(auto it=sample.begin();it!=sample.end();++it)combined[it.key()]+=.08*it.value()/norm;
  if(combined.size()>100000)throw std::runtime_error("Correction exceeds profile feature limit");

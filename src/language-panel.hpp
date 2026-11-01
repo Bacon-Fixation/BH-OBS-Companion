@@ -26,7 +26,9 @@ private:
  QString settingsPath_;
  QCheckBox *enabled_, *automatic_;
  QLineEdit *sample_, *target_;
- QSpinBox *threshold_, *minimumWords_, *margin_;
+ QSpinBox *threshold_, *minimumWords_, *margin_, *minimumLetters_, *targetMass_;
+ QLineEdit *suppressedLanguages_;
+ QLabel *details_;
  QCheckBox *clusters_;
  QLineEdit *correctLanguage_;
  QLabel *modelStatus_;

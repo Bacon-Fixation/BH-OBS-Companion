@@ -18,6 +18,7 @@
 #include "native-language-worker.hpp"
 #include <QPushButton>
 #include <QSettings>
+#include <QRegularExpression>
 #include <QSpinBox>
 #include <QTimer>
 #include <QTreeWidget>
@@ -34,18 +35,26 @@ LanguagePanel::LanguagePanel(Sender send, std::function<QString()> session, cons
  auto *content = new QWidget(); auto *form = new QFormLayout(content);
  form->setRowWrapPolicy(QFormLayout::WrapLongRows);
  scroll->setWidget(content); layout->addWidget(scroll);
- auto *note = new QLabel(tr("(Experimental Expect Bugs) Have language detection run locally in OBS and allow you to fine tune detection to better suite your individual needs instead of the generic global settings."));
+ auto *note = new QLabel(tr("Native C++ language detection runs locally in the background. Translation requests go only to your paired Bacons Helper server. Enable Translator in the Channel section for live messages."));
  note->setWordWrap(true); note->setTextFormat(Qt::PlainText); form->addRow(note);
  enabled_ = new QCheckBox(tr("Run local detector (preview by default)"));
- automatic_ = new QCheckBox(tr("Automatically send translation in chat"));
- threshold_ = new QSpinBox(); threshold_->setRange(50, 100); threshold_->setSuffix(tr("% minimum score"));
+ automatic_ = new QCheckBox(tr("Automatically request translation in chat"));
+ threshold_ = new QSpinBox(); threshold_->setRange(82, 100); threshold_->setSuffix(tr("% minimum score"));
  form->addRow(enabled_); form->addRow(automatic_); form->addRow(tr("Confidence"), threshold_);
  minimumWords_=new QSpinBox();minimumWords_->setRange(4,20);
  margin_=new QSpinBox();margin_->setRange(0,100);margin_->setSuffix(tr("% minimum candidate gap"));
  clusters_=new QCheckBox(tr("Allow related-language groups when exact language is uncertain"));
  form->addRow(tr("Minimum useful words"),minimumWords_);form->addRow(tr("Ambiguity guard"),margin_);form->addRow(clusters_);
+ minimumLetters_=new QSpinBox();minimumLetters_->setRange(0,200);minimumLetters_->setSpecialValueText(tr("Off"));
+ targetMass_=new QSpinBox();targetMass_->setRange(0,100);targetMass_->setSuffix(tr("% maximum target score"));
+ suppressedLanguages_=new QLineEdit();suppressedLanguages_->setMaxLength(512);suppressedLanguages_->setPlaceholderText(tr("Language codes, e.g. es, pt"));
+ form->addRow(tr("Minimum useful letters"),minimumLetters_);
+ form->addRow(tr("Target-language protection"),targetMass_);
+ form->addRow(tr("Never auto-translate languages"),suppressedLanguages_);
+ targetMass_->setToolTip(tr("Skip when the target language candidate score exceeds this limit. 100% disables this guard."));
+ suppressedLanguages_->setToolTip(tr("Comma or space separated codes. Detection still runs; matching detected languages cannot trigger translation."));
  auto *cautious=new QPushButton(tr("Use cautious settings (fewer triggers)"));form->addRow(cautious);
- connect(cautious,&QPushButton::clicked,this,[this]{threshold_->setValue(95);minimumWords_->setValue(6);margin_->setValue(15);clusters_->setChecked(false);savePreferences();});
+ connect(cautious,&QPushButton::clicked,this,[this]{threshold_->setValue(95);minimumWords_->setValue(6);margin_->setValue(15);clusters_->setChecked(false);minimumLetters_->setValue(20);targetMass_->setValue(10);savePreferences();});
  auto *scoreNote=new QLabel(tr("Scores are model evidence, not calibrated probabilities. Stricter settings skip more messages; corrections can improve or worsen predictions."));scoreNote->setWordWrap(true);form->addRow(scoreNote);
 
  status_ = new QLabel(tr("Stopped. Automatic translation is off.")); status_->setWordWrap(true); status_->setTextFormat(Qt::PlainText); form->addRow(status_);
@@ -70,6 +79,7 @@ LanguagePanel::LanguagePanel(Sender send, std::function<QString()> session, cons
  history_->setRootIsDecorated(false); history_->setAlternatingRowColors(true);
  history_->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
  history_->header()->setStretchLastSection(true); layout->addWidget(history_, 1);
+ details_=new QLabel(tr("Select a result to inspect candidate scores and every blocking reason."));details_->setWordWrap(true);details_->setTextFormat(Qt::PlainText);layout->addWidget(details_);
  auto *clear = new QPushButton(tr("Clear local history")); layout->addWidget(clear);
  connect(clear, &QPushButton::clicked, history_, &QTreeWidget::clear);
  modelStorage_=QDir(QFileInfo(settingsPath_).absolutePath()).filePath(QStringLiteral("language-model-custom.json"));
@@ -77,6 +87,9 @@ LanguagePanel::LanguagePanel(Sender send, std::function<QString()> session, cons
  minimumWords_->setValue(settings.value(QStringLiteral("language/minimumWords"),4).toInt());
  margin_->setValue(settings.value(QStringLiteral("language/margin"),0).toInt());
  clusters_->setChecked(settings.value(QStringLiteral("language/clusters"),true).toBool());
+ minimumLetters_->setValue(settings.value(QStringLiteral("language/minimumLetters"),0).toInt());
+ targetMass_->setValue(settings.value(QStringLiteral("language/targetMass"),100).toInt());
+ suppressedLanguages_->setText(settings.value(QStringLiteral("language/suppressedLanguages")).toString());
  settings.remove(QStringLiteral("language/node"));
  threshold_->setValue(settings.value(QStringLiteral("language/threshold"), 85).toInt());
  // Posting and live polling require an explicit opt-in each OBS session.
@@ -95,6 +108,17 @@ LanguagePanel::LanguagePanel(Sender send, std::function<QString()> session, cons
  connect(minimumWords_,qOverload<int>(&QSpinBox::valueChanged),this,[this]{savePreferences();});
  connect(margin_,qOverload<int>(&QSpinBox::valueChanged),this,[this]{savePreferences();});
  connect(clusters_,&QCheckBox::toggled,this,[this]{savePreferences();});
+ for(auto *spin:{minimumLetters_,targetMass_})connect(spin,qOverload<int>(&QSpinBox::valueChanged),this,[this]{savePreferences();});
+ connect(suppressedLanguages_,&QLineEdit::editingFinished,this,[this]{savePreferences();});
+ connect(history_,&QTreeWidget::itemSelectionChanged,this,[this]{
+  auto *item=history_->currentItem();if(!item)return;
+  const auto r=item->data(0,Qt::UserRole).toJsonObject();QStringList candidates,blockers;
+  for(const auto &v:r.value("candidates").toArray()){const auto c=v.toObject();candidates.append(c.value("language").toString()+": "+QString::number(c.value("score").toDouble()*100,'f',1)+"%");}
+  for(const auto &v:r.value("blockers").toArray())blockers.append(v.toString());
+  details_->setText(tr("Candidates: %1\nTarget score: %2% | Gap: %3% | Useful letters: %4 | Words: %5\nBlocked by: %6")
+   .arg(candidates.join(", ")).arg(r.value("targetCandidateScore").toDouble()*100,0,'f',1).arg(r.value("candidateMargin").toDouble()*100,0,'f',1)
+   .arg(r.value("usefulLetters").toInt()).arg(r.value("usefulWords").toInt()).arg(blockers.isEmpty()?tr("None"):blockers.join(", ")));
+ });
  for(auto *field:{sample_,target_,correctLanguage_})connect(field,&QLineEdit::textChanged,this,[this]{applyCorrection_->setEnabled(false);});
  connect(history_,&QTreeWidget::itemSelectionChanged,this,[this]{auto *item=history_->currentItem();if(!item || modelBusy_)return;const auto result=item->data(0,Qt::UserRole).toJsonObject();sample_->setText(result.value(QStringLiteral("text")).toString());target_->setText(result.value(QStringLiteral("target")).toString(QStringLiteral("en")));correctLanguage_->setText(result.value(QStringLiteral("language")).toString(QStringLiteral("en")));});
  connect(worker_,&NativeLanguageWorker::managed,this,[this](const QJsonObject &report,int generation){
@@ -130,6 +154,9 @@ LanguagePanel::~LanguagePanel()
 void LanguagePanel::savePreferences()
 {
  QSettings settings(settingsPath_, QSettings::IniFormat);
+ settings.setValue(QStringLiteral("language/minimumLetters"),minimumLetters_->value());
+ settings.setValue(QStringLiteral("language/targetMass"),targetMass_->value());
+ settings.setValue(QStringLiteral("language/suppressedLanguages"),suppressedLanguages_->text());
  settings.setValue(QStringLiteral("language/threshold"), threshold_->value());
  settings.setValue(QStringLiteral("language/minimumWords"),minimumWords_->value());
  settings.setValue(QStringLiteral("language/margin"),margin_->value());
@@ -180,6 +207,11 @@ void LanguagePanel::dispatch(QJsonObject job, const QString &session)
  job.insert(QStringLiteral("minimumWords"),minimumWords_->value());
  job.insert(QStringLiteral("minimumMargin"),margin_->value()/100.0);
  job.insert(QStringLiteral("allowClusters"),clusters_->isChecked());
+ job.insert(QStringLiteral("minimumLetters"),minimumLetters_->value());
+ job.insert(QStringLiteral("maximumTargetMass"),targetMass_->value()/100.0);
+ QJsonArray suppressed;
+ for(const auto &code:suppressedLanguages_->text().split(QRegularExpression(QStringLiteral("[,;\\s]+")),Qt::SkipEmptyParts))suppressed.append(code);
+ job.insert(QStringLiteral("suppressedLanguages"),suppressed);
  pending_ = job; pendingSession_ = session; test_->setEnabled(false);
  job.insert(QStringLiteral("_generation"), generation_);
  auto *worker = worker_;

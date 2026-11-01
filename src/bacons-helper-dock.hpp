@@ -4,6 +4,7 @@
 #include <QJsonObject>
 #include <QString>
 #include <QMap>
+#include <QPointer>
 #include <QUrl>
 #include <QWidget>
 
@@ -27,6 +28,8 @@ public:
 
 private:
 	QNetworkAccessManager *network_ = nullptr;
+	QPointer<QNetworkReply> pairReply_;
+	QMap<QString, QTimer *> overlaySaveTimers_;
 	QLineEdit *serverUrl_ = nullptr;
 	QLineEdit *pairCode_ = nullptr;
 	QPushButton *pairButton_ = nullptr;
@@ -146,6 +149,7 @@ private:
 	void saveChannelToggle(const QString &key, bool checked);
 	void saveStreamEvent(const QString &key, bool checked);
 	void saveOverlaySettings(const QString &key);
+	void submitOverlaySettings(const QString &key);
 	void testStreamEvent();
 	void installBrowserSource(const QString &key);
 	void syncExistingBrowserSources();

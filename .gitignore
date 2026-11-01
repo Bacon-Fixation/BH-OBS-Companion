@@ -20,3 +20,5 @@ CMakeUserPresets.json
 Thumbs.db
 *.swp
 *.swo
+/test/*
+/tests/*

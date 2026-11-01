@@ -28,6 +28,35 @@ int main(int argc, char **argv)
    if(std::abs(expected.value("confidence").toDouble()-actual.value("confidence").toDouble())>0.000001) differences.append(QString("confidence expected=%1 actual=%2").arg(expected.value("confidence").toDouble(),0,'f',9).arg(actual.value("confidence").toDouble(),0,'f',9));
    if(!differences.isEmpty()){++failures;err<<job.value("id").toString()<<": "<<job.value("text").toString()<<"\n  "<<differences.join("; ")<<"\n";}
   }
+  // Exercise guards against reference messages that previously translated.
+  int translating=0;
+  for(const auto &entry:fixtures){
+   auto job=entry.toObject().value("job").toObject();
+   const auto baseline=detector.detect(job);
+   if(!baseline.value("translate").toBool())continue;
+   ++translating;
+   auto check=[&](const QJsonObject &actual,const QString &blocker){
+    ++checked;
+    if(actual.value("translate").toBool() || !actual.value("blockers").toArray().contains(blocker) ||
+       actual.value("language")!=baseline.value("language") || actual.value("confidence")!=baseline.value("confidence")){
+     ++failures;err<<"Guard failed: "<<blocker<<"\n";
+    }
+   };
+   job.insert("suppressedLanguages",QJsonArray{baseline.value("language").toString().toUpper()});
+   check(detector.detect(job),"language-suppressed");
+   job.remove("suppressedLanguages");
+   if(baseline.value("usefulLetters").toInt()<200){
+    job.insert("minimumLetters",200);check(detector.detect(job),"below-minimum-letters");job.remove("minimumLetters");
+   }
+   if(baseline.value("targetCandidateScore").toDouble()>0){
+    job.insert("maximumTargetMass",0);check(detector.detect(job),"target-language-plausible");job.remove("maximumTargetMass");
+   }
+   ++checked;
+   const auto ranked=baseline.value("candidates").toArray();
+   if(ranked.size()!=5 || baseline.value("usefulWords").toInt()<4)++failures;
+   for(int i=1;i<ranked.size();++i)if(ranked[i].toObject().value("score").toDouble()>ranked[i-1].toObject().value("score").toDouble())++failures;
+  }
+  ++checked;if(!translating){++failures;err<<"No translating guard fixtures exercised\n";}
   auto requireReject=[&](const QJsonObject &job){try{detector.detect(job);++failures;err<<"Accepted invalid job\n";}catch(const std::exception &){}; ++checked;};
   requireReject({{"id","long"},{"text",QString(2001,'x')},{"target","en"}});
   requireReject({{"id","bad-target"},{"text","Hello everyone how are you doing"},{"target","invalid-target"}});
