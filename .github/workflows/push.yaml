@@ -1,33 +1,53 @@
 name: Bacons Helper OBS Companion
-run-name: ${{ github.ref_name }} build
+run-name: ${{ github.event.release.tag_name || inputs.release_tag || github.ref_name }} build
 
 on:
   push:
     branches: [main, master]
-    tags: ['v*', '[0-9]+.[0-9]+.[0-9]+*']
+    tags: ['v*', '[0-9]+.[0-9]+.[0-9]+*', 'Beta_*', 'beta_*']
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing tag to build and attach packages to (e.g. Beta_V0.7.2). Leave empty for build only.
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: read
 
 concurrency:
-  group: bh-obs-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: bh-obs-${{ github.workflow }}-${{ github.event.release.tag_name || inputs.release_tag || github.ref_name }}
+  # A release publication and its tag push can arrive close together. Queue
+  # runs for the same tag instead of cancelling package builds or asset uploads.
+  cancel-in-progress: false
 
 jobs:
   build:
     name: Build Packages
     uses: ./.github/workflows/build.yml
+    with:
+      build_ref: ${{ github.event.release.tag_name && format('refs/tags/{0}', github.event.release.tag_name) || inputs.release_tag && format('refs/tags/{0}', inputs.release_tag) || github.ref }}
     permissions:
       contents: read
 
   release:
-    name: Publish tagged release
-    if: startsWith(github.ref, 'refs/tags/')
+    name: Publish release packages
+    if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) || (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
     needs: build
     runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
+      - name: Checkout publishing helper from this workflow revision
+        uses: actions/checkout@v6
+        env:
+          GIT_CONFIG_COUNT: "1"
+          GIT_CONFIG_KEY_0: core.symlinks
+          GIT_CONFIG_VALUE_0: "false"
+
       - name: Download build artifacts
         uses: actions/download-artifact@v6
         with:
@@ -35,8 +55,10 @@ jobs:
           path: release-assets
           merge-multiple: true
 
-      - name: Publish GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          files: release-assets/*
+      - name: Attach packages to the release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag || github.ref_name }}
+        run: bash scripts/publish-release-assets.sh release-assets
