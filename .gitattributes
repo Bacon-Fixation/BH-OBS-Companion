@@ -1,0 +1,5 @@
+
+# Formatting launchers must remain regular LF-terminated scripts.
+build-aux/run-* text eol=lf
+build-aux/.run-format.zsh text eol=lf
+scripts/repair-formatters.* text eol=lf

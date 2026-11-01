@@ -22,3 +22,5 @@ Thumbs.db
 *.swo
 /test/*
 /tests/*
+scripts/repair-formatters.ps1
+scripts/repair-formatters.sh

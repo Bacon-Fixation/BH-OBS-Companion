@@ -14,6 +14,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        # Tolerate previously committed malformed symlink blobs during migration.
+        env:
+          GIT_CONFIG_COUNT: "1"
+          GIT_CONFIG_KEY_0: core.symlinks
+          GIT_CONFIG_VALUE_0: "false"
 
       - name: Verify repository layout
         shell: pwsh
@@ -39,6 +44,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        # Tolerate previously committed malformed symlink blobs during migration.
+        env:
+          GIT_CONFIG_COUNT: "1"
+          GIT_CONFIG_KEY_0: core.symlinks
+          GIT_CONFIG_VALUE_0: "false"
 
       - name: Install build dependencies
         run: |
@@ -71,6 +81,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        # Tolerate previously committed malformed symlink blobs during migration.
+        env:
+          GIT_CONFIG_COUNT: "1"
+          GIT_CONFIG_KEY_0: core.symlinks
+          GIT_CONFIG_VALUE_0: "false"
 
       - name: Install Flatpak tooling
         run: |

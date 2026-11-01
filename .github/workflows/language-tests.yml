@@ -7,6 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        # Tolerate previously committed malformed symlink blobs during migration.
+        env:
+          GIT_CONFIG_COUNT: "1"
+          GIT_CONFIG_KEY_0: core.symlinks
+          GIT_CONFIG_VALUE_0: "false"
       - run: sudo apt-get update && sudo apt-get install -y qt6-base-dev cmake ninja-build
       - run: cmake -S tests -B build-native-tests -G Ninja -DCMAKE_BUILD_TYPE=Release
       - run: cmake --build build-native-tests
