@@ -1,0 +1,51 @@
+{
+  "revision": "obs-chat-20261104-1",
+  "sourceVersion": "0.11.5",
+  "training": {
+    "before": 10325,
+    "after": 10753,
+    "additionalLabeledExamples": 428,
+    "additionalNormalizedTexts": 427,
+    "expandedLanguages": 24,
+    "unchangedLanguages": 190,
+    "sampleSource": "authored synthetic chat examples",
+    "syntheticAugmentationAdded": false,
+    "sharedIndonesianMalayTextExamples": 1
+  },
+  "evaluation": {
+    "developmentSentences": 152,
+    "developmentLanguages": 88,
+    "heldoutSentences": 108,
+    "heldoutLanguages": 24,
+    "variants": [
+      "plain",
+      "quoted",
+      "chat-noise"
+    ],
+    "casesPerSentence": 2,
+    "trainEvaluationOverlap": 0,
+    "development": {
+      "correctLabelsBefore": 304,
+      "correctLabelsAfter": 304,
+      "falseTargetTranslationsBefore": 0,
+      "falseTargetTranslationsAfter": 0,
+      "foreignTranslationsBefore": 90,
+      "foreignTranslationsAfter": 93
+    },
+    "heldout": {
+      "correctLabelsBefore": 166,
+      "correctLabelsAfter": 176,
+      "labelAccuracyBefore": 0.7685185185185185,
+      "labelAccuracyAfter": 0.8148148148148148,
+      "falseTargetTranslationsBefore": 0,
+      "falseTargetTranslationsAfter": 0,
+      "foreignTranslationsBefore": 14,
+      "foreignTranslationsAfter": 13
+    }
+  },
+  "selection": {
+    "method": "50% update of expanded profiles with frozen original IDF",
+    "selectedOn": "development set only",
+    "coverageTradeoff": "One fewer eligible foreign translation per held-out variant; no thresholds lowered."
+  }
+}

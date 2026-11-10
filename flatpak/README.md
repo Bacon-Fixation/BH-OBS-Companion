@@ -4,7 +4,7 @@ Bacons Helper is packaged as an OBS Studio Flatpak extension:
 
 - Extension ID: `com.obsproject.Studio.Plugin.BaconsHelper`
 - OBS runtime: `com.obsproject.Studio//stable`
-- SDK: `org.freedesktop.Sdk//25.08`
+- SDK: `org.freedesktop.Sdk//26.08`
 - Extension prefix: `/app/plugins/BaconsHelper`
 
 Build locally from the repository root:
@@ -27,3 +27,7 @@ The native Linux build stores the OBS-only credential with Secret Service (`libs
 For Flatpak, Bacons Helper therefore keeps the pairing credential only in memory for the current OBS process. Closing OBS requires pairing again on the next launch. This is less convenient, but it avoids silently writing a reversible credential to disk and keeps the Flatpak package independent of host keyring permissions.
 
 The pairing credential remains channel-scoped and independently revocable from the Bacons Helper dashboard. A future Flatpak build can add persistent storage through a sandbox-appropriate secret mechanism without changing the server-side pairing model.
+
+## OBS 33 plugin-manager layout
+
+The manifest selects `BH_OBS_INSTALL_LAYOUT=FLATPAK`. Extension merge paths are `lib/obs-modules/plugins` and `share/obs/obs-modules/plugins`; `manifest.json` is installed beside the locale/model data. See [OBS 33 installation](../OBS33-PLUGIN-MANAGER.md) for migration and validation details.

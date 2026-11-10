@@ -1,0 +1,16 @@
+{
+  "id": "bacons-helper",
+  "name": "bacons-helper",
+  "display_name": "Bacons Helper OBS Companion",
+  "version": "@PROJECT_VERSION@",
+  "os_arch": "@BH_MANIFEST_OS_ARCH@",
+  "description": "Control Bacons Helper channel settings and live stream tools from an OBS dock.",
+  "long_description": "Pair with Bacons Helper to manage overlays, countdowns, counters, walk-ons, loyalty and giveaways. Includes native offline language detection, reviewed correction packs and local model tuning. Translation requests are handled by the paired Bacons Helper server.",
+  "urls": {
+    "website": "https://baconshelper.com",
+    "repository": "https://github.com/Bacon-Fixation/BH-OBS-Companion",
+    "support": "https://github.com/Bacon-Fixation/BH-OBS-Companion/issues"
+  },
+  "has_icon": false,
+  "has_banner": false
+}

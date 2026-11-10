@@ -4,7 +4,13 @@
 #include "bacons-helper-dock.hpp"
 
 OBS_DECLARE_MODULE()
+OBS_MODULE_AUTHOR("Bacon_Fixation")
 OBS_MODULE_USE_DEFAULT_LOCALE("bacons-helper", "en-US")
+
+MODULE_EXPORT const char *obs_module_name(void)
+{
+	return "Bacons Helper OBS Companion";
+}
 
 MODULE_EXPORT const char *obs_module_description(void)
 {

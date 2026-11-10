@@ -40,7 +40,7 @@ LanguagePanel::LanguagePanel(Sender send, std::function<QString()> session, cons
  enabled_ = new QCheckBox(tr("Run local detector (preview by default)"));
  automatic_ = new QCheckBox(tr("Automatically request translation in chat"));
  threshold_ = new QSpinBox(); threshold_->setRange(82, 100); threshold_->setSuffix(tr("% minimum score"));
- form->addRow(enabled_); form->addRow(automatic_); form->addRow(tr("Confidence"), threshold_);
+ form->addRow(enabled_); form->addRow(automatic_); form->addRow(tr("Translation threshold"), threshold_);
  minimumWords_=new QSpinBox();minimumWords_->setRange(4,20);
  margin_=new QSpinBox();margin_->setRange(0,100);margin_->setSuffix(tr("% minimum candidate gap"));
  clusters_=new QCheckBox(tr("Allow related-language groups when exact language is uncertain"));
@@ -55,7 +55,7 @@ LanguagePanel::LanguagePanel(Sender send, std::function<QString()> session, cons
  suppressedLanguages_->setToolTip(tr("Comma or space separated codes. Detection still runs; matching detected languages cannot trigger translation."));
  auto *cautious=new QPushButton(tr("Use cautious settings (fewer triggers)"));form->addRow(cautious);
  connect(cautious,&QPushButton::clicked,this,[this]{threshold_->setValue(95);minimumWords_->setValue(6);margin_->setValue(15);clusters_->setChecked(false);minimumLetters_->setValue(20);targetMass_->setValue(10);savePreferences();});
- auto *scoreNote=new QLabel(tr("Scores are model evidence, not calibrated probabilities. Stricter settings skip more messages; corrections can improve or worsen predictions."));scoreNote->setWordWrap(true);form->addRow(scoreNote);
+ auto *scoreNote=new QLabel(tr("Language score reflects candidate ranking; translation score reflects evidence that translation is needed. Scores are model evidence, not calibrated probabilities. Stricter settings skip more messages; corrections can improve or worsen predictions."));scoreNote->setWordWrap(true);form->addRow(scoreNote);
 
  status_ = new QLabel(tr("Stopped. Automatic translation is off.")); status_->setWordWrap(true); status_->setTextFormat(Qt::PlainText); form->addRow(status_);
  sample_ = new QLineEdit(); sample_->setMaxLength(2000); sample_->setPlaceholderText(tr("Enter a sentence to test offline"));
@@ -70,12 +70,19 @@ LanguagePanel::LanguagePanel(Sender send, std::function<QString()> session, cons
  applyCorrection_=addAction(tr("Apply previewed correction"),QStringLiteral("apply"));applyCorrection_->setEnabled(false);
  addAction(tr("Ignore this normalized text"),QStringLiteral("ignore"));
  addAction(tr("Import model…"),QStringLiteral("import"));addAction(tr("Export active model…"),QStringLiteral("export"));
+ addAction(tr("Import translation feedback for review…"),QStringLiteral("import-feedback"));
+ addAction(tr("Export reviewed corrections (includes text)…"),QStringLiteral("export-feedback"));
+ auto *feedbackNote=new QLabel(tr("Translation feedback is collected by Bacons Helper only after you enable it. Cleaned messages are kept for 30 days, up to 200 per channel. Provider language labels are suggestions. Exported correction packs contain message text; model exports still omit it."));feedbackNote->setWordWrap(true);modelForm->addRow(feedbackNote);
+ for(const auto &action:QStringList{"list","enable","disable"}){
+  auto *button=new QPushButton(action=="list"?tr("Load channel translation feedback"):action=="enable"?tr("Enable channel feedback collection"):tr("Disable channel feedback collection"));modelForm->addRow(button);
+  connect(button,&QPushButton::clicked,this,[this,action]{channelFeedback(action=="list"?"list":"configure",action=="enable");});
+ }
  addAction(tr("Undo last model change"),QStringLiteral("undo"));addAction(tr("Restore bundled model"),QStringLiteral("reset"));
  auto *privacy=new QLabel(tr("Applied corrections save reviewed messages locally (up to 200). Export includes trained weights and ignored-text hashes, but no raw review messages. Import/reset clears reviews; undo retains one previous local model."));privacy->setWordWrap(true);modelForm->addRow(privacy);
  form->addRow(modelBox);
 
  history_ = new QTreeWidget(); history_->setColumnCount(5);
- history_->setHeaderLabels({tr("Time"), tr("Language"), tr("Confidence"), tr("Decision"), tr("Text")});
+ history_->setHeaderLabels({tr("Time"), tr("Language"), tr("Translation score"), tr("Decision"), tr("Text")});
  history_->setRootIsDecorated(false); history_->setAlternatingRowColors(true);
  history_->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
  history_->header()->setStretchLastSection(true); layout->addWidget(history_, 1);
@@ -115,9 +122,12 @@ LanguagePanel::LanguagePanel(Sender send, std::function<QString()> session, cons
   const auto r=item->data(0,Qt::UserRole).toJsonObject();QStringList candidates,blockers;
   for(const auto &v:r.value("candidates").toArray()){const auto c=v.toObject();candidates.append(c.value("language").toString()+": "+QString::number(c.value("score").toDouble()*100,'f',1)+"%");}
   for(const auto &v:r.value("blockers").toArray())blockers.append(v.toString());
-  details_->setText(tr("Candidates: %1\nTarget score: %2% | Gap: %3% | Useful letters: %4 | Words: %5\nBlocked by: %6")
+  details_->setText(tr("Candidates: %1\nTarget score: %2% | Gap: %3% | Useful letters: %4 | Words: %5\nBlocked by: %6\nLanguage score: %7% | Translation score: %8%\nEvidence: %9")
    .arg(candidates.join(", ")).arg(r.value("targetCandidateScore").toDouble()*100,0,'f',1).arg(r.value("candidateMargin").toDouble()*100,0,'f',1)
-   .arg(r.value("usefulLetters").toInt()).arg(r.value("usefulWords").toInt()).arg(blockers.isEmpty()?tr("None"):blockers.join(", ")));
+   .arg(r.value("usefulLetters").toInt()).arg(r.value("usefulWords").toInt()).arg(blockers.isEmpty()?tr("None"):blockers.join(", "))
+   .arg(r.value("languageConfidence").toDouble(r.value("rawTopConfidence").toDouble())*100,0,'f',1)
+   .arg(r.value("translationConfidence").toDouble(r.value("confidence").toDouble())*100,0,'f',1)
+   .arg(r.value("evidenceReason").toString(r.value("reason").toString())));
  });
  for(auto *field:{sample_,target_,correctLanguage_})connect(field,&QLineEdit::textChanged,this,[this]{applyCorrection_->setEnabled(false);});
  connect(history_,&QTreeWidget::itemSelectionChanged,this,[this]{auto *item=history_->currentItem();if(!item || modelBusy_)return;const auto result=item->data(0,Qt::UserRole).toJsonObject();sample_->setText(result.value(QStringLiteral("text")).toString());target_->setText(result.value(QStringLiteral("target")).toString(QStringLiteral("en")));correctLanguage_->setText(result.value(QStringLiteral("language")).toString(QStringLiteral("en")));});
@@ -125,6 +135,7 @@ LanguagePanel::LanguagePanel(Sender send, std::function<QString()> session, cons
   modelBusy_=false;for(auto *field:{sample_,target_,correctLanguage_})field->setEnabled(true);enabled_->setEnabled(true);for(auto *button:modelButtons_)button->setEnabled(true);applyCorrection_->setEnabled(false);
   if(generation!=generation_)return;
   modelStatus_->setText(report.value(QStringLiteral("message")).toString());
+  if(report.contains("feedbackExamples")){loadFeedback(report.value("feedbackExamples").toArray());modelStatus_->setText(modelStatus_->text()+tr(" Held-out examples: %1.").arg(report.value("heldOutCount").toInt()));}
   applyCorrection_->setEnabled(report.value(QStringLiteral("canApply")).toBool());
   ready_=report.value(QStringLiteral("modelReady")).toBool() && enabled_->isChecked();
   automatic_->setEnabled(ready_);test_->setEnabled(ready_);if(ready_)pollTimer_->start();
@@ -196,7 +207,7 @@ void LanguagePanel::poll()
   if (!body.value(QStringLiteral("enabled")).toBool()) { status_->setText(tr("Enable Translator in the Channel tab to process live chat.")); return; }
   const auto jobs = body.value(QStringLiteral("jobs")).toArray();
   if (!jobs.isEmpty()) dispatch(jobs.first().toObject(), session);
-  else status_->setText(automatic_->isChecked() ? tr("Listening - automatic translation enabled.") : tr("Listening - preview only; no chat messages will be posted."));
+  else status_->setText(automatic_->isChecked() ? tr("Listening — automatic translation enabled.") : tr("Listening — preview only; no chat messages will be posted."));
  });
 }
 void LanguagePanel::dispatch(QJsonObject job, const QString &session)
@@ -232,7 +243,7 @@ void LanguagePanel::handleResult(const QJsonObject &result)
   showResult(result, translate ? tr("Requesting translation") : result.value(QStringLiteral("translate")).toBool() ? tr("Would translate (preview)") : result.value(QStringLiteral("reason")).toString());
   if (!live) return;
   QJsonObject payload{{QStringLiteral("id"), result.value(QStringLiteral("id"))}, {QStringLiteral("translate"), translate},
-   {QStringLiteral("language"), result.value(QStringLiteral("language"))}, {QStringLiteral("confidence"), result.value(QStringLiteral("confidence"))}, {QStringLiteral("automationReliable"), result.value(QStringLiteral("automationReliable"))}};
+   {QStringLiteral("language"), result.value(QStringLiteral("language"))}, {QStringLiteral("confidence"), result.value(QStringLiteral("confidence"))}, {QStringLiteral("automationReliable"), result.value(QStringLiteral("automationReliable"))}, {QStringLiteral("modelVersion"),result.value(QStringLiteral("modelVersion"))}};
   resultBusy_ = true; const int generation = generation_;
   auto *reply = send_(QStringLiteral("/api/obs-plugin/language/result"), payload);
   connect(reply, &QNetworkReply::finished, this, [this, reply, result, session, generation] {
@@ -242,7 +253,12 @@ void LanguagePanel::handleResult(const QJsonObject &result)
    reply->deleteLater();
    if (generation != generation_ || session != session_()) return;
    const QString outcome = ok ? body.value(QStringLiteral("status")).toString() : tr("Request failed; not retried");
-   showResult(result, outcome); status_->setText(outcome);
+   auto reviewed=result;
+   if(body.value("status").toString()=="same-language"){
+    reviewed.insert("language",body.value("sourceLanguage"));
+    reviewed.insert("providerLanguage",body.value("sourceLanguage"));
+   }
+   showResult(reviewed, outcome=="same-language"?tr("Provider says target language — select to review correction"):outcome); status_->setText(outcome);
   });
 }
 void LanguagePanel::showResult(const QJsonObject &result, const QString &action)
@@ -252,12 +268,16 @@ void LanguagePanel::showResult(const QJsonObject &result, const QString &action)
  item->setData(0,Qt::UserRole,result);
  item->setToolTip(3, action); item->setToolTip(4, result.value(QStringLiteral("text")).toString());
  history_->insertTopLevelItem(0, item);
- while (history_->topLevelItemCount() > 100) delete history_->takeTopLevelItem(history_->topLevelItemCount() - 1);
+ while (history_->topLevelItemCount() > 200) delete history_->takeTopLevelItem(history_->topLevelItemCount() - 1);
 }
 
 void LanguagePanel::modelAction(const QString &operation,QJsonObject request)
 {
  if(modelBusy_)return;
+ if(operation==QStringLiteral("import-feedback") || operation==QStringLiteral("export-feedback")){
+  const auto path=operation=="import-feedback"?QFileDialog::getOpenFileName(this,tr("Import language feedback"),{},tr("Feedback pack (*.json)")):QFileDialog::getSaveFileName(this,tr("Export reviewed corrections including text"),QStringLiteral("bh-language-corrections.json"),tr("Feedback pack (*.json)"));
+  if(path.isEmpty())return;request.insert("path",path);
+ }
  if(operation==QStringLiteral("import") || operation==QStringLiteral("export")){
   const QString path=operation==QStringLiteral("import")?QFileDialog::getOpenFileName(this,tr("Import Bacons Helper native model"),{},tr("Native model (*.json)")):QFileDialog::getSaveFileName(this,tr("Export active native model"),QStringLiteral("bacons-helper-model.json"),tr("Native model (*.json)"));
   if(path.isEmpty())return;request.insert(QStringLiteral("path"),path);
@@ -271,4 +291,27 @@ void LanguagePanel::modelAction(const QString &operation,QJsonObject request)
  modelStatus_->setText(tr("Processing model operation locally…"));
  const int generation=++generation_;auto *worker=worker_;
  QMetaObject::invokeMethod(worker,[worker,operation,request,generation]{worker->manage(operation,request,generation);},Qt::QueuedConnection);
+}
+
+void LanguagePanel::loadFeedback(const QJsonArray &rows)
+{
+ history_->clear();
+ for(const auto &v:rows){
+  const auto row=v.toObject();
+  const auto suggestion=row.value("status").toString()=="approved"?row.value("language"):row.value("providerLanguage");
+  showResult(QJsonObject{{"text",row.value("text")},{"target",row.value("targetLanguage")},{"language",suggestion},{"providerLanguage",row.value("providerLanguage")},{"confidence",row.value("confidence")}},tr("Feedback — confirm label, then preview correction"));
+ }
+}
+void LanguagePanel::channelFeedback(const QString &action,bool enabled)
+{
+ const auto session=session_();if(session.isEmpty() || modelBusy_){modelStatus_->setText(tr("Pair OBS with a channel first and wait for model operations to finish."));return;}
+ auto *reply=send_(QStringLiteral("/api/obs-plugin/language/feedback"),{{"action",action},{"enabled",enabled}});
+ connect(reply,&QNetworkReply::finished,this,[this,reply,session]{
+  const auto body=QJsonDocument::fromJson(reply->readAll()).object();
+  const bool ok=reply->error()==QNetworkReply::NoError && body.value("ok").toBool();reply->deleteLater();
+  if(session!=session_())return;
+  if(!ok){modelStatus_->setText(tr("Feedback unavailable. Update Bacons Helper and check pairing."));return;}
+  loadFeedback(body.value("rows").toArray());
+  modelStatus_->setText(body.value("enabled").toBool()?tr("Channel feedback collection enabled. Select a row to review its suggested language."):tr("Channel feedback collection disabled. Existing examples remain available for review."));
+ });
 }

@@ -6,6 +6,7 @@ asset_directory="${1:-release-assets}"
 # Validate all packages before making any release changes.
 assets=(
   "$asset_directory/bacons-helper-windows-x64.zip"
+  "$asset_directory/bacons-helper-windows-x64-obs31.1-32.zip"
   "$asset_directory/bacons-helper-linux-x86_64.tar.gz"
   "$asset_directory/bacons-helper-obs-flatpak-x86_64.flatpak"
 )

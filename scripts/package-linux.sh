@@ -44,6 +44,7 @@ echo "  Qt6_DIR=$qt6_dir"
 pkg-config --modversion libsecret-1
 
 cmake --preset ubuntu-x86_64 --fresh \
+  -DBH_OBS_INSTALL_LAYOUT=BUNDLE \
   -Dlibobs_DIR="$libobs_dir" \
   -Dobs-frontend-api_DIR="$frontend_dir" \
   -DQt6_DIR="$qt6_dir"
@@ -60,12 +61,17 @@ if [[ -z "$plugin" ]]; then
   exit 1
 fi
 
-locale="$(find "$root/dist/linux-x86_64" -type f -path '*/obs-plugins/bacons-helper/locale/en-US.ini' -print -quit)"
+locale="$(find "$root/dist/linux-x86_64" -type f -path '*/bacons-helper/data/locale/en-US.ini' -print -quit)"
 if [[ -z "$locale" ]]; then
   find "$root/dist/linux-x86_64" -type f -print
   echo 'Expected en-US.ini was not staged.' >&2
   exit 1
 fi
+
+test -s "$root/dist/linux-x86_64/bacons-helper/data/manifest.json"
+cp scripts/install-linux.sh "$root/dist/linux-x86_64/install-linux.sh"
+chmod +x "$root/dist/linux-x86_64/install-linux.sh"
+cp OBS33-PLUGIN-MANAGER.md "$root/dist/linux-x86_64/OBS33-PLUGIN-MANAGER.md"
 
 # Show dynamic dependencies in CI so a bad link is obvious before packaging.
 ldd "$plugin" || true

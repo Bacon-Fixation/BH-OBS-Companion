@@ -18,7 +18,7 @@ flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flath
 rm -rf "$builddir" "$repo"
 mkdir -p "$root/dist"
 
-# Let flatpak-builder resolve the OBS runtime and matching 25.08 SDK itself.
+# Let flatpak-builder resolve the OBS runtime and matching 26.08 SDK itself.
 # This avoids a second, separately-maintained runtime-install step in CI.
 flatpak-builder \
   --user \

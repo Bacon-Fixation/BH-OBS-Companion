@@ -2,6 +2,7 @@
 #include <QWidget>
 #include <QByteArray>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QList>
 #include <functional>
 class QCheckBox;
@@ -36,6 +37,8 @@ private:
  QList<QPushButton *> modelButtons_;
  bool modelBusy_ = false;
  QString modelStorage_;
+ void loadFeedback(const QJsonArray &rows);
+ void channelFeedback(const QString &action, bool enabled = false);
  void modelAction(const QString &operation, QJsonObject request = {});
  QPushButton *test_;
  QLabel *status_;

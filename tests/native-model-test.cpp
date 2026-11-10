@@ -1,5 +1,6 @@
 #include "native-language-detector.hpp"
 #include "native-language-worker.hpp"
+#include "language-feedback.hpp"
 #include <QCoreApplication>
 #include <QTemporaryDir>
 #include <QJsonDocument>
@@ -59,6 +60,24 @@ int main(int argc,char **argv)
   check(!action("preview",{{"text","hi"},{"target","en"},{"language","en"}}),"short correction rejected");
   check(!action("apply"),"failed preview invalidates old candidate");
   check(!action("export",{{"path",active}}),"export cannot overwrite active local review store");
+  const auto beforeFeedback=finalModel.package();
+  const QJsonArray feedbackRows{QJsonObject{{"text",job.value("text")},{"language","es"},{"target","en"}}};
+  LanguageFeedback::write(path,feedbackRows);
+  const auto shared=LanguageFeedback::read(path);check(shared.size()==1,"shared feedback pack round trip");
+  check(shared.first().toObject().value("status")=="approved","export contains explicitly reviewed labels");
+  check(action("import-feedback",{{"path",path}}),"import feedback stages examples");
+  check(report.value("feedbackExamples").toArray().size()==1,"import exposes review text");
+  NativeLanguageDetector unchanged(active);check(unchanged.package()==beforeFeedback,"feedback import never changes model");
+  check(!action("apply"),"feedback import requires new preview");
+  check(action("export-feedback",{{"path",path}}),"export local correction examples");
+  check(!action("export-feedback",{{"path",active}}),"feedback cannot overwrite model");
+  auto heldout=LanguageFeedback::pack(feedbackRows);auto heldRows=heldout.value("examples").toArray();auto held=heldRows.first().toObject();held.insert("set","evaluation");heldRows[0]=held;heldout.insert("examples",heldRows);
+  NativeLanguageDetector::writePackage(path,heldout);
+  check(action("import-feedback",{{"path",path}}),"import held-out examples");
+  check(report.value("feedbackExamples").toArray().isEmpty() && report.value("heldOutCount").toInt()==1,"held-out rows excluded from correction list");
+  check(!action("preview",{{"text",job.value("text")},{"target","en"},{"language","es"}}),"held-out example cannot train detector");
+  heldout.insert("formatVersion",99);NativeLanguageDetector::writePackage(path,heldout);check(!action("import-feedback",{{"path",path}}),"unsupported feedback format rejected");
+  check(!action("apply"),"invalid import cannot enable candidate apply");
   QTextStream(stdout)<<"Native model management: "<<checks<<" checks passed\n";return 0;
  }catch(const std::exception &error){QTextStream(stderr)<<"After "<<checks<<" checks: "<<error.what()<<"\n";return 1;}
 }

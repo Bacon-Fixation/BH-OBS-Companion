@@ -1,10 +1,12 @@
 # Bacons Helper OBS Companion
 
+Current source: **0.7.6 Proto**. OBS Studio 33 plugin-manager metadata and modern install packaging are included. See [OBS 33 plugin manager](OBS33-PLUGIN-MANAGER.md) for install/migration steps. The expanded language model and feedback features are retained.
+
 Native OBS Studio dock for controlling supported Bacons Helper channel settings and live tools without leaving OBS.
 
 ## 0.7.0 Proto: native model management and tuning
 
-Language detection runs locally on a background thread with the model bundled in the plugin data. Translation requests go only to Bacons Helper server. 
+Language detection runs locally in C++ on a background thread with the model bundled in the plugin data. No Node installation or separate detector service is required. Translation requests go only to the paired Bacons Helper server. See [LOCAL_TRANSLATION.md](LOCAL_TRANSLATION.md) for setup, tests and limits.
 
 Import/export native models, preview and apply labeled corrections, undo changes, ignore repeated phrases, and tune minimum score, word count and candidate separation. See [MODEL_TUNING.md](MODEL_TUNING.md) for the workflow and score limitations.
 
@@ -15,6 +17,7 @@ Import/export native models, preview and apply labeled corrections, undo changes
 - Configure Win/Loss, Death Counter, Shot Counter, and Credits overlays directly from OBS.
 - Install or update Bacons Helper Browser Sources in the current OBS scene without copying URLs manually.
 - Send Stream Event test notifications from the native dock.
+- Review **Command History** for the paired Twitch channel. Use **Latest** or **Older** to browse pages of 50, search the current page, and select a row to read its recorded output. The Bacons Helper Twitch server needs the Companion history update.
 - Review recent channel activity in a searchable **Event History** tab, including raids, subs/resub milestones, follows, cheers, redemptions, winners, Walk-Ons, and successful follow-bot moderation.
 - Start and cancel the existing Bacons Helper countdown, including 30-second, 1-minute, 2-minute, and 5-minute presets with a live remaining-time display.
 - Use **Live Controls** to select and adjust saved per-game Death Counters without leaving OBS.
@@ -61,6 +64,7 @@ Pairing codes are single-use and expire after a short period. Disconnecting from
 ├─ src/
 ├─ CMakeLists.txt
 ├─ CMakePresets.json
+├─ CHANGELOG.md
 └─ README.md
 ```
 
@@ -78,30 +82,14 @@ Build and package:
 .\scripts\package-windows.ps1
 ```
 
-If `BH_OBS_CMAKE_PREFIX_PATH` is not set, the packaging script uses the official OBS plugin-template bootstrap to prepare `libobs`, `obs-frontend-api`, and an OBS-compatible Qt 6 development environment.
+The Windows packaging script uses a pinned OBS 31.1.1 SDK and prepares the matching Qt development environment. It creates both ZIPs in `dist`.
 
-If you already have an OBS/Qt development environment:
+| OBS Studio | Windows x64 package |
+| --- | --- |
+| 31.1.x and 32.x | `bacons-helper-windows-x64-obs31.1-32.zip` |
+| 33.x | `bacons-helper-windows-x64.zip` |
 
-```powershell
-$env:BH_OBS_CMAKE_PREFIX_PATH = 'C:\path\to\obs-sdk;C:\path\to\qt6'
-.\scripts\package-windows.ps1 -NoBootstrap
-```
-
-Output:
-
-```text
-dist/bacons-helper-windows-x64.zip
-```
-
-The packaged OBS layout contains:
-
-```text
-obs-plugins/64bit/bacons-helper.dll
-data/obs-plugins/bacons-helper/locale/en-US.ini
-data/obs-plugins/bacons-helper/qt-plugins/tls/qschannelbackend.dll
-```
-
-Copy those directories into the OBS Studio installation directory.
+See [Windows compatibility and installation](OBS-WINDOWS-COMPATIBILITY.md) for the installed and portable layouts and the environment variables for custom SDK builds.
 
 The Windows package intentionally ships the Schannel TLS plugin from the same
 OBS-compatible Qt dependency tree used to compile the companion. It is kept
@@ -132,6 +120,8 @@ Output:
 ```text
 dist/bacons-helper-linux-x86_64.tar.gz
 ```
+
+Extract the built archive into a temporary directory and run `bash install-linux.sh --migrate-legacy`. This installs the OBS 33 user bundle under `$XDG_DATA_HOME/obs-studio/plugins` (default `~/.local/share/obs-studio/plugins`).
 
 ## OBS Flatpak build
 
@@ -199,5 +189,10 @@ On Windows, do **not** run `cmake --preset windows-x64` first on a fresh clone. 
 
 The script uses the official OBS plugin-template bootstrap, resolves `libobs_DIR`, `obs-frontend-api_DIR`, and `Qt6_DIR`, configures the project, builds it, and creates `dist\bacons-helper-windows-x64.zip`. After the first successful bootstrap, advanced users may reuse the resolved package directories for manual CMake builds.
 
-**Much Love,**
-**-Bacon**
+## Translation feedback
+
+Collect and review translation-provider language disagreements, then share approved examples between native OBS and Language Guesser. See [Translation feedback](TRANSLATION-FEEDBACK.md) for setup, review, training, and evaluation steps.
+
+## Expanded chat training model
+
+The bundled model adds 428 labeled chat examples across 24 languages. See [Model training update](MODEL-TRAINING-UPDATE.md) for measured accuracy, coverage tradeoffs, local custom-model migration, and reproduction steps.

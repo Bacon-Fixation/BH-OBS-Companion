@@ -29,6 +29,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
@@ -47,6 +48,7 @@
 #include <QTreeWidgetItem>
 #include <QtNumeric>
 #include <QUrl>
+#include <QUrlQuery>
 #include <QVBoxLayout>
 
 #include <cstring>
@@ -58,6 +60,16 @@
 
 namespace {
 constexpr auto kDefaultServer = "https://baconshelper.com";
+
+QString historyTimeText(const QString &value)
+{
+	QDateTime timestamp = QDateTime::fromString(value, Qt::ISODateWithMs);
+	if (!timestamp.isValid())
+		timestamp = QDateTime::fromString(value, Qt::ISODate);
+	return timestamp.isValid()
+		? timestamp.toLocalTime().toString(QStringLiteral("MMM d HH:mm:ss"))
+		: QStringLiteral("—");
+}
 
 QString configPath()
 {
@@ -245,11 +257,13 @@ BaconsHelperDock::BaconsHelperDock(QWidget *parent) : QWidget(parent)
 	setControlsEnabled(!token_.isEmpty());
 	if (!token_.isEmpty()) {
 		refresh();
+		if (commandHistorySelected_)
+			refreshCommandHistory();
 	} else if (!credentialStorageWarning_.isEmpty()) {
-		setStatus(QStringLiteral("⚠ Not paired - secure credential storage is unavailable: %1")
+		setStatus(QStringLiteral("⚠ Not paired — secure credential storage is unavailable: %1")
 				  .arg(credentialStorageWarning_), false);
 	} else {
-		setStatus(QStringLiteral("✕ Not paired - generate a code in the Bacons Helper dashboard."), false);
+		setStatus(QStringLiteral("✕ Not paired — generate a code in the Bacons Helper dashboard."), false);
 	}
 }
 
@@ -737,6 +751,53 @@ void BaconsHelperDock::buildUi()
 	toolsLayout->addStretch();
 	tabs->addTab(toolsTab, QStringLiteral("More"));
 
+	auto *commandHistoryTab = new QWidget();
+	auto *commandHistoryLayout = new QVBoxLayout(commandHistoryTab);
+	auto *commandHistoryToolbar = new QHBoxLayout();
+	commandHistorySearch_ = new QLineEdit();
+	commandHistorySearch_->setPlaceholderText(QStringLiteral("Search this page"));
+	commandHistorySearch_->setAccessibleName(QStringLiteral("Search command history"));
+	commandHistorySearch_->setClearButtonEnabled(true);
+	commandHistoryLatest_ = new QPushButton(QStringLiteral("Latest"));
+	commandHistoryOlder_ = new QPushButton(QStringLiteral("Older"));
+	commandHistoryToolbar->addWidget(commandHistorySearch_, 1);
+	commandHistoryToolbar->addWidget(commandHistoryLatest_);
+	commandHistoryToolbar->addWidget(commandHistoryOlder_);
+	commandHistoryLayout->addLayout(commandHistoryToolbar);
+
+	commandHistoryTree_ = new QTreeWidget();
+	commandHistoryTree_->setColumnCount(4);
+	commandHistoryTree_->setHeaderLabels({QStringLiteral("Time"), QStringLiteral("User"),
+					       QStringLiteral("Command"), QStringLiteral("Output")});
+	commandHistoryTree_->setRootIsDecorated(false);
+	commandHistoryTree_->setAlternatingRowColors(true);
+	commandHistoryTree_->setUniformRowHeights(true);
+	commandHistoryTree_->setSelectionMode(QAbstractItemView::SingleSelection);
+	commandHistoryTree_->header()->setSectionResizeMode(QHeaderView::Interactive);
+	commandHistoryTree_->setColumnWidth(0, 118);
+	commandHistoryTree_->setColumnWidth(1, 90);
+	commandHistoryTree_->setColumnWidth(2, 108);
+	commandHistoryLayout->addWidget(commandHistoryTree_, 1);
+
+	commandHistoryOutput_ = new QPlainTextEdit();
+	commandHistoryOutput_->setReadOnly(true);
+	commandHistoryOutput_->setAccessibleName(QStringLiteral("Recorded command output"));
+	commandHistoryOutput_->setPlaceholderText(QStringLiteral("Select a command to read its recorded output."));
+	commandHistoryOutput_->setMaximumHeight(90);
+	commandHistoryLayout->addWidget(commandHistoryOutput_);
+	commandHistoryStatus_ = new QLabel(QStringLiteral("Pair to load command history."));
+	commandHistoryStatus_->setWordWrap(true);
+	commandHistoryLayout->addWidget(commandHistoryStatus_);
+	const int commandHistoryIndex = tabs->addTab(commandHistoryTab, QStringLiteral("Command History"));
+
+	connect(commandHistoryLatest_, &QPushButton::clicked, this, [this] { refreshCommandHistory(); });
+	connect(commandHistoryOlder_, &QPushButton::clicked, this, [this] { refreshCommandHistory(commandHistoryNextBefore_); });
+	connect(commandHistorySearch_, &QLineEdit::textChanged, this, [this] { filterCommandHistory(); });
+	connect(commandHistoryTree_, &QTreeWidget::currentItemChanged, this, [this](QTreeWidgetItem *item) {
+		const QString output = item ? item->data(3, Qt::UserRole).toString() : QString{};
+		commandHistoryOutput_->setPlainText(item && output.isEmpty() ? QStringLiteral("No output recorded") : output);
+	});
+
 	connect(pairButton_, &QPushButton::clicked, this, &BaconsHelperDock::pair);
 	connect(disconnectButton_, &QPushButton::clicked, this, &BaconsHelperDock::disconnectAccount);
 	connect(refreshButton_, &QPushButton::clicked, this, &BaconsHelperDock::refresh);
@@ -747,7 +808,7 @@ void BaconsHelperDock::buildUi()
 	connect(countdownPreset120_, &QPushButton::clicked, this, [this] { startCountdownPreset(120); });
 	connect(countdownPreset300_, &QPushButton::clicked, this, [this] { startCountdownPreset(300); });
 	connect(testEventButton_, &QPushButton::clicked, this, &BaconsHelperDock::testStreamEvent);
-	connect(historyRefreshButton_, &QPushButton::clicked, this, &BaconsHelperDock::refreshEventHistory);
+	connect(historyRefreshButton_, &QPushButton::clicked, this, [this] { refreshEventHistory(); });
 	connect(historyFilter_, &QComboBox::currentIndexChanged, this, [this](int) { filterEventHistory(); });
 	connect(historySearch_, &QLineEdit::textChanged, this, [this](const QString &) { filterEventHistory(); });
 	connect(deathCounterSelect_, &QComboBox::currentIndexChanged, this, [this](int) { updateDeathCounterSelection(); });
@@ -825,15 +886,23 @@ void BaconsHelperDock::buildUi()
 		if (!applyingState_) saveOverlaySettings(QStringLiteral("credits"));
 	});
 
+	// Resolve older saved indices before reordering the dropdown.
+	QSettings navigation(configPath(), QSettings::IniFormat);
+	const int legacyIndex = qBound(0, navigation.value(QStringLiteral("ui/tab"), 0).toInt(), tabs->count() - 1);
+	const QString savedSection = navigation.value(QStringLiteral("ui/section"), tabs->tabText(legacyIndex)).toString();
+	tabs->tabBar()->moveTab(commandHistoryIndex, tabs->indexOf(historyTab));
 	for (int index = 0; index < tabs->count(); ++index)
 		navigationSelector->addItem(tabs->tabText(index));
 	connect(navigationSelector, qOverload<int>(&QComboBox::currentIndexChanged), tabs, &QTabWidget::setCurrentIndex);
 	connect(tabs, &QTabWidget::currentChanged, navigationSelector, &QComboBox::setCurrentIndex);
-	QSettings navigation(configPath(), QSettings::IniFormat);
-	tabs->setCurrentIndex(qBound(0, navigation.value(QStringLiteral("ui/tab"), 0).toInt(), tabs->count() - 1));
-	connect(tabs, &QTabWidget::currentChanged, this, [](int index) {
+	tabs->setCurrentIndex(qMax(0, navigationSelector->findText(savedSection)));
+	commandHistorySelected_ = tabs->currentWidget() == commandHistoryTab;
+	connect(tabs, &QTabWidget::currentChanged, this, [this, tabs, commandHistoryTab](int index) {
 		QSettings settings(configPath(), QSettings::IniFormat);
-		settings.setValue(QStringLiteral("ui/tab"), index);
+		settings.setValue(QStringLiteral("ui/section"), tabs->tabText(index));
+		commandHistorySelected_ = tabs->currentWidget() == commandHistoryTab;
+		if (commandHistorySelected_ && commandHistoryBefore_.isEmpty())
+			refreshCommandHistory();
 	});
 	refreshTimer_ = new QTimer(this);
 	refreshTimer_->setInterval(30000);
@@ -977,7 +1046,10 @@ void BaconsHelperDock::setControlsEnabled(bool enabled)
 	testEventButton_->setEnabled(enabled);
 	historyFilter_->setEnabled(enabled);
 	historySearch_->setEnabled(enabled);
-	historyRefreshButton_->setEnabled(enabled);
+	historyRefreshButton_->setEnabled(enabled && !historyRefreshInFlight_);
+	commandHistorySearch_->setEnabled(enabled);
+	commandHistoryLatest_->setEnabled(enabled && !commandHistoryInFlight_);
+	commandHistoryOlder_->setEnabled(enabled && !commandHistoryInFlight_ && !commandHistoryNextBefore_.isEmpty());
 	for (auto *button : sourceInstallButtons_)
 		button->setEnabled(enabled);
 	countdownSeconds_->setEnabled(enabled);
@@ -1032,9 +1104,13 @@ QUrl BaconsHelperDock::endpoint(const QString &path) const
 	return base;
 }
 
-QNetworkReply *BaconsHelperDock::sendJson(const QByteArray &method, const QString &path, const QJsonObject &payload)
+QNetworkReply *BaconsHelperDock::sendJson(const QByteArray &method, const QString &path,
+					  const QJsonObject &payload, const QUrlQuery *query)
 {
-	QNetworkRequest request(endpoint(path));
+	QUrl url = endpoint(path);
+	if (query)
+		url.setQuery(*query);
+	QNetworkRequest request(url);
 	request.setTransferTimeout(15000);
 	// Never allow an authenticated request to follow a redirect to another
 	// origin. This keeps the channel-scoped bearer credential pinned to the
@@ -1077,6 +1153,8 @@ void BaconsHelperDock::handleAuthFailure(QNetworkReply *reply)
 {
 	if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 401) {
 		token_.clear();
+		refreshInFlight_ = false;
+		clearHistories();
 		browserSourceUrls_.clear();
 		saveLocalSettings();
 		setControlsEnabled(false);
@@ -1146,6 +1224,8 @@ void BaconsHelperDock::pair()
 			setStatus(QStringLiteral("⚠ Paired for this OBS session, but secure credential storage failed: %1").arg(credentialError), false);
 		reply->deleteLater();
 		refresh();
+		if (commandHistorySelected_)
+			refreshCommandHistory();
 	});
 }
 
@@ -1175,7 +1255,7 @@ void BaconsHelperDock::disconnectAccount()
 	}
 	pairReply_.clear();
 	refreshInFlight_ = false;
-	historyRefreshInFlight_ = false;
+	clearHistories();
 	overlaySettings_.clear();
 	dashboardLinks_.clear();
 	browserSourceUrls_.clear();
@@ -1184,8 +1264,6 @@ void BaconsHelperDock::disconnectAccount()
 	loyaltyState_ = QJsonObject{};
 	deathCounterSelect_->clear();
 	walkOnSelect_->clear();
-	if (historyTree_) historyTree_->clear();
-	if (historyStatus_) historyStatus_->setText(QStringLiteral("Pair again to load event history."));
 	countdownEndTime_ = 0;
 	updateCountdownStatus();
 	if (sourceStatus_)
@@ -1223,71 +1301,197 @@ void BaconsHelperDock::refresh()
 	if (token_.isEmpty() || !validateServerUrl() || refreshInFlight_)
 		return;
 	refreshInFlight_ = true;
+	refreshEventHistory();
 	setStatus(QStringLiteral("… Refreshing Bacons Helper settings…"), true);
+	const QString requestToken = token_;
 	auto *reply = sendJson("GET", QStringLiteral("/api/obs-plugin/settings"));
-	connect(reply, &QNetworkReply::finished, this, [this, reply] {
+	connect(reply, &QNetworkReply::finished, this, [this, reply, requestToken] {
+		reply->deleteLater();
+		if (token_ != requestToken)
+			return;
 		refreshInFlight_ = false;
 		const QByteArray bytes = reply->readAll();
 		if (reply->error() != QNetworkReply::NoError) {
 			handleAuthFailure(reply);
 			if (!token_.isEmpty())
 				setStatus(QStringLiteral("⚠ Unable to refresh. Existing settings remain visible."), false);
-			reply->deleteLater();
 			return;
 		}
 		const QJsonDocument doc = QJsonDocument::fromJson(bytes);
 		if (!doc.isObject() || !doc.object().value(QStringLiteral("ok")).toBool()) {
 			setStatus(QStringLiteral("⚠ Bacons Helper returned an unexpected response."), false);
-			reply->deleteLater();
 			return;
 		}
 		applySettingsPayload(doc.object());
-		refreshEventHistory();
 		if (!credentialStorageWarning_.isEmpty()) {
 			setStatus(QStringLiteral("⚠ Connected for this OBS session, but the pairing cannot be stored securely: %1")
 					  .arg(credentialStorageWarning_), false);
 		} else {
-			setStatus(QStringLiteral("✓ Connected - settings are synchronized with Bacons Helper."), true);
+			setStatus(QStringLiteral("✓ Connected — settings are synchronized with Bacons Helper."), true);
 		}
-		reply->deleteLater();
 	});
 }
 
-void BaconsHelperDock::refreshEventHistory()
+void BaconsHelperDock::refreshEventHistory(bool queueIfBusy)
 {
-	if (token_.isEmpty() || !validateServerUrl() || historyRefreshInFlight_)
+	if (token_.isEmpty() || !validateServerUrl())
 		return;
+	if (historyRefreshInFlight_) {
+		historyRefreshQueued_ = historyRefreshQueued_ || queueIfBusy;
+		return;
+	}
 	historyRefreshInFlight_ = true;
-	if (historyRefreshButton_)
-		historyRefreshButton_->setEnabled(false);
-	if (historyStatus_)
-		historyStatus_->setText(QStringLiteral("Refreshing recent events…"));
+	historyRefreshButton_->setEnabled(false);
+	historyStatus_->setText(QStringLiteral("Refreshing recent events…"));
 
+	const QString requestToken = token_;
 	auto *reply = sendJson("GET", QStringLiteral("/api/obs-plugin/event-history"));
-	connect(reply, &QNetworkReply::finished, this, [this, reply] {
+	connect(reply, &QNetworkReply::finished, this, [this, reply, requestToken] {
+		reply->deleteLater();
+		if (token_ != requestToken)
+			return;
 		historyRefreshInFlight_ = false;
-		if (historyRefreshButton_)
-			historyRefreshButton_->setEnabled(!token_.isEmpty());
-		const QByteArray bytes = reply->readAll();
+		if (historyRefreshQueued_) {
+			historyRefreshQueued_ = false;
+			QTimer::singleShot(0, this, [this, requestToken] {
+				if (token_ == requestToken)
+					refreshEventHistory(true);
+			});
+		}
+		historyRefreshButton_->setEnabled(true);
 		if (reply->error() != QNetworkReply::NoError) {
 			handleAuthFailure(reply);
-			if (!token_.isEmpty() && historyStatus_)
-				historyStatus_->setText(QStringLiteral("Could not refresh event history. Existing rows remain visible."));
-			reply->deleteLater();
+			if (!token_.isEmpty())
+				historyStatus_->setText(QStringLiteral("Could not refresh event history. Showing any previously loaded events."));
 			return;
 		}
 
-		const QJsonDocument doc = QJsonDocument::fromJson(bytes);
-		if (!doc.isObject() || !doc.object().value(QStringLiteral("ok")).toBool()) {
-			if (historyStatus_)
-				historyStatus_->setText(QStringLiteral("Bacons Helper returned an unexpected history response."));
-			reply->deleteLater();
+		const QJsonObject response = QJsonDocument::fromJson(reply->readAll()).object();
+		const QJsonValue events = response.value(QStringLiteral("events"));
+		if (!response.value(QStringLiteral("ok")).toBool() || !events.isArray()) {
+			historyStatus_->setText(QStringLiteral("Bacons Helper returned an unexpected event history response."));
 			return;
 		}
-
-		applyEventHistory(doc.object().value(QStringLiteral("events")).toArray());
-		reply->deleteLater();
+		applyEventHistory(events.toArray());
 	});
+}
+
+void BaconsHelperDock::refreshCommandHistory(const QString &before)
+{
+	if (token_.isEmpty() || !validateServerUrl() || commandHistoryInFlight_)
+		return;
+	commandHistoryInFlight_ = true;
+	commandHistoryLatest_->setEnabled(false);
+	commandHistoryOlder_->setEnabled(false);
+	commandHistoryStatus_->setText(QStringLiteral("Loading command history…"));
+
+	QUrlQuery query;
+	if (!before.isEmpty())
+		query.addQueryItem(QStringLiteral("before"), before);
+	const QString requestToken = token_;
+	auto *reply = sendJson("GET", QStringLiteral("/api/obs-plugin/command-history"), {}, &query);
+	connect(reply, &QNetworkReply::finished, this, [this, reply, requestToken, before] {
+		reply->deleteLater();
+		if (token_ != requestToken)
+			return;
+		commandHistoryInFlight_ = false;
+		commandHistoryLatest_->setEnabled(true);
+		commandHistoryOlder_->setEnabled(!commandHistoryNextBefore_.isEmpty());
+		if (reply->error() != QNetworkReply::NoError) {
+			handleAuthFailure(reply);
+			if (token_.isEmpty())
+				return;
+			const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+			const bool missingEndpoint = status == 404 && !QJsonDocument::fromJson(reply->readAll()).isObject();
+			commandHistoryStatus_->setText(missingEndpoint
+				? QStringLiteral("Update the Bacons Helper server to use Command History in OBS.")
+				: QStringLiteral("Could not load command history. Try Latest or Older again."));
+			return;
+		}
+
+		const QJsonObject response = QJsonDocument::fromJson(reply->readAll()).object();
+		const QJsonValue commands = response.value(QStringLiteral("commands"));
+		const QJsonValue nextBefore = response.value(QStringLiteral("nextBefore"));
+		if (!response.value(QStringLiteral("ok")).toBool() || !commands.isArray() ||
+			(!nextBefore.isNull() && !nextBefore.isString())) {
+			commandHistoryStatus_->setText(QStringLiteral("Bacons Helper returned an unexpected command history response."));
+			return;
+		}
+		commandHistoryBefore_ = before;
+		commandHistoryNextBefore_ = nextBefore.toString();
+		commandHistoryOlder_->setEnabled(!commandHistoryNextBefore_.isEmpty());
+		applyCommandHistory(commands.toArray());
+	});
+}
+
+void BaconsHelperDock::applyCommandHistory(const QJsonArray &commands)
+{
+	commandHistoryTree_->clear();
+	commandHistoryOutput_->clear();
+	for (const auto &value : commands) {
+		const QJsonObject command = value.toObject();
+		const QString time = historyTimeText(command.value(QStringLiteral("timestamp")).toString());
+		const QString user = command.value(QStringLiteral("user")).toString();
+		const QString name = command.value(QStringLiteral("command")).toString();
+		const QString alias = command.value(QStringLiteral("alias")).toString();
+		const QString output = command.value(QStringLiteral("output")).toString();
+		const QString label = alias.isEmpty() ? name : alias;
+		auto *item = new QTreeWidgetItem(commandHistoryTree_, {
+			time, user.isEmpty() ? QStringLiteral("—") : user,
+			label.isEmpty() ? QStringLiteral("—") : label,
+			output.isEmpty() ? QStringLiteral("No output recorded") : output.simplified()
+		});
+		if (!name.isEmpty() && name != label)
+			item->setToolTip(2, QStringLiteral("<span>%1</span>").arg(name.toHtmlEscaped()));
+		item->setData(0, Qt::UserRole, QStringList{time, user, alias, name, output}.join(QLatin1Char(' ')));
+		item->setData(3, Qt::UserRole, output);
+	}
+	filterCommandHistory();
+}
+
+void BaconsHelperDock::filterCommandHistory()
+{
+	const QString search = commandHistorySearch_->text().trimmed();
+	int visible = 0;
+	const int count = commandHistoryTree_->topLevelItemCount();
+	for (int index = 0; index < count; ++index) {
+		auto *item = commandHistoryTree_->topLevelItem(index);
+		const bool matches = item->data(0, Qt::UserRole).toString().contains(search, Qt::CaseInsensitive);
+		item->setHidden(!matches);
+		visible += matches;
+	}
+	auto *current = commandHistoryTree_->currentItem();
+	if (current && current->isHidden()) {
+		commandHistoryTree_->setCurrentItem(nullptr);
+		commandHistoryTree_->clearSelection();
+		commandHistoryOutput_->clear();
+	}
+	if (token_.isEmpty() || commandHistoryInFlight_)
+		return;
+	if (count == 0) {
+		commandHistoryStatus_->setText(commandHistoryBefore_.isEmpty()
+			? QStringLiteral("No command runs found for this channel.")
+			: QStringLiteral("No older command runs found."));
+		return;
+	}
+	commandHistoryStatus_->setText(QStringLiteral("%1 of %2 commands on this page · Times shown in your local time")
+		.arg(visible).arg(count));
+}
+
+void BaconsHelperDock::clearHistories()
+{
+	historyRefreshInFlight_ = false;
+	historyRefreshQueued_ = false;
+	historyTree_->clear();
+	historySearch_->clear();
+	historyStatus_->setText(QStringLiteral("Pair again to load event history."));
+	commandHistoryInFlight_ = false;
+	commandHistoryBefore_.clear();
+	commandHistoryNextBefore_.clear();
+	commandHistoryTree_->clear();
+	commandHistoryOutput_->clear();
+	commandHistorySearch_->clear();
+	commandHistoryStatus_->setText(QStringLiteral("Pair again to load command history."));
 }
 
 void BaconsHelperDock::applyEventHistory(const QJsonArray &events)
@@ -1345,24 +1549,21 @@ void BaconsHelperDock::applyEventHistory(const QJsonArray &events)
 		const QString amount = event.value(QStringLiteral("amount")).toString();
 		QString details;
 		if (!title.isEmpty()) details += title;
-		if (!message.isEmpty()) details += (details.isEmpty() ? QString{} : QStringLiteral(" - ")) + message;
+		if (!message.isEmpty()) details += (details.isEmpty() ? QString{} : QStringLiteral(" — ")) + message;
 		if (!amount.isEmpty()) details += (details.isEmpty() ? QString{} : QStringLiteral(" • ")) + amount;
 
-		QDateTime timestamp = QDateTime::fromString(event.value(QStringLiteral("occurredAt")).toString(), Qt::ISODateWithMs);
-		if (!timestamp.isValid())
-			timestamp = QDateTime::fromString(event.value(QStringLiteral("occurredAt")).toString(), Qt::ISODate);
-		const QString timeText = timestamp.isValid()
-			? timestamp.toLocalTime().toString(QStringLiteral("MMM d HH:mm:ss"))
-			: QStringLiteral("-");
-
+		const bool isTest = event.value(QStringLiteral("source")).toString() == QStringLiteral("obs-test");
+		const QString label = eventLabel(eventName);
 		auto *item = new QTreeWidgetItem(historyTree_);
-		item->setText(0, timeText);
-		item->setText(1, eventLabel(eventName));
-		item->setText(2, username.isEmpty() ? QStringLiteral("-") : username);
-		item->setText(3, details.isEmpty() ? QStringLiteral("-") : details);
+		item->setText(0, historyTimeText(event.value(QStringLiteral("occurredAt")).toString()));
+		item->setText(1, isTest ? QStringLiteral("%1 (test)").arg(label) : label);
+		item->setText(2, username.isEmpty() ? QStringLiteral("—") : username);
+		item->setText(3, details.isEmpty() ? QStringLiteral("—") : details);
+		if (!details.isEmpty())
+			item->setToolTip(3, QStringLiteral("<span>%1</span>").arg(details.toHtmlEscaped()));
 		item->setData(0, Qt::UserRole, categoryFor(eventName));
 		item->setData(0, Qt::UserRole + 1,
-			QStringLiteral("%1 %2 %3 %4 %5").arg(eventName, username, title, message, amount).toLower());
+			QStringList{eventName, item->text(1), username, title, message, amount}.join(QLatin1Char(' ')).toLower());
 	}
 
 	filterEventHistory();
@@ -1482,7 +1683,7 @@ void BaconsHelperDock::applySettingsPayload(const QJsonObject &payload)
 			continue;
 		deathCounters_.insert(counterId, counter);
 		deathCounterSelect_->addItem(
-			QStringLiteral("%1 - %2").arg(counter.value(QStringLiteral("gameName")).toString(QStringLiteral("Unknown game")))
+			QStringLiteral("%1 — %2").arg(counter.value(QStringLiteral("gameName")).toString(QStringLiteral("Unknown game")))
 				.arg(counter.value(QStringLiteral("total")).toInt()),
 			counterId);
 	}
@@ -1593,7 +1794,8 @@ void BaconsHelperDock::testStreamEvent()
 		} else {
 			const QJsonObject response = QJsonDocument::fromJson(bytes).object();
 			const int delivered = response.value(QStringLiteral("delivered")).toInt();
-			setStatus(QStringLiteral("✓ Test event sent - %1 local overlay client(s) received it.").arg(delivered), true);
+			setStatus(QStringLiteral("✓ Test event sent — %1 local overlay client(s) received it.").arg(delivered), true);
+			refreshEventHistory(true);
 		}
 		reply->deleteLater();
 	});
@@ -1718,7 +1920,7 @@ void BaconsHelperDock::updateDeathCounterSelection()
 	const QJsonObject counter = deathCounters_.value(counterId);
 	const int total = counter.value(QStringLiteral("total")).toInt();
 	deathCounterSetValue_->setValue(total);
-	deathCounterValue_->setText(QStringLiteral("%1 - %2 death%3")
+	deathCounterValue_->setText(QStringLiteral("%1 — %2 death%3")
 		.arg(counter.value(QStringLiteral("gameName")).toString(QStringLiteral("Unknown game")))
 		.arg(total)
 		.arg(total == 1 ? QString{} : QStringLiteral("s")));
@@ -1753,7 +1955,7 @@ void BaconsHelperDock::runDeathCounterAction(const QString &action, int value)
 		deathCounters_.insert(counterId, counter);
 		const int index = deathCounterSelect_->findData(counterId);
 		if (index >= 0) {
-			deathCounterSelect_->setItemText(index, QStringLiteral("%1 - %2")
+			deathCounterSelect_->setItemText(index, QStringLiteral("%1 — %2")
 				.arg(counter.value(QStringLiteral("gameName")).toString(QStringLiteral("Unknown game")))
 				.arg(counter.value(QStringLiteral("total")).toInt()));
 		}
@@ -1793,7 +1995,7 @@ void BaconsHelperDock::applyLoyaltyState(const QJsonObject &loyalty)
 	const QJsonObject raffle = loyalty.value(QStringLiteral("raffle")).toObject();
 	const bool raffleRunning = raffle.value(QStringLiteral("running")).toBool();
 	QString giveawayText = hasGiveaway
-		? QStringLiteral("Giveaway: %1 - %2").arg(settings.value(QStringLiteral("giveawayName")).toString(QStringLiteral("Untitled")),
+		? QStringLiteral("Giveaway: %1 — %2").arg(settings.value(QStringLiteral("giveawayName")).toString(QStringLiteral("Untitled")),
 			giveawayActive ? QStringLiteral("active") : QStringLiteral("paused"))
 		: QStringLiteral("No giveaway is configured.");
 	if (raffleRunning)

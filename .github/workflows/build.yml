@@ -45,11 +45,17 @@ jobs:
         shell: pwsh
         run: .\scripts\package-windows.ps1
 
+      - name: Test Windows installer and migration
+        shell: pwsh
+        run: .\tests\install-windows-test.ps1 -PackageRoot .\dist\windows-x64 -LegacyArchive .\dist\bacons-helper-windows-x64-obs31.1-32.zip
+
       - name: Upload Windows package
         uses: actions/upload-artifact@v6
         with:
           name: bacons-helper-windows-x64
-          path: dist/bacons-helper-windows-x64.zip
+          path: |
+            dist/bacons-helper-windows-x64.zip
+            dist/bacons-helper-windows-x64-obs31.1-32.zip
           if-no-files-found: error
 
   linux-x86_64:

@@ -14,10 +14,12 @@ class QLabel;
 class QLineEdit;
 class QNetworkAccessManager;
 class QNetworkReply;
+class QPlainTextEdit;
 class QPushButton;
 class QSpinBox;
 class QTimer;
 class QTreeWidget;
+class QUrlQuery;
 
 class BaconsHelperDock final : public QWidget {
 	Q_OBJECT
@@ -120,6 +122,14 @@ private:
 	QPushButton *historyRefreshButton_ = nullptr;
 	QTreeWidget *historyTree_ = nullptr;
 	QLabel *historyStatus_ = nullptr;
+	QLineEdit *commandHistorySearch_ = nullptr;
+	QPushButton *commandHistoryLatest_ = nullptr;
+	QPushButton *commandHistoryOlder_ = nullptr;
+	QTreeWidget *commandHistoryTree_ = nullptr;
+	QPlainTextEdit *commandHistoryOutput_ = nullptr;
+	QLabel *commandHistoryStatus_ = nullptr;
+	QString commandHistoryBefore_;
+	QString commandHistoryNextBefore_;
 	QMap<QString, QPushButton *> sourceInstallButtons_;
 	QString token_;
 	QString credentialStorageWarning_;
@@ -128,6 +138,9 @@ private:
 	bool botIsModerator_ = false;
 	bool refreshInFlight_ = false;
 	bool historyRefreshInFlight_ = false;
+	bool historyRefreshQueued_ = false;
+	bool commandHistoryInFlight_ = false;
+	bool commandHistorySelected_ = false;
 
 	void buildUi();
 	void loadLocalSettings();
@@ -136,15 +149,19 @@ private:
 	void setControlsEnabled(bool enabled);
 	QUrl endpoint(const QString &path) const;
 	QNetworkReply *sendJson(const QByteArray &method, const QString &path,
-						 const QJsonObject &payload = {});
+						 const QJsonObject &payload = {}, const QUrlQuery *query = nullptr);
 	bool validateServerUrl();
 	void handleAuthFailure(QNetworkReply *reply);
 	void pair();
 	void disconnectAccount();
 	void refresh();
-	void refreshEventHistory();
+	void refreshEventHistory(bool queueIfBusy = false);
 	void applyEventHistory(const QJsonArray &events);
 	void filterEventHistory();
+	void refreshCommandHistory(const QString &before = {});
+	void applyCommandHistory(const QJsonArray &commands);
+	void filterCommandHistory();
+	void clearHistories();
 	void applySettingsPayload(const QJsonObject &payload);
 	void saveChannelToggle(const QString &key, bool checked);
 	void saveStreamEvent(const QString &key, bool checked);

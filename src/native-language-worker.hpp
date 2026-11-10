@@ -20,7 +20,7 @@ Q_SIGNALS:
 private:
  std::unique_ptr<NativeLanguageDetector> detector_, candidate_;
  QString directory_, storage_;
- QJsonArray reviews_, candidateReviews_;
+ QJsonArray reviews_, candidateReviews_, feedbackEvaluation_;
  bool candidateSafe_ = false;
  void commit(std::unique_ptr<NativeLanguageDetector> next, const QJsonArray &reviews);
 };

@@ -50,7 +50,7 @@
     "expected": {
       "normalized": "idk why the bot keeps doing that",
       "language": "en",
-      "confidence": 0.8729452713055903,
+      "confidence": 0.8766809187522515,
       "automationReliable": true,
       "translate": false
     }
@@ -64,7 +64,7 @@
     "expected": {
       "normalized": "tbh i dont think thats the issue",
       "language": "en",
-      "confidence": 0.8445233742728162,
+      "confidence": 0.8485020201048098,
       "automationReliable": true,
       "translate": false
     }
@@ -162,7 +162,7 @@
     "expected": {
       "normalized": "thanks for the raid everyone",
       "language": "en",
-      "confidence": 0.9448708618253163,
+      "confidence": 0.947798149038826,
       "automationReliable": true,
       "translate": false
     }
@@ -204,7 +204,7 @@
     "expected": {
       "normalized": "the database looks healthy",
       "language": "en",
-      "confidence": 0.3326988317417442,
+      "confidence": 0.3594359740891865,
       "automationReliable": true,
       "translate": false
     }
@@ -218,7 +218,7 @@
     "expected": {
       "normalized": "restart the process and check the logs",
       "language": "en",
-      "confidence": 0.789495434488425,
+      "confidence": 0.8084378378173775,
       "automationReliable": true,
       "translate": false
     }
@@ -232,7 +232,7 @@
     "expected": {
       "normalized": "this should not trigger the translator",
       "language": "en",
-      "confidence": 0.9241828623138807,
+      "confidence": 0.9282476887749448,
       "automationReliable": true,
       "translate": false
     }
@@ -246,7 +246,7 @@
     "expected": {
       "normalized": "dont translate this message please",
       "language": "en",
-      "confidence": 0.7605692115640671,
+      "confidence": 0.7553101230978775,
       "automationReliable": true,
       "translate": false
     }
@@ -456,7 +456,7 @@
     "expected": {
       "normalized": "havent tried that yet",
       "language": "en",
-      "confidence": 0.8352582924542046,
+      "confidence": 0.8301792071804637,
       "automationReliable": true,
       "translate": false
     }
@@ -470,7 +470,7 @@
     "expected": {
       "normalized": "the backup completed without errors",
       "language": "en",
-      "confidence": 0.6330944122850923,
+      "confidence": 0.6481112792327988,
       "automationReliable": true,
       "translate": false
     }
@@ -484,7 +484,7 @@
     "expected": {
       "normalized": "the service is running on the local network",
       "language": "en",
-      "confidence": 0.9013903099982825,
+      "confidence": 0.9142212633687793,
       "automationReliable": true,
       "translate": false
     }
@@ -498,7 +498,7 @@
     "expected": {
       "normalized": "can we add another option to the dashboard",
       "language": "en",
-      "confidence": 0.819375,
+      "confidence": 0.8256484064288341,
       "automationReliable": true,
       "translate": false
     }
@@ -512,7 +512,7 @@
     "expected": {
       "normalized": "keep the module separate from the web interface",
       "language": "en",
-      "confidence": 0.8416224593646087,
+      "confidence": 0.8636190745185592,
       "automationReliable": true,
       "translate": false
     }
@@ -554,7 +554,7 @@
     "expected": {
       "normalized": "lmao bro that was wild",
       "language": "en",
-      "confidence": 0.8347321901558539,
+      "confidence": 0.8267129426325628,
       "automationReliable": true,
       "translate": false
     }
@@ -568,7 +568,7 @@
     "expected": {
       "normalized": "mañana seguimos jugando porque esta partida estuvo increíble",
       "language": "es",
-      "confidence": 0.9045324887408136,
+      "confidence": 0.9252808959117663,
       "automationReliable": true,
       "translate": true
     }
@@ -582,9 +582,9 @@
     "expected": {
       "normalized": "dónde puedo cambiar la configuración del juego",
       "language": "es",
-      "confidence": 0.8416215965658286,
+      "confidence": 0.8569276689180042,
       "automationReliable": true,
-      "translate": false
+      "translate": true
     }
   },
   {
@@ -596,7 +596,7 @@
     "expected": {
       "normalized": "amanhã continuamos jogando porque esta partida foi incrível",
       "language": "pt",
-      "confidence": 0.9414117575192268,
+      "confidence": 0.9062590217852831,
       "automationReliable": true,
       "translate": true
     }
@@ -610,7 +610,7 @@
     "expected": {
       "normalized": "onde posso mudar as configurações do jogo",
       "language": "pt",
-      "confidence": 0.8812106012033034,
+      "confidence": 0.8876130775598844,
       "automationReliable": true,
       "translate": true
     }
@@ -624,7 +624,7 @@
     "expected": {
       "normalized": "mañá seguimos xogando porque esta partida foi incrible",
       "language": "gl",
-      "confidence": 0.915991438091766,
+      "confidence": 0.9202118037909969,
       "automationReliable": true,
       "translate": true
     }
@@ -638,7 +638,7 @@
     "expected": {
       "normalized": "onde podo cambiar a configuración do xogo",
       "language": "gl",
-      "confidence": 0.7563391200164509,
+      "confidence": 0.7556955998347333,
       "automationReliable": true,
       "translate": false
     }
@@ -652,7 +652,7 @@
     "expected": {
       "normalized": "demà continuem jugant perquè aquesta partida ha estat increïble",
       "language": "ca",
-      "confidence": 0.9498869089228694,
+      "confidence": 0.948243401165138,
       "automationReliable": true,
       "translate": true
     }
@@ -666,7 +666,7 @@
     "expected": {
       "normalized": "on puc canviar la configuració del joc",
       "language": "ca",
-      "confidence": 0.6062991346071389,
+      "confidence": 0.6049135510497861,
       "automationReliable": true,
       "translate": false
     }
@@ -680,7 +680,7 @@
     "expected": {
       "normalized": "besok kita lanjut bermain karena pertandingan ini sangat seru",
       "language": "id",
-      "confidence": 0.8987276366727679,
+      "confidence": 0.9024715699501179,
       "automationReliable": true,
       "translate": true
     }
@@ -694,7 +694,7 @@
     "expected": {
       "normalized": "di mana saya bisa mengubah pengaturan permainan",
       "language": "id",
-      "confidence": 0.8578010915916899,
+      "confidence": 0.8661341591938754,
       "automationReliable": true,
       "translate": true
     }
@@ -708,7 +708,7 @@
     "expected": {
       "normalized": "esok kita sambung bermain kerana permainan ini sangat menyeronokkan",
       "language": "ms",
-      "confidence": 0.9533621426749199,
+      "confidence": 0.955103084853923,
       "automationReliable": true,
       "translate": true
     }
@@ -722,7 +722,7 @@
     "expected": {
       "normalized": "di mana saya boleh menukar tetapan permainan",
       "language": "ms",
-      "confidence": 0.9144194649885471,
+      "confidence": 0.9203093094700645,
       "automationReliable": true,
       "translate": true
     }
@@ -736,7 +736,7 @@
     "expected": {
       "normalized": "vi fortsätter spela i morgon eftersom den här matchen var fantastisk",
       "language": "sv",
-      "confidence": 0.857025826790345,
+      "confidence": 0.865346146577413,
       "automationReliable": true,
       "translate": true
     }
@@ -750,7 +750,7 @@
     "expected": {
       "normalized": "var kan jag ändra inställningarna i spelet",
       "language": "sv",
-      "confidence": 0.904660401923552,
+      "confidence": 0.910373847459909,
       "automationReliable": true,
       "translate": true
     }
@@ -764,7 +764,7 @@
     "expected": {
       "normalized": "vi fortsetter å spille i morgen fordi denne runden var fantastisk",
       "language": "no",
-      "confidence": 0.9371831811269973,
+      "confidence": 0.9452218552695675,
       "automationReliable": true,
       "translate": true
     }
@@ -778,7 +778,7 @@
     "expected": {
       "normalized": "hvor kan jeg endre innstillingene i spillet",
       "language": "no",
-      "confidence": 0.9184924351020158,
+      "confidence": 0.9219551279359122,
       "automationReliable": true,
       "translate": true
     }
@@ -792,7 +792,7 @@
     "expected": {
       "normalized": "vi fortsætter med at spille i morgen fordi denne runde var fantastisk",
       "language": "da",
-      "confidence": 0.9554658888146415,
+      "confidence": 0.9576571804427252,
       "automationReliable": true,
       "translate": true
     }
@@ -806,7 +806,7 @@
     "expected": {
       "normalized": "hvor kan jeg ændre indstillingerne i spillet",
       "language": "da",
-      "confidence": 0.9502556648008265,
+      "confidence": 0.9521374474657989,
       "automationReliable": true,
       "translate": true
     }
@@ -820,7 +820,7 @@
     "expected": {
       "normalized": "zítra budeme pokračovat protože tahle hra byla skvělá",
       "language": "cs",
-      "confidence": 0.8048714790307139,
+      "confidence": 0.7879954802688325,
       "automationReliable": true,
       "translate": false
     }
@@ -834,7 +834,7 @@
     "expected": {
       "normalized": "kde můžu změnit nastavení této hry",
       "language": "cs",
-      "confidence": 0.7703194769799575,
+      "confidence": 0.7768607510864223,
       "automationReliable": true,
       "translate": false
     }
@@ -848,7 +848,7 @@
     "expected": {
       "normalized": "zajtra budeme pokračovať pretože táto hra bola skvelá",
       "language": "sk",
-      "confidence": 0.8078210452997071,
+      "confidence": 0.7898880625252773,
       "automationReliable": true,
       "translate": false
     }
@@ -862,7 +862,7 @@
     "expected": {
       "normalized": "kde môžem zmeniť nastavenia tejto hry",
       "language": "sk",
-      "confidence": 0.8702827279888041,
+      "confidence": 0.8683317532000375,
       "automationReliable": true,
       "translate": true
     }
@@ -876,7 +876,7 @@
     "expected": {
       "normalized": "завтра продолжим играть потому что эта партия была отличной",
       "language": "ru",
-      "confidence": 0.7507078790695393,
+      "confidence": 0.7611167789389016,
       "automationReliable": true,
       "translate": false
     }
@@ -890,7 +890,7 @@
     "expected": {
       "normalized": "где я могу изменить настройки этой игры",
       "language": "ru",
-      "confidence": 0.7334497830049904,
+      "confidence": 0.7451212026629194,
       "automationReliable": true,
       "translate": false
     }
@@ -904,7 +904,7 @@
     "expected": {
       "normalized": "завтра продовжимо грати тому що ця гра була чудовою",
       "language": "uk",
-      "confidence": 0.7536188981076374,
+      "confidence": 0.7632933072700941,
       "automationReliable": true,
       "translate": false
     }
@@ -918,7 +918,7 @@
     "expected": {
       "normalized": "де я можу змінити налаштування цієї гри",
       "language": "uk",
-      "confidence": 0.8572497001172917,
+      "confidence": 0.8677594987325368,
       "automationReliable": true,
       "translate": true
     }
@@ -932,7 +932,7 @@
     "expected": {
       "normalized": "заўтра працягнем гуляць таму што гэтая гульня была выдатнай",
       "language": "be",
-      "confidence": 0.9386029097730606,
+      "confidence": 0.9376960622183291,
       "automationReliable": true,
       "translate": true
     }
@@ -946,7 +946,7 @@
     "expected": {
       "normalized": "дзе я магу змяніць налады гэтай гульні",
       "language": "be",
-      "confidence": 0.8476955638802737,
+      "confidence": 0.8484522982941388,
       "automationReliable": true,
       "translate": false
     }
@@ -960,7 +960,7 @@
     "expected": {
       "normalized": "سنواصل اللعب غدا لأن هذه الجولة كانت رائعة",
       "language": "ar",
-      "confidence": 0.8920790029984849,
+      "confidence": 0.9040038868579978,
       "automationReliable": true,
       "translate": true
     }
@@ -974,7 +974,7 @@
     "expected": {
       "normalized": "أين يمكنني تغيير إعدادات هذه اللعبة",
       "language": "ar",
-      "confidence": 0.8815411329561059,
+      "confidence": 0.8926358677886266,
       "automationReliable": true,
       "translate": true
     }
@@ -988,7 +988,7 @@
     "expected": {
       "normalized": "فردا بازی را ادامه میدهیم چون این دور عالی بود",
       "language": "fa",
-      "confidence": 0.920481425022935,
+      "confidence": 0.9199212208394628,
       "automationReliable": true,
       "translate": true
     }
@@ -1002,7 +1002,7 @@
     "expected": {
       "normalized": "از کجا میتوانم تنظیمات این بازی را تغییر دهم",
       "language": "fa",
-      "confidence": 0.9576359549064895,
+      "confidence": 0.9580364316770837,
       "automationReliable": true,
       "translate": true
     }
@@ -1016,7 +1016,7 @@
     "expected": {
       "normalized": "ہم کل کھیل جاری رکھیں گے کیونکہ یہ راؤنڈ بہت اچھا تھا",
       "language": "ur",
-      "confidence": 0.9966981416989458,
+      "confidence": 0.9966785682517172,
       "automationReliable": true,
       "translate": true
     }
@@ -1030,7 +1030,7 @@
     "expected": {
       "normalized": "میں اس کھیل کی ترتیبات کہاں تبدیل کر سکتا ہوں",
       "language": "ur",
-      "confidence": 0.9677779330472216,
+      "confidence": 0.9676711423447617,
       "automationReliable": true,
       "translate": true
     }
@@ -1044,7 +1044,7 @@
     "expected": {
       "normalized": "हम कल खेलना जारी रखेंगे क्योंकि यह मुकाबला शानदार था",
       "language": "hi",
-      "confidence": 0.8021853195703819,
+      "confidence": 0.8006545686988713,
       "automationReliable": true,
       "translate": false
     }
@@ -1058,9 +1058,9 @@
     "expected": {
       "normalized": "मैं इस खेल की सेटिंग कहाँ बदल सकता हूँ",
       "language": "hi",
-      "confidence": 0.9436846972578932,
-      "automationReliable": true,
-      "translate": true
+      "confidence": 0.7737089603489333,
+      "automationReliable": false,
+      "translate": false
     }
   },
   {
@@ -1072,7 +1072,7 @@
     "expected": {
       "normalized": "आपण उद्या खेळत राहू कारण हा सामना खूप छान होता",
       "language": "mr",
-      "confidence": 0.97771224657256,
+      "confidence": 0.9763906179323921,
       "automationReliable": true,
       "translate": true
     }
@@ -1086,7 +1086,7 @@
     "expected": {
       "normalized": "मी या खेळाची सेटिंग कुठे बदलू शकतो",
       "language": "mr",
-      "confidence": 0.9315126372954136,
+      "confidence": 0.953527533741846,
       "automationReliable": true,
       "translate": true
     }
@@ -1100,7 +1100,7 @@
     "expected": {
       "normalized": "हामी भोलि खेलिरहनेछौँ किनकि यो खेल निकै राम्रो थियो",
       "language": "ne",
-      "confidence": 0.8829540901094516,
+      "confidence": 0.8828492093042339,
       "automationReliable": true,
       "translate": true
     }
@@ -1114,7 +1114,7 @@
     "expected": {
       "normalized": "म यो खेलको सेटिङ कहाँ परिवर्तन गर्न सक्छु",
       "language": "ne",
-      "confidence": 0.9560277222423356,
+      "confidence": 0.9604200636801499,
       "automationReliable": true,
       "translate": true
     }
@@ -1128,7 +1128,7 @@
     "expected": {
       "normalized": "明天我们继续玩因为这一局真的很精彩",
       "language": "zh",
-      "confidence": 0.9997071115560452,
+      "confidence": 0.9997061319961577,
       "automationReliable": true,
       "translate": true
     }
@@ -1142,7 +1142,7 @@
     "expected": {
       "normalized": "我在哪里可以修改这个游戏的设置",
       "language": "zh",
-      "confidence": 0.9999080300640886,
+      "confidence": 0.9999130686893976,
       "automationReliable": true,
       "translate": true
     }
@@ -1156,7 +1156,7 @@
     "expected": {
       "normalized": "聽日我哋繼續玩因為呢一局真係好精彩",
       "language": "yue",
-      "confidence": 0.9998701496910738,
+      "confidence": 0.9998701563055639,
       "automationReliable": true,
       "translate": true
     }
@@ -1170,7 +1170,7 @@
     "expected": {
       "normalized": "我可以喺邊度改呢個遊戲嘅設定",
       "language": "yue",
-      "confidence": 0.9998996117748822,
+      "confidence": 0.9998996807861679,
       "automationReliable": true,
       "translate": true
     }
@@ -1184,7 +1184,7 @@
     "expected": {
       "normalized": "góða kvöldið vinir takk kærlega fyrir að horfa með mér í kvöld",
       "language": "is",
-      "confidence": 0.9821857584261218,
+      "confidence": 0.9828054879952782,
       "automationReliable": true,
       "translate": true
     }
@@ -1198,7 +1198,7 @@
     "expected": {
       "normalized": "tráthnóna maith a chairde go raibh maith agaibh as féachaint liom anocht",
       "language": "ga",
-      "confidence": 0.9785039767415907,
+      "confidence": 0.9784223085846167,
       "automationReliable": true,
       "translate": true
     }
@@ -1212,7 +1212,7 @@
     "expected": {
       "normalized": "noswaith dda ffrindiau diolch yn fawr am wylio gyda mi heno",
       "language": "cy",
-      "confidence": 0.9611996149490682,
+      "confidence": 0.9610742039255269,
       "automationReliable": true,
       "translate": true
     }
@@ -1226,7 +1226,7 @@
     "expected": {
       "normalized": "il lejla t tajba ħbieb grazzi ħafna talli qed taraw miegħi",
       "language": "mt",
-      "confidence": 0.891026402829161,
+      "confidence": 0.8907135179478886,
       "automationReliable": true,
       "translate": true
     }
@@ -1240,7 +1240,7 @@
     "expected": {
       "normalized": "dobro veče prijatelji hvala vam puno što gledate sa mnom večeras",
       "language": "bs",
-      "confidence": 0.7427673305456703,
+      "confidence": 0.7416449645177912,
       "automationReliable": true,
       "translate": false
     }
@@ -1254,7 +1254,7 @@
     "expected": {
       "normalized": "добры вечар сябры вялікі дзякуй што глядзіце разам са мной",
       "language": "be",
-      "confidence": 0.9614094131669867,
+      "confidence": 0.9611060046232407,
       "automationReliable": true,
       "translate": true
     }
@@ -1268,7 +1268,7 @@
     "expected": {
       "normalized": "қайырлы кеш достар менімен бірге көріп отырғандарыңа көп рақмет",
       "language": "kk",
-      "confidence": 0.978994107725925,
+      "confidence": 0.9788720401472362,
       "automationReliable": true,
       "translate": true
     }
@@ -1282,7 +1282,7 @@
     "expected": {
       "normalized": "кутман кеч достор мени менен көрүп жатканыңарга чоң рахмат",
       "language": "ky",
-      "confidence": 0.9415161887725692,
+      "confidence": 0.9412102914868584,
       "automationReliable": true,
       "translate": true
     }
@@ -1296,7 +1296,7 @@
     "expected": {
       "normalized": "xayrli kech do'stlar men bilan tomosha qilayotganingiz uchun katta rahmat",
       "language": "uz",
-      "confidence": 0.9361469223142308,
+      "confidence": 0.935835523001211,
       "automationReliable": true,
       "translate": true
     }
@@ -1310,7 +1310,7 @@
     "expected": {
       "normalized": "оройн мэнд найзууд аа надтай хамт үзэж байгаад маш их баярлалаа",
       "language": "mn",
-      "confidence": 0.9953833665335492,
+      "confidence": 0.9953581899725953,
       "automationReliable": true,
       "translate": true
     }
@@ -1324,7 +1324,7 @@
     "expected": {
       "normalized": "ماښام مو پخیر ملګرو له ما سره د کتلو لپاره ډېره مننه",
       "language": "ps",
-      "confidence": 0.999183121848146,
+      "confidence": 0.9991829733004407,
       "automationReliable": true,
       "translate": true
     }
@@ -1338,7 +1338,7 @@
     "expected": {
       "normalized": "শুভ সন্ধিয়া বন্ধুসকল মোৰ সৈতে চাই থকাৰ বাবে বহুত ধন্যবাদ",
       "language": "as",
-      "confidence": 0.9991641754641588,
+      "confidence": 0.9991185100012604,
       "automationReliable": true,
       "translate": true
     }
@@ -1450,7 +1450,7 @@
     "expected": {
       "normalized": "መልካም ምሽት ጓደኞች ከእኔ ጋር ስለተመለከታችሁ በጣም አመሰግናለሁ",
       "language": "am",
-      "confidence": 0.9993674696511892,
+      "confidence": 0.9993675393587249,
       "automationReliable": true,
       "translate": true
     }
@@ -1464,7 +1464,7 @@
     "expected": {
       "normalized": "bonswa zanmi mèsi anpil paske nou ap gade ansanm avè m",
       "language": "ht",
-      "confidence": 0.6259560765604393,
+      "confidence": 0.6251690469592477,
       "automationReliable": true,
       "translate": false
     }
@@ -1478,7 +1478,7 @@
     "expected": {
       "normalized": "fiid wanaagsan saaxiibayaal aad baad ugu mahadsan tihiin inaad ila daawanaysaan",
       "language": "so",
-      "confidence": 0.9571350142058337,
+      "confidence": 0.9569597024040558,
       "automationReliable": true,
       "translate": true
     }
@@ -1492,7 +1492,7 @@
     "expected": {
       "normalized": "barka da yamma abokai na gode sosai da kuke kallo tare da ni",
       "language": "ha",
-      "confidence": 0.9513051110884164,
+      "confidence": 0.9510848621325979,
       "automationReliable": true,
       "translate": true
     }
@@ -1506,7 +1506,7 @@
     "expected": {
       "normalized": "ẹ káalẹ́ ẹ̀yin ọ̀rẹ́ ẹ ṣé púpọ̀ pé ẹ ń wò pẹ̀lú mi",
       "language": "yo",
-      "confidence": 0.9777110502031114,
+      "confidence": 0.9812501007967209,
       "automationReliable": true,
       "translate": true
     }
@@ -1520,7 +1520,7 @@
     "expected": {
       "normalized": "sawubona kusihlwa bangani ngiyabonga kakhulu ngokubuka nami",
       "language": "zu",
-      "confidence": 0.9560750156669643,
+      "confidence": 0.9559825666933205,
       "automationReliable": true,
       "translate": true
     }
@@ -1534,7 +1534,7 @@
     "expected": {
       "normalized": "molo ngokuhlwa bahlobo enkosi kakhulu ngokubukela kunye nam",
       "language": "xh",
-      "confidence": 0.9389082983416888,
+      "confidence": 0.9387529458195657,
       "automationReliable": true,
       "translate": true
     }
@@ -1548,7 +1548,7 @@
     "expected": {
       "normalized": "mwiriwe nshuti murakoze cyane kurebera hamwe nanjye",
       "language": "rw",
-      "confidence": 0.8965447031946377,
+      "confidence": 0.8962633790953587,
       "automationReliable": true,
       "translate": true
     }
@@ -1562,7 +1562,7 @@
     "expected": {
       "normalized": "manao ahoana hariva ry namana misaotra betsaka mijery miaraka amiko",
       "language": "mg",
-      "confidence": 0.9561573048653453,
+      "confidence": 0.9559903305679225,
       "automationReliable": true,
       "translate": true
     }
@@ -1576,7 +1576,7 @@
     "expected": {
       "normalized": "bonan vesperon amikoj koran dankon pro spekti kun mi",
       "language": "eo",
-      "confidence": 0.9155251045113334,
+      "confidence": 0.9148440945861449,
       "automationReliable": true,
       "translate": true
     }
@@ -1590,7 +1590,7 @@
     "expected": {
       "normalized": "sugeng sonten kanca matur nuwun banget wis nonton bareng aku",
       "language": "jv",
-      "confidence": 0.9282730625248097,
+      "confidence": 0.927344288668516,
       "automationReliable": true,
       "translate": true
     }
@@ -1604,7 +1604,7 @@
     "expected": {
       "normalized": "wilujeng sonten rerencangan hatur nuhun pisan parantos nonton sareng abdi",
       "language": "su",
-      "confidence": 0.9825013244783545,
+      "confidence": 0.9823815021758916,
       "automationReliable": true,
       "translate": true
     }
@@ -1618,7 +1618,7 @@
     "expected": {
       "normalized": "madainn mhath a chàirdean tha mi toilichte ur faicinn an seo",
       "language": "gd",
-      "confidence": 0.6092717888188451,
+      "confidence": 0.607584958893508,
       "automationReliable": true,
       "translate": false
     }
@@ -1632,7 +1632,7 @@
     "expected": {
       "normalized": "noz vat d'an holl mignoned ha trugarez evit bezañ ganeomp",
       "language": "br",
-      "confidence": 0.9343510173317505,
+      "confidence": 0.93421673736435,
       "automationReliable": true,
       "translate": true
     }
@@ -1646,7 +1646,7 @@
     "expected": {
       "normalized": "gudde moien alleguer ech freeë mech datt dir hei sidd",
       "language": "lb",
-      "confidence": 0.6801234216711352,
+      "confidence": 0.6792621216819719,
       "automationReliable": true,
       "translate": false
     }
@@ -1660,7 +1660,7 @@
     "expected": {
       "normalized": "дӯстони азиз шоми хуб ба ҳама ва барои дастгирӣ ташаккур",
       "language": "tg",
-      "confidence": 0.9841085144045306,
+      "confidence": 0.9840157662236362,
       "automationReliable": true,
       "translate": true
     }
@@ -1674,7 +1674,7 @@
     "expected": {
       "normalized": "dostlar hemmäňize agşamyňyz haýyrly bolsun goldawyňyz üçin sag boluň",
       "language": "tk",
-      "confidence": 0.9249731107780896,
+      "confidence": 0.9247440608850102,
       "automationReliable": true,
       "translate": true
     }
@@ -1688,7 +1688,7 @@
     "expected": {
       "normalized": "дуслар барыгызга хәерле кич һәм ярдәмегез өчен зур рәхмәт",
       "language": "tt",
-      "confidence": 0.9949254195309757,
+      "confidence": 0.9949091085740738,
       "automationReliable": true,
       "translate": true
     }
@@ -1702,7 +1702,7 @@
     "expected": {
       "normalized": "دوستلار ھەممىڭلارغا كەچلىك سالام قوللىغانلىقىڭلارغا كۆپ رەھمەت",
       "language": "ug",
-      "confidence": 0.9556465062426603,
+      "confidence": 0.95543196842462,
       "automationReliable": true,
       "translate": true
     }
@@ -1716,7 +1716,7 @@
     "expected": {
       "normalized": "دوستو سڀني کي شام جو سلام توهان جي مدد لاءِ تمام گهڻي مهرباني",
       "language": "sd",
-      "confidence": 0.9976133584847935,
+      "confidence": 0.997709944704859,
       "automationReliable": true,
       "translate": true
     }
@@ -1730,7 +1730,7 @@
     "expected": {
       "normalized": "tēnā koutou e hoa mā he pai ki te kite i a koutou i konei",
       "language": "mi",
-      "confidence": 0.6795759558937552,
+      "confidence": 0.697266654501055,
       "automationReliable": true,
       "translate": false
     }
@@ -1744,7 +1744,7 @@
     "expected": {
       "normalized": "manuia le afiafi uo faafetai tele mo lo outou lagolago",
       "language": "sm",
-      "confidence": 0.7145642001211097,
+      "confidence": 0.7136573240637912,
       "automationReliable": true,
       "translate": false
     }
@@ -1758,7 +1758,7 @@
     "expected": {
       "normalized": "ndị enyi ndeewo unu daalụ nke ukwuu maka nkwado unu taa",
       "language": "ig",
-      "confidence": 0.9142631486376734,
+      "confidence": 0.9170660920120844,
       "automationReliable": true,
       "translate": true
     }
@@ -1772,7 +1772,7 @@
     "expected": {
       "normalized": "manheru akanaka shamwari ndatenda zvikuru nerutsigiro rwenyu",
       "language": "sn",
-      "confidence": 0.9526905790808889,
+      "confidence": 0.9525059453334909,
       "automationReliable": true,
       "translate": true
     }
@@ -1786,7 +1786,7 @@
     "expected": {
       "normalized": "goeie jûn freonen tige tank foar it sjen fan de stream",
       "language": "fy",
-      "confidence": 0.8568519295093212,
+      "confidence": 0.8604074600173238,
       "automationReliable": true,
       "translate": true
     }
@@ -1800,7 +1800,7 @@
     "expected": {
       "normalized": "gott kvøld vinir takk fyri hjálpina í dag",
       "language": "fo",
-      "confidence": 0.9070845583373688,
+      "confidence": 0.9099406463068999,
       "automationReliable": true,
       "translate": true
     }
@@ -1814,7 +1814,7 @@
     "expected": {
       "normalized": "amici bonam noctem vobis gratias ago pro auxilio",
       "language": "la",
-      "confidence": 0.6350890648523236,
+      "confidence": 0.6346850949046386,
       "automationReliable": true,
       "translate": false
     }
@@ -1828,7 +1828,7 @@
     "expected": {
       "normalized": "bona serada amics mercés fòrça per vòstra ajuda",
       "language": "oc",
-      "confidence": 0.7069294482874097,
+      "confidence": 0.705337210987861,
       "automationReliable": true,
       "translate": false
     }
@@ -1842,7 +1842,7 @@
     "expected": {
       "normalized": "bona sera amichi grazie mille per u vostru aiutu",
       "language": "co",
-      "confidence": 0.6277311029964415,
+      "confidence": 0.627367937620856,
       "automationReliable": true,
       "translate": false
     }
@@ -1856,7 +1856,7 @@
     "expected": {
       "normalized": "buna saira amis grazia fitg per vossa agid",
       "language": "rm",
-      "confidence": 0.6367323956456961,
+      "confidence": 0.6360855947676395,
       "automationReliable": true,
       "translate": false
     }
@@ -1870,7 +1870,7 @@
     "expected": {
       "normalized": "hevalno êvara we baş spas dikim ji bo alîkariya we",
       "language": "ku",
-      "confidence": 0.6423748405667049,
+      "confidence": 0.641434836719159,
       "automationReliable": true,
       "translate": false
     }
@@ -1884,7 +1884,7 @@
     "expected": {
       "normalized": "allin tuta masikuna ancha sulpayki yanapawaykichik",
       "language": "qu",
-      "confidence": 0.6847988999753215,
+      "confidence": 0.6836872038779835,
       "automationReliable": true,
       "translate": false
     }
@@ -1898,7 +1898,7 @@
     "expected": {
       "normalized": "suma arumakipan masinaka wali yuspajara yanapt awinakata",
       "language": "ay",
-      "confidence": 0.6693848077297327,
+      "confidence": 0.6680988530355356,
       "automationReliable": true,
       "translate": false
     }
@@ -1912,7 +1912,7 @@
     "expected": {
       "normalized": "mba eichapa angirunguera aguyjevete peeme pene pytyvore",
       "language": "gn",
-      "confidence": 0.8770584024956737,
+      "confidence": 0.876453154025322,
       "automationReliable": true,
       "translate": true
     }
@@ -1926,7 +1926,7 @@
     "expected": {
       "normalized": "madzulo abwino anzanga zikomo kwambiri chifukwa cha thandizo lanu",
       "language": "ny",
-      "confidence": 0.7633251127243114,
+      "confidence": 0.7627578419762459,
       "automationReliable": true,
       "translate": false
     }
@@ -1940,7 +1940,7 @@
     "expected": {
       "normalized": "mantsiboya metswalle kea leboha haholo ka thuso ya lona",
       "language": "st",
-      "confidence": 0.8800444082656327,
+      "confidence": 0.8795871673998196,
       "automationReliable": true,
       "translate": true
     }
@@ -1954,7 +1954,7 @@
     "expected": {
       "normalized": "maitseboa ditsala ke leboga thata ka thuso ya lona",
       "language": "tn",
-      "confidence": 0.7042620435081163,
+      "confidence": 0.7032962080997539,
       "automationReliable": true,
       "translate": false
     }
@@ -1968,7 +1968,7 @@
     "expected": {
       "normalized": "ririle vanghana ndza khensa swinene hi nseketelo wa n wena",
       "language": "ts",
-      "confidence": 0.7151649715751607,
+      "confidence": 0.7143259418103292,
       "automationReliable": true,
       "translate": false
     }
@@ -1982,7 +1982,7 @@
     "expected": {
       "normalized": "madekwana khonani ndo livhuwa nga maanda thikhedzo yanu",
       "language": "ve",
-      "confidence": 0.7357123914233159,
+      "confidence": 0.7348726661310921,
       "automationReliable": true,
       "translate": false
     }
@@ -1996,7 +1996,7 @@
     "expected": {
       "normalized": "ኣዕሩኽተይ ጽቡቕ ምሸት ንደገፍኩም ብጣዕሚ የቐንየለይ",
       "language": "ti",
-      "confidence": 0.999673253323879,
+      "confidence": 0.9996732585265015,
       "automationReliable": true,
       "translate": true
     }
@@ -2066,7 +2066,7 @@
     "expected": {
       "normalized": "maayong adlaw kumusta ka karon salamat sa pagtan aw sa stream",
       "language": "ceb",
-      "confidence": 0.9926566495657367,
+      "confidence": 0.9926212783750868,
       "automationReliable": true,
       "translate": true
     }
@@ -2080,7 +2080,7 @@
     "expected": {
       "normalized": "aloha pehea ʻoe i kēia lā mahalo no kou nānā ʻana i ke kahawai",
       "language": "haw",
-      "confidence": 0.9954591814174862,
+      "confidence": 0.9957165889940328,
       "automationReliable": true,
       "translate": true
     }
@@ -2094,7 +2094,7 @@
     "expected": {
       "normalized": "nyob zoo hnub no koj nyob li cas ua tsaug uas tuaj saib peb",
       "language": "hmn",
-      "confidence": 0.9958481647265617,
+      "confidence": 0.9958383413043391,
       "automationReliable": true,
       "translate": true
     }
@@ -2108,7 +2108,7 @@
     "expected": {
       "normalized": "naka nga def tey jërëjëf ci sa ñëw seetaan stream bi",
       "language": "wo",
-      "confidence": 0.989823569711816,
+      "confidence": 0.9897908712359376,
       "automationReliable": true,
       "translate": true
     }
@@ -2122,7 +2122,7 @@
     "expected": {
       "normalized": "mbote ozali malamu lelo matondo mingi mpo na kotala stream",
       "language": "ln",
-      "confidence": 0.9924904104191068,
+      "confidence": 0.9924524461944443,
       "automationReliable": true,
       "translate": true
     }
@@ -2136,7 +2136,7 @@
     "expected": {
       "normalized": "gyebale ko oli otya leero webale nnyo okujja okulaba stream",
       "language": "lg",
-      "confidence": 0.9900424059557862,
+      "confidence": 0.9900072597907144,
       "automationReliable": true,
       "translate": true
     }
@@ -2150,7 +2150,7 @@
     "expected": {
       "normalized": "akkam jirtu har'a galatoomi tamsaasa kana ilaaluuf waan dhuftaniif",
       "language": "om",
-      "confidence": 0.9929843243154125,
+      "confidence": 0.992962650353878,
       "automationReliable": true,
       "translate": true
     }
@@ -2164,7 +2164,7 @@
     "expected": {
       "normalized": "i ni ce bi i ka kɛnɛ wa i ni baraji ka na nin stream lajɛ",
       "language": "bm",
-      "confidence": 0.9806356226167292,
+      "confidence": 0.9805861529855029,
       "automationReliable": true,
       "translate": true
     }
@@ -2178,7 +2178,7 @@
     "expected": {
       "normalized": "wòezɔ egbe èfɔ̃a nyuie loo akpe na wò be èva kpɔ stream la",
       "language": "ee",
-      "confidence": 0.9862406114139318,
+      "confidence": 0.9864126888353872,
       "automationReliable": true,
       "translate": true
     }
@@ -2192,7 +2192,7 @@
     "expected": {
       "normalized": "akwaaba wo ho te sɛn nnɛ medaase sɛ wobɛhwɛ stream no",
       "language": "ak",
-      "confidence": 0.9946830200996727,
+      "confidence": 0.9946721022495035,
       "automationReliable": true,
       "translate": true
     }
@@ -2206,7 +2206,7 @@
     "expected": {
       "normalized": "bula vinaka o vakacava nikua vinaka vakalevu ni o mai sarava na stream",
       "language": "fj",
-      "confidence": 0.9960618463065759,
+      "confidence": 0.9960456855233749,
       "automationReliable": true,
       "translate": true
     }
@@ -2220,7 +2220,7 @@
     "expected": {
       "normalized": "mālō e lelei fēfē hake he ʻahó ni mālō ʻaupito hoʻo sio ki he stream",
       "language": "to",
-      "confidence": 0.9946228600609587,
+      "confidence": 0.9946817140941028,
       "automationReliable": true,
       "translate": true
     }
@@ -2234,7 +2234,7 @@
     "expected": {
       "normalized": "hello everyone thanks for joining the stream",
       "language": "en",
-      "confidence": 0.9405237108104834,
+      "confidence": 0.9442414536976281,
       "automationReliable": true,
       "translate": false
     }
@@ -2248,7 +2248,7 @@
     "expected": {
       "normalized": "hola a todos gracias por venir al directo",
       "language": "es",
-      "confidence": 0.8715454892219857,
+      "confidence": 0.8651816843313577,
       "automationReliable": true,
       "translate": true
     }
@@ -2262,7 +2262,7 @@
     "expected": {
       "normalized": "bonjour tout le monde merci d être venu",
       "language": "fr",
-      "confidence": 0.6365484496389487,
+      "confidence": 0.6392517958765994,
       "automationReliable": true,
       "translate": false
     }
@@ -2276,7 +2276,7 @@
     "expected": {
       "normalized": "hallo zusammen danke dass ihr heute dabei seid",
       "language": "de",
-      "confidence": 0.4809616824953844,
+      "confidence": 0.4822784832182977,
       "automationReliable": true,
       "translate": false
     }
@@ -2290,7 +2290,7 @@
     "expected": {
       "normalized": "привет всем спасибо что пришли сегодня",
       "language": "ru",
-      "confidence": 0.9968454248830032,
+      "confidence": 0.9967516467705655,
       "automationReliable": true,
       "translate": true
     }
@@ -2304,7 +2304,7 @@
     "expected": {
       "normalized": "こんにちはみんな来てくれてありがとう",
       "language": "ja",
-      "confidence": 0.9999961017713414,
+      "confidence": 0.9999960499650432,
       "automationReliable": true,
       "translate": true
     }
@@ -2321,7 +2321,7 @@
     "expected": {
       "normalized": "hola amigos como estan todos hoy",
       "language": "es",
-      "confidence": 0.8869681213674808,
+      "confidence": 0.8837945114907932,
       "automationReliable": true,
       "translate": true
     }
@@ -2338,7 +2338,7 @@
     "expected": {
       "normalized": "今日はとても楽しい配信ですね",
       "language": "ja",
-      "confidence": 0.999970700748621,
+      "confidence": 0.999971425781295,
       "automationReliable": true,
       "translate": true
     }
@@ -2440,7 +2440,7 @@
     "expected": {
       "normalized": "привет друзья как ваши дела сегодня",
       "language": "ru",
-      "confidence": 0.9645648657705842,
+      "confidence": 0.9643315585368535,
       "automationReliable": true,
       "translate": true
     }
@@ -2457,7 +2457,7 @@
     "expected": {
       "normalized": "مرحبا كيف حالك اليوم يا صديقي",
       "language": "ar",
-      "confidence": 0.9891491129208884,
+      "confidence": 0.9893966013502511,
       "automationReliable": true,
       "translate": true
     }
@@ -2474,7 +2474,7 @@
     "expected": {
       "normalized": "今日は とても楽しい配信ですね",
       "language": "ja",
-      "confidence": 0.9999775358792778,
+      "confidence": 0.9999779549595056,
       "automationReliable": true,
       "translate": true
     }

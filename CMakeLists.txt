@@ -1,12 +1,15 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(bacons-helper-obs VERSION 0.7.1 LANGUAGES CXX)
+project(bacons-helper-obs VERSION 0.7.6 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_AUTOMOC ON)
 
+# On Windows, libobs and obs-frontend-api are development packages, not part of
+# the normal OBS installation. The packaging script bootstraps them from the
+# official OBS plugin template and passes their package directories here.
 if(WIN32 AND (NOT libobs_DIR OR NOT EXISTS "${libobs_DIR}/libobsConfig.cmake"))
     message(FATAL_ERROR
         "OBS development packages are not configured. "
@@ -15,8 +18,9 @@ if(WIN32 AND (NOT libobs_DIR OR NOT EXISTS "${libobs_DIR}/libobsConfig.cmake"))
     )
 endif()
 
-find_package(libobs CONFIG REQUIRED)
-find_package(obs-frontend-api CONFIG REQUIRED)
+set(BH_OBS_REQUIRED_SDK_RANGE "" CACHE STRING "OBS SDK version range required when packaging")
+find_package(libobs ${BH_OBS_REQUIRED_SDK_RANGE} CONFIG REQUIRED)
+find_package(obs-frontend-api ${BH_OBS_REQUIRED_SDK_RANGE} CONFIG REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network)
 
 add_library(bacons-helper MODULE
@@ -28,6 +32,8 @@ add_library(bacons-helper MODULE
     src/native-language-detector.cpp
     src/native-language-detector.hpp
     src/native-language-worker.cpp
+    src/language-feedback.cpp
+    src/language-feedback.hpp
     src/native-language-worker.hpp
 )
 
@@ -60,14 +66,6 @@ set_target_properties(bacons-helper PROPERTIES
     OUTPUT_NAME "bacons-helper"
 )
 
-if(WIN32)
-    install(TARGETS bacons-helper LIBRARY DESTINATION obs-plugins/64bit)
-    install(DIRECTORY data/ DESTINATION data/obs-plugins/bacons-helper)
-elseif(APPLE)
-    install(TARGETS bacons-helper LIBRARY DESTINATION obs-plugins)
-    install(DIRECTORY data/ DESTINATION share/obs/obs-plugins/bacons-helper)
-else()
-    include(GNUInstallDirs)
-    install(TARGETS bacons-helper LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/obs-plugins)
-    install(DIRECTORY data/ DESTINATION ${CMAKE_INSTALL_DATADIR}/obs/obs-plugins/bacons-helper)
-endif()
+# Generate OBS manager metadata and stage the selected third-party layout.
+include(cmake/PluginInstall.cmake)
+bh_install_plugin(bacons-helper "${CMAKE_CURRENT_SOURCE_DIR}/data")
