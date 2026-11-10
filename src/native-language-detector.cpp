@@ -24,7 +24,7 @@ QRegularExpression rx(const QString &pattern, bool insensitive = false)
  if (!result.isValid()) throw std::runtime_error(("Invalid native expression: " + pattern).toStdString());
  return result;
 }
-QString fold(QString text) { return text.normalized(QString::NormalizationForm_D).remove(rx(QStringLiteral("\\p{M}+"))); }
+
 QStringList strings(const QJsonValue &value)
 {
  QStringList output;
@@ -51,6 +51,25 @@ QString mapMatches(const QString &text, const QRegularExpression &pattern, const
  QString out; qsizetype cursor = 0; auto it = pattern.globalMatch(text);
  while (it.hasNext()) { const auto m = it.next(); out += text.mid(cursor, m.capturedStart() - cursor); out += transform(m.captured()); cursor = m.capturedEnd(); }
  return out + text.mid(cursor);
+}
+// Fold accents only within Latin graphemes. Marks in Hindi and other scripts
+// carry language evidence and must survive lexical matching.
+QString fold(const QString &text)
+{
+ return mapMatches(text, rx(QStringLiteral("\\p{Latin}\\p{M}*")), [](const QString &part) {
+  return part.normalized(QString::NormalizationForm_D).remove(rx(QStringLiteral("\\p{M}+")));
+ });
+}
+QString canonicalApostrophes(QString text) { return text.replace(QChar(0x2019), '\''); }
+// Quotes around words are presentation, while apostrophes inside words are
+// linguistic evidence. Keep the latter, canonicalize curly apostrophes, and
+// exclude only surrounding quotation marks from statistical features.
+QString featureText(QString text)
+{
+ text = canonicalApostrophes(text);
+ text.replace(rx(R"((^|\s)'+(?=[\p{L}\p{M}\p{N}]))"), "\\1");
+ text.replace(rx(R"((?<=[\p{L}\p{M}\p{N}])'+(?=\s|$))"), "");
+ return text;
 }
 QString scriptOf(char32_t point)
 {
@@ -288,7 +307,7 @@ double NativeLanguageDetector::Data::english(const QString &text, const Scripts 
   recognized += a; distinctiveCount += b; chats += c; suffixes += s;
  }
  if (!count) return 0;
- const int contractions = matches(text, rx(R"(\b(?:i'm|i've|i'll|i'd|you're|you've|you'll|you'd|we're|we've|we'll|we'd|they're|they've|they'll|they'd|he's|he'll|he'd|she's|she'll|she'd|it's|that's|there's|what's|who's|can't|cannot|won't|wouldn't|shouldn't|couldn't|don't|doesn't|didn't|isn't|aren't|wasn't|weren't|haven't|hasn't|hadn't)\b)", true));
+ const int contractions = matches(canonicalApostrophes(text), rx(R"(\b(?:i'm|i've|i'll|i'd|you're|you've|you'll|you'd|we're|we've|we'll|we'd|they're|they've|they'll|they'd|he's|he'll|he'd|she's|she'll|she'd|it's|that's|there's|what's|who's|can't|cannot|won't|wouldn't|shouldn't|couldn't|don't|doesn't|didn't|isn't|aren't|wasn't|weren't|haven't|hasn't|hadn't)\b)", true));
  double score = std::min(.46, double(recognized)/count*.62) + std::min(.2, double(distinctiveCount)/count*.55) + std::min(.18, double(chats)/count*.6) + std::min(.13, contractions*.08) + std::min(.1, double(suffixes)/count*.3);
  if (scripts.letters && double(scripts.counts.value("Latin"))/scripts.letters > .96) score += .04;
  if (count >= 3 && recognized >= 2) score += .08;
@@ -315,12 +334,12 @@ QJsonObject NativeLanguageDetector::detect(const QJsonObject &job) const
  const int useful = matches(text,rx(R"([\p{L}\p{M}])"));
  const auto tokenList = text.split(' ',Qt::SkipEmptyParts); const int tokens = tokenList.size();
  const int words = matches(text,rx(R"(\p{Han}|[\p{Hiragana}\p{Katakana}]|\p{L}[\p{L}\p{M}]*)"));
- QJsonObject result{{"id",job.value("id")},{"target",target},{"text",job.value("text")},{"normalized",text},{"_generation",job.value("_generation")},{"backend","native-cpp"},{"modelVersion","0.11.3"}};
+ QJsonObject result{{"id",job.value("id")},{"target",target},{"text",job.value("text")},{"normalized",text},{"_generation",job.value("_generation")},{"backend","native-cpp"},{"modelVersion",d.metadata.value("sourceVersion").toString("0.11.3")},{"detectorVersion","0.7.2"}};
  result.insert("usefulLetters",useful); result.insert("usefulWords",words);
  if (useful < 4) {
   result.insert("language","unknown"); result.insert("confidence",0); result.insert("automationReliable",false); result.insert("translate",false); result.insert("reason","insufficient-evidence"); return result;
  }
- const auto points = ("_" + QString(text).replace(' ','_') + "_").toStdU32String();
+ const auto points = ("_" + featureText(text).replace(' ','_') + "_").toStdU32String();
  Numbers vector; double norm = 0;
  for (int n = d.minN; n <= d.maxN; ++n) for (qsizetype i = 0; i+n <= points.size(); ++i) ++vector[QString::fromUcs4(points.data()+i,n)];
  for (auto it = vector.begin(); it != vector.end(); ++it) { it.value() *= d.idf.value(it.key(),1); norm += it.value()*it.value(); }
@@ -330,15 +349,31 @@ QJsonObject NativeLanguageDetector::detect(const QJsonObject &job) const
   const auto found = d.inverted.constFind(it.key()); if (found == d.inverted.cend()) continue;
   const double value = it.value()/norm; for (const auto &entry : found.value()) ml[entry.first] += value*entry.second;
  }
- QSet<QString> tokenSet(tokenList.begin(),tokenList.end()), folded;
- for (const auto &token : tokenList) folded.insert(fold(token));
+ // Whole-word evidence must survive quotation marks and punctuation without
+ // becoming substring matches inside unrelated words.
+ QSet<QString> tokenSet, elisionTokens;
+ const QString hintText = canonicalApostrophes(text);
+ auto lexical = rx(R"([\p{L}\p{M}\p{N}]+(?:['-][\p{L}\p{M}\p{N}]+)*)").globalMatch(hintText);
+ while (lexical.hasNext()) tokenSet.insert(lexical.next().captured());
+ elisionTokens = tokenSet;
+ const auto elision = rx(R"(^(?:[cdjlmnst]|qu|un|quest|senz|dall|dell|nell|all)'(.+)$)");
+ for (const auto &token : tokenSet) {
+  const auto match = elision.match(token);
+  if (match.hasMatch()) elisionTokens.insert(match.captured(1));
+ }
  QVector<Candidate> candidates; QVector<double> hintScores, orthoScores, evidenceScores;
  for (const auto &language : d.languages) {
   int hits = 0, orthoHits = 0; double weighted = 0; QSet<QString> matched;
+  const auto &lexicalTokens = language.code == "fr" || language.code == "it" ? elisionTokens : tokenSet;
   for (const auto &hint : language.hints) {
-   const bool match = language.noSpace ? text.contains(hint.raw) : tokenSet.contains(hint.raw) || folded.contains(hint.folded);
-   if (!match) continue; ++hits;
-   if (!matched.contains(hint.folded)) { matched.insert(hint.folded); weighted += 1/std::sqrt(std::max(1,d.hintFrequency.value(hint.folded,1))); }
+   const QString raw = canonicalApostrophes(hint.raw), folded = canonicalApostrophes(hint.folded);
+   // Missing accents may match an accented hint. Supplied accents must not
+   // become evidence for a different unaccented word or another language.
+   const bool match = language.noSpace ? hintText.contains(raw) :
+    lexicalTokens.contains(raw) || (raw != folded && lexicalTokens.contains(folded));
+   if (!match || matched.contains(folded)) continue;
+   ++hits; matched.insert(folded);
+   weighted += 1/std::sqrt(std::max(1,d.hintFrequency.value(hint.folded,1)));
   }
   for (const auto &hint : language.ortho) if (text.contains(hint)) ++orthoHits;
   hintScores.append(std::min(1.0,hits/3.0)); orthoScores.append(std::min(1.0,orthoHits/2.0)); evidenceScores.append(std::min(2.0,weighted/2.5));
@@ -411,7 +446,7 @@ QJsonObject NativeLanguageDetector::detect(const QJsonObject &job) const
  QJsonArray ranked;
  for(int i=0;i<std::min(5,int(candidates.size()));++i){
   const auto &c=candidates[i];
-  ranked.append(QJsonObject{{"language",d.languages[c.index].code},{"score",c.confidence}});
+  ranked.append(QJsonObject{{"language",d.languages[c.index].code},{"score",c.confidence},{"mlScore",c.ml},{"wordHintScore",c.hint},{"distinctiveWordHintEvidence",c.evidence},{"orthographicHintScore",c.ortho}});
  }
  result.insert("candidates",ranked);
  result.insert("targetCandidateScore",preferredMass);
@@ -430,6 +465,12 @@ QJsonObject NativeLanguageDetector::detect(const QJsonObject &job) const
  result.insert("translate",useful>=minimumLetters && !suppressedLanguage && !targetAmbiguous && words>=minimumWords && needed && automation && automationConfidence>=threshold && exactEnough && marginEnough && !ignored);
  result.insert("candidateMargin",top.confidence-second.confidence);
  result.insert("rawTopConfidence",top.confidence);
+ double languageConfidence = 0;
+ for (const auto &candidate : candidates)
+  if (d.languages[candidate.index].code == result.value("language").toString()) languageConfidence = candidate.confidence;
+ result.insert("languageConfidence",languageConfidence);
+ result.insert("translationConfidence",automationConfidence);
+ result.insert("evidenceReason",reason);
  result.insert("modelReliable",reliableResult);
  result.insert("reason",blockers.isEmpty()?reason:blockers.first().toString());
  result.insert("elapsedMs",timer.nsecsElapsed()/1000000.0);
@@ -456,7 +497,7 @@ QJsonObject NativeLanguageDetector::correctedPackage(const QString &input, const
  if(!profiles.contains(code)) throw std::runtime_error("Unknown correction language code");
  const QString text=d.normalize(input,{});
  if(matches(text,rx(R"([\p{L}\p{M}])"))<10 || matches(text,rx(R"(\p{Han}|[\p{Hiragana}\p{Katakana}]|\p{L}[\p{L}\p{M}]*)"))<4) throw std::runtime_error("Use at least four useful words for a correction");
- const auto points=("_"+QString(text).replace(' ','_')+"_").toStdU32String();
+ const auto points=("_"+featureText(text).replace(' ','_')+"_").toStdU32String();
  Numbers sample;double norm=0;
  for(int n=d.minN;n<=d.maxN;++n)for(size_t i=0;i+n<=points.size();++i)++sample[QString::fromUcs4(points.data()+i,n)];
  for(auto it=sample.begin();it!=sample.end();++it){it.value()*=d.idf.value(it.key(),1);norm+=it.value()*it.value();}
