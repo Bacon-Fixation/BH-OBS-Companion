@@ -20,8 +20,4 @@ CMakeUserPresets.json
 Thumbs.db
 *.swp
 *.swo
-*test*
-/test/*
-/tests/*
 scripts/repair-formatters.ps1
-

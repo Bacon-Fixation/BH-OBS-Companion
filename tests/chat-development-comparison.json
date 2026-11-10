@@ -1,0 +1,3281 @@
+{
+  "corpus": "chat-development.jsonl",
+  "corpusSha256": "4b6fa6d3dc22079a92db6130ee212c858242699a8b840245d67b505f5fcd8c7f",
+  "uniqueSentences": 152,
+  "languages": 88,
+  "trainingOverlap": 0,
+  "scoreNote": "Candidate scores are model evidence, not calibrated correctness probabilities.",
+  "acceptanceCriteria": "No exact-label regression, no increase in false target-language translations or high-score label errors. Coverage is reported separately.",
+  "variants": {
+    "plain": {
+      "before": {
+        "sentences": 152,
+        "cases": 304,
+        "correctLabels": 304,
+        "labelAccuracy": 1.0,
+        "foreignTranslations": 90,
+        "eligibleForeignCases": 152,
+        "translationRecall": 0.5921052631578947,
+        "falseTranslations": 0,
+        "translationPrecision": 1.0,
+        "highConfidenceWrong": 0,
+        "meanCorrectLanguageScore": 0.7436914280680742,
+        "byLanguage": {
+          "am": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ar": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "as": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ay": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "be": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "bo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "br": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "bs": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ca": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "co": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "cs": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "cy": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "da": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "de": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "dv": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "en": {
+            "cases": 80,
+            "correct": 80,
+            "falseTranslations": 0,
+            "foreignTranslations": 11
+          },
+          "eo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "es": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "fa": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "fo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "fr": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "fy": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ga": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "gd": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "gl": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "gn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ha": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "hi": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ht": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "id": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ig": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "is": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "iu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ja": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "jv": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "kk": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "km": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "kn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ku": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ky": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "la": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "lb": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "lo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "mg": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mi": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ml": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mr": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ms": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "mt": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "my": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ne": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "no": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ny": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "oc": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "or": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ps": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "pt": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "qu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "rm": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ru": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "rw": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sd": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "si": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sk": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sm": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "sn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "so": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "st": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "su": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sv": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "tg": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ti": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "tk": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "tn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ts": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "tt": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ug": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "uk": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ur": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "uz": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ve": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "xh": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yi": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yue": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "zh": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "zu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          }
+        }
+      },
+      "after": {
+        "sentences": 152,
+        "cases": 304,
+        "correctLabels": 304,
+        "labelAccuracy": 1.0,
+        "foreignTranslations": 93,
+        "eligibleForeignCases": 152,
+        "translationRecall": 0.6118421052631579,
+        "falseTranslations": 0,
+        "translationPrecision": 1.0,
+        "highConfidenceWrong": 0,
+        "meanCorrectLanguageScore": 0.7450894448675632,
+        "byLanguage": {
+          "am": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ar": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "as": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ay": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "be": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "bo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "br": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "bs": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ca": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "co": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "cs": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "cy": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "da": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "de": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "dv": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "en": {
+            "cases": 80,
+            "correct": 80,
+            "falseTranslations": 0,
+            "foreignTranslations": 13
+          },
+          "eo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "es": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 3
+          },
+          "fa": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "fo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "fr": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "fy": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ga": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "gd": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "gl": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "gn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ha": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "hi": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ht": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "id": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ig": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "is": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "iu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ja": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "jv": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "kk": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "km": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "kn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ku": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ky": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "la": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "lb": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "lo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "mg": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mi": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ml": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mr": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ms": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "mt": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "my": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ne": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "no": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ny": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "oc": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "or": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ps": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "pt": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "qu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "rm": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ru": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "rw": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sd": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "si": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sk": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sm": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "sn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "so": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "st": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "su": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sv": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "tg": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ti": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "tk": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "tn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ts": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "tt": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ug": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "uk": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ur": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "uz": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ve": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "xh": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yi": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yue": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "zh": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "zu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          }
+        }
+      }
+    },
+    "quoted": {
+      "before": {
+        "sentences": 152,
+        "cases": 304,
+        "correctLabels": 304,
+        "labelAccuracy": 1.0,
+        "foreignTranslations": 90,
+        "eligibleForeignCases": 152,
+        "translationRecall": 0.5921052631578947,
+        "falseTranslations": 0,
+        "translationPrecision": 1.0,
+        "highConfidenceWrong": 0,
+        "meanCorrectLanguageScore": 0.7436914280680742,
+        "byLanguage": {
+          "am": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ar": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "as": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ay": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "be": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "bo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "br": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "bs": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ca": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "co": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "cs": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "cy": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "da": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "de": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "dv": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "en": {
+            "cases": 80,
+            "correct": 80,
+            "falseTranslations": 0,
+            "foreignTranslations": 11
+          },
+          "eo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "es": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "fa": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "fo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "fr": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "fy": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ga": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "gd": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "gl": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "gn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ha": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "hi": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ht": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "id": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ig": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "is": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "iu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ja": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "jv": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "kk": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "km": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "kn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ku": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ky": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "la": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "lb": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "lo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "mg": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mi": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ml": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mr": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ms": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "mt": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "my": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ne": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "no": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ny": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "oc": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "or": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ps": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "pt": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "qu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "rm": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ru": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "rw": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sd": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "si": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sk": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sm": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "sn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "so": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "st": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "su": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sv": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "tg": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ti": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "tk": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "tn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ts": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "tt": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ug": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "uk": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ur": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "uz": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ve": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "xh": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yi": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yue": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "zh": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "zu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          }
+        }
+      },
+      "after": {
+        "sentences": 152,
+        "cases": 304,
+        "correctLabels": 304,
+        "labelAccuracy": 1.0,
+        "foreignTranslations": 93,
+        "eligibleForeignCases": 152,
+        "translationRecall": 0.6118421052631579,
+        "falseTranslations": 0,
+        "translationPrecision": 1.0,
+        "highConfidenceWrong": 0,
+        "meanCorrectLanguageScore": 0.7450894448675632,
+        "byLanguage": {
+          "am": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ar": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "as": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ay": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "be": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "bo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "br": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "bs": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ca": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "co": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "cs": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "cy": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "da": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "de": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "dv": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "en": {
+            "cases": 80,
+            "correct": 80,
+            "falseTranslations": 0,
+            "foreignTranslations": 13
+          },
+          "eo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "es": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 3
+          },
+          "fa": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "fo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "fr": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "fy": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ga": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "gd": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "gl": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "gn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ha": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "hi": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ht": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "id": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ig": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "is": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "iu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ja": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "jv": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "kk": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "km": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "kn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ku": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ky": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "la": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "lb": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "lo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "mg": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mi": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ml": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mr": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ms": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "mt": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "my": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ne": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "no": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ny": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "oc": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "or": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ps": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "pt": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "qu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "rm": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ru": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "rw": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sd": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "si": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sk": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sm": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "sn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "so": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "st": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "su": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sv": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "tg": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ti": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "tk": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "tn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ts": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "tt": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ug": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "uk": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ur": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "uz": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ve": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "xh": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yi": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yue": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "zh": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "zu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          }
+        }
+      }
+    },
+    "chat-noise": {
+      "before": {
+        "sentences": 152,
+        "cases": 304,
+        "correctLabels": 304,
+        "labelAccuracy": 1.0,
+        "foreignTranslations": 90,
+        "eligibleForeignCases": 152,
+        "translationRecall": 0.5921052631578947,
+        "falseTranslations": 0,
+        "translationPrecision": 1.0,
+        "highConfidenceWrong": 0,
+        "meanCorrectLanguageScore": 0.7436914280680742,
+        "byLanguage": {
+          "am": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ar": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "as": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ay": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "be": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "bo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "br": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "bs": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ca": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "co": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "cs": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "cy": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "da": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "de": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "dv": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "en": {
+            "cases": 80,
+            "correct": 80,
+            "falseTranslations": 0,
+            "foreignTranslations": 11
+          },
+          "eo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "es": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "fa": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "fo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "fr": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "fy": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ga": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "gd": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "gl": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "gn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ha": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "hi": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ht": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "id": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ig": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "is": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "iu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ja": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "jv": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "kk": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "km": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "kn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ku": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ky": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "la": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "lb": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "lo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "mg": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mi": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ml": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mr": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ms": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "mt": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "my": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ne": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "no": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ny": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "oc": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "or": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ps": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "pt": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "qu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "rm": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ru": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "rw": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sd": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "si": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sk": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sm": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "sn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "so": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "st": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "su": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sv": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "tg": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ti": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "tk": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "tn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ts": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "tt": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ug": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "uk": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ur": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "uz": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ve": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "xh": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yi": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yue": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "zh": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "zu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          }
+        }
+      },
+      "after": {
+        "sentences": 152,
+        "cases": 304,
+        "correctLabels": 304,
+        "labelAccuracy": 1.0,
+        "foreignTranslations": 93,
+        "eligibleForeignCases": 152,
+        "translationRecall": 0.6118421052631579,
+        "falseTranslations": 0,
+        "translationPrecision": 1.0,
+        "highConfidenceWrong": 0,
+        "meanCorrectLanguageScore": 0.7450894448675632,
+        "byLanguage": {
+          "am": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ar": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "as": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ay": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "be": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "bo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "br": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "bs": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ca": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "co": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "cs": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "cy": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "da": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "de": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "dv": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "en": {
+            "cases": 80,
+            "correct": 80,
+            "falseTranslations": 0,
+            "foreignTranslations": 13
+          },
+          "eo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "es": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 3
+          },
+          "fa": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "fo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "fr": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "fy": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ga": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "gd": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "gl": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "gn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ha": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "hi": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ht": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "id": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ig": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "is": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "iu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ja": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "jv": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "kk": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "km": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "kn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ku": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ky": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "la": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "lb": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "lo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "mg": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mi": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ml": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "mr": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ms": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "mt": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "my": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ne": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "no": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "ny": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "oc": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "or": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ps": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "pt": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "qu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "rm": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ru": {
+            "cases": 6,
+            "correct": 6,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "rw": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sd": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "si": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sk": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sm": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "sn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "so": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "st": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "su": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "sv": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "tg": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ti": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "tk": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "tn": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "ts": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "tt": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ug": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "uk": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ur": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "uz": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "ve": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 0
+          },
+          "xh": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yi": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yo": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          },
+          "yue": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "zh": {
+            "cases": 4,
+            "correct": 4,
+            "falseTranslations": 0,
+            "foreignTranslations": 2
+          },
+          "zu": {
+            "cases": 2,
+            "correct": 2,
+            "falseTranslations": 0,
+            "foreignTranslations": 1
+          }
+        }
+      }
+    }
+  },
+  "regressions": [],
+  "coverageChanges": {
+    "plain": 3,
+    "quoted": 3,
+    "chat-noise": 3
+  }
+}
