@@ -1,6 +1,6 @@
 # Bacons Helper OBS Companion
 
-Current source: **0.7.6 Proto**. OBS Studio 33 plugin-manager metadata and modern install packaging are included. See [OBS 33 plugin manager](OBS33-PLUGIN-MANAGER.md) for install/migration steps. The expanded language model and feedback features are retained.
+Current source: **0.7.8 Proto**. OBS Studio 33 plugin-manager metadata and modern install packaging are included. See [OBS 33 plugin manager](OBS33-PLUGIN-MANAGER.md) for install/migration steps. The expanded language model and feedback features are retained.
 
 Native OBS Studio dock for controlling supported Bacons Helper channel settings and live tools without leaving OBS.
 
@@ -196,3 +196,5 @@ Collect and review translation-provider language disagreements, then share appro
 ## Expanded chat training model
 
 The bundled model adds 428 labeled chat examples across 24 languages. See [Model training update](MODEL-TRAINING-UPDATE.md) for measured accuracy, coverage tradeoffs, local custom-model migration, and reproduction steps.
+
+Countdown chat announcements and Discord stream notification controls are available in the dock. Install the matching Bacons Helper API files before using these panels; see [Stream controls](STREAM-CONTROLS.md).

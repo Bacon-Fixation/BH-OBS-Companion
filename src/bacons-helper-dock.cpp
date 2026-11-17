@@ -594,8 +594,128 @@ void BaconsHelperDock::buildUi()
 	countdownLayout->addLayout(countdownRow);
 	countdownLayout->addLayout(presetRow);
 	countdownLayout->addWidget(countdownStatus_);
+	countdownOptionsStatus_ = new QLabel(QStringLiteral("Refresh to load chat announcement settings."));
+	countdownOptionsStatus_->setWordWrap(true);
+	countdownLayout->addWidget(countdownOptionsStatus_);
+	countdownOptionsPanel_ = new QWidget();
+	auto *chatForm = new QFormLayout(countdownOptionsPanel_);
+	const QList<QPair<QString, QString>> chatOptions = {
+		{QStringLiteral("remainingEnabled"), QStringLiteral("Announce Remaining Time")},
+		{QStringLiteral("finalSeconds"), QStringLiteral("Final Five-Second Count")},
+		{QStringLiteral("completionEnabled"), QStringLiteral("Completion Announcement")},
+		{QStringLiteral("startEnabled"), QStringLiteral("Command Start Announcement")}};
+	for (const auto &option : chatOptions) {
+		auto *toggle = new QCheckBox(option.second);
+		toggle->setChecked(true);
+		countdownChatToggles_.insert(option.first, toggle);
+		chatForm->addRow(toggle);
+	}
+	countdownInterval_ = new QSpinBox();
+	countdownInterval_->setRange(0, 3600);
+	countdownInterval_->setSpecialValueText(QStringLiteral("Automatic"));
+	countdownInterval_->setSuffix(QStringLiteral(" seconds"));
+	countdownInterval_->setToolTip(QStringLiteral("Automatic (0), or 5–3600 seconds."));
+	chatForm->addRow(QStringLiteral("Posting Interval"), countdownInterval_);
+	countdownSaveDefaults_ = new QPushButton(QStringLiteral("Save Chat Defaults"));
+	chatForm->addRow(countdownSaveDefaults_);
+	countdownOptionsPanel_->setEnabled(false);
+	countdownLayout->addWidget(countdownOptionsPanel_);
+	auto *chatHelp = new QLabel(QStringLiteral("Start and preset buttons use these choices for the next run. Save Chat Defaults also applies them to future countdowns from chat and the dashboard. Active timers keep their current choices. The start announcement setting applies to the Twitch command."));
+	chatHelp->setWordWrap(true);
+	countdownLayout->addWidget(chatHelp);
+	connect(countdownSaveDefaults_, &QPushButton::clicked, this, [this] {
+		if (countdownInterval_->value() > 0 && countdownInterval_->value() < 5) {
+			setStatus(QStringLiteral("Choose Automatic or an interval of at least 5 seconds."), false);
+			return;
+		}
+		streamControlRequest("PUT", QStringLiteral("/api/obs-plugin/countdown/settings"),
+			{{QStringLiteral("settings"), countdownChatOptions()}}, [this](const QJsonObject &) {
+				setStatus(QStringLiteral("✓ Countdown chat defaults saved."), true);
+			});
+	});
 	countdownLayout->addStretch();
-	tabs->addTab(countdownTab, QStringLiteral("Countdown"));
+	auto *countdownScroll = new QScrollArea();
+	countdownScroll->setWidgetResizable(true);
+	countdownScroll->setWidget(countdownTab);
+	tabs->addTab(countdownScroll, QStringLiteral("Countdown"));
+
+	auto *discordTab = new QWidget();
+	auto *discordLayout = new QVBoxLayout(discordTab);
+	discordStatus_ = new QLabel(QStringLiteral("Refresh to load Discord stream notifications."));
+	discordStatus_->setWordWrap(true);
+	discordLayout->addWidget(discordStatus_);
+	auto *discordDashboard = new QPushButton(QStringLiteral("Connect Discord / Choose Destination"));
+	discordLayout->addWidget(discordDashboard);
+	connect(discordDashboard, &QPushButton::clicked, this, [this] {
+		QUrl url = dashboardLinks_.value(QStringLiteral("dashboard"));
+		if (!url.isValid() || url.isEmpty()) return;
+		url.setFragment(QStringLiteral("discord-streams"));
+		QDesktopServices::openUrl(url);
+	});
+	discordOptionsPanel_ = new QWidget();
+	auto *discordForm = new QFormLayout(discordOptionsPanel_);
+	const QList<QPair<QString, QString>> discordOptions = {
+		{QStringLiteral("own"), QStringLiteral("Announce My Stream")},
+		{QStringLiteral("watched"), QStringLiteral("Announce Watched Streams")},
+		{QStringLiteral("ownSilent"), QStringLiteral("Send My Stream Silently")},
+		{QStringLiteral("updateOnChange"), QStringLiteral("Update Title / Category Changes")},
+		{QStringLiteral("deleteOnEnd"), QStringLiteral("Delete When Stream Ends")}};
+	for (const auto &option : discordOptions) {
+		auto *toggle = new QCheckBox(option.second);
+		discordToggles_.insert(option.first, toggle);
+		discordForm->addRow(toggle);
+	}
+	discordRefresh_ = new QComboBox();
+	for (const int minutes : {0, 10, 15, 30, 60})
+		discordRefresh_->addItem(minutes == 0 ? QStringLiteral("Off") : QStringLiteral("%1 minutes").arg(minutes), minutes);
+	discordForm->addRow(QStringLiteral("Periodic Refresh"), discordRefresh_);
+	auto *discordSave = new QPushButton(QStringLiteral("Save Notification Settings"));
+	discordForm->addRow(discordSave);
+	connect(discordSave, &QPushButton::clicked, this, [this] {
+		QJsonObject settings;
+		for (auto it = discordToggles_.cbegin(); it != discordToggles_.cend(); ++it)
+			settings.insert(it.key(), it.value()->isChecked());
+		settings.insert(QStringLiteral("refreshMinutes"), discordRefresh_->currentData().toInt());
+		streamControlRequest("PATCH", QStringLiteral("/api/obs-plugin/discord-streams"),
+			{{QStringLiteral("settings"), settings}}, [this](const QJsonObject &) {
+				setStatus(QStringLiteral("✓ Discord notification settings saved."), true);
+			});
+	});
+	discordStreamer_ = new QComboBox();
+	discordForm->addRow(QStringLiteral("Watched Streamer"), discordStreamer_);
+	auto *silentButton = new QPushButton(QStringLiteral("Send Silently"));
+	auto *notifyButton = new QPushButton(QStringLiteral("Enable Notifications"));
+	auto *removeButton = new QPushButton(QStringLiteral("Remove Streamer"));
+	discordForm->addRow(silentButton, notifyButton);
+	discordForm->addRow(removeButton);
+	const auto watchAction = [this](const QString &action, bool silent) {
+		if (discordStreamer_->currentIndex() < 0) return;
+		streamControlRequest("POST", QStringLiteral("/api/obs-plugin/discord-streams/watch"),
+			{{QStringLiteral("action"), action}, {QStringLiteral("sourceId"), discordStreamer_->currentData().toString()},
+			 {QStringLiteral("silent"), silent}}, [this](const QJsonObject &) { refreshStreamControls(false); });
+	};
+	connect(silentButton, &QPushButton::clicked, this, [watchAction] { watchAction(QStringLiteral("silent"), true); });
+	connect(notifyButton, &QPushButton::clicked, this, [watchAction] { watchAction(QStringLiteral("silent"), false); });
+	connect(removeButton, &QPushButton::clicked, this, [watchAction] { watchAction(QStringLiteral("remove"), false); });
+	discordAddLogin_ = new QLineEdit();
+	discordAddLogin_->setPlaceholderText(QStringLiteral("Twitch username"));
+	auto *addStreamer = new QPushButton(QStringLiteral("Add Streamer"));
+	discordForm->addRow(discordAddLogin_, addStreamer);
+	connect(addStreamer, &QPushButton::clicked, this, [this] {
+		streamControlRequest("POST", QStringLiteral("/api/obs-plugin/discord-streams/watch"),
+			{{QStringLiteral("action"), QStringLiteral("add")}, {QStringLiteral("login"), discordAddLogin_->text().trimmed()}},
+			[this](const QJsonObject &) { discordAddLogin_->clear(); refreshStreamControls(false); });
+	});
+	discordOptionsPanel_->setEnabled(false);
+	discordLayout->addWidget(discordOptionsPanel_);
+	auto *discordHelp = new QLabel(QStringLiteral("Silent posts still appear and update, without Discord push or desktop notifications. All embed edits respect a ten-minute minimum. Settings are shared with the dashboard. Refresh reloads saved settings and replaces unsaved edits."));
+	discordHelp->setWordWrap(true);
+	discordLayout->addWidget(discordHelp);
+	discordLayout->addStretch();
+	auto *discordScroll = new QScrollArea();
+	discordScroll->setWidgetResizable(true);
+	discordScroll->setWidget(discordTab);
+	tabs->addTab(discordScroll, QStringLiteral("Discord Streams"));
 
 
 	auto *liveTab = new QWidget();
@@ -1052,6 +1172,11 @@ void BaconsHelperDock::setControlsEnabled(bool enabled)
 	commandHistoryOlder_->setEnabled(enabled && !commandHistoryInFlight_ && !commandHistoryNextBefore_.isEmpty());
 	for (auto *button : sourceInstallButtons_)
 		button->setEnabled(enabled);
+	if (!enabled) {
+		countdownOptionsAvailable_ = false;
+		countdownOptionsPanel_->setEnabled(false);
+		discordOptionsPanel_->setEnabled(false);
+	}
 	countdownSeconds_->setEnabled(enabled);
 	for (auto *button : {countdownStartButton_, countdownCancelButton_, countdownPreset30_,
 					 countdownPreset60_, countdownPreset120_, countdownPreset300_})
@@ -1323,6 +1448,7 @@ void BaconsHelperDock::refresh()
 			return;
 		}
 		applySettingsPayload(doc.object());
+		refreshStreamControls();
 		if (!credentialStorageWarning_.isEmpty()) {
 			setStatus(QStringLiteral("⚠ Connected for this OBS session, but the pairing cannot be stored securely: %1")
 					  .arg(credentialStorageWarning_), false);
@@ -2337,7 +2463,13 @@ void BaconsHelperDock::startCountdown()
 {
 	if (token_.isEmpty())
 		return;
+	if (countdownOptionsAvailable_ && countdownInterval_->value() > 0 && countdownInterval_->value() < 5) {
+		setStatus(QStringLiteral("Choose Automatic or an interval of at least 5 seconds."), false);
+		return;
+	}
 	QJsonObject payload{{QStringLiteral("durationSeconds"), countdownSeconds_->value()}};
+	if (countdownOptionsAvailable_)
+		payload.insert(QStringLiteral("chatOptions"), countdownChatOptions());
 	auto *reply = sendJson("POST", QStringLiteral("/api/obs-plugin/countdown"), payload);
 	connect(reply, &QNetworkReply::finished, this, [this, reply] {
 		const QByteArray bytes = reply->readAll();
@@ -2390,4 +2522,90 @@ void BaconsHelperDock::openDashboardLink(const QString &key)
 		return;
 	}
 	QDesktopServices::openUrl(url);
+}
+
+QJsonObject BaconsHelperDock::countdownChatOptions() const
+{
+	QJsonObject options;
+	for (auto it = countdownChatToggles_.cbegin(); it != countdownChatToggles_.cend(); ++it)
+		options.insert(it.key(), it.value()->isChecked());
+	options.insert(QStringLiteral("intervalSeconds"), countdownInterval_->value());
+	return options;
+}
+
+void BaconsHelperDock::streamControlRequest(const QByteArray &method, const QString &path,
+	const QJsonObject &payload, const std::function<void(const QJsonObject &)> &onSuccess)
+{
+	if (token_.isEmpty()) return;
+	const bool mutation = method != "GET";
+	QWidget *panel = path.contains(QStringLiteral("countdown")) ? countdownOptionsPanel_ : discordOptionsPanel_;
+	if (mutation) panel->setEnabled(false);
+	const QString requestToken = token_;
+	auto *reply = sendJson(method, path, payload);
+	connect(reply, &QNetworkReply::finished, this, [this, reply, requestToken, onSuccess, path, mutation, panel] {
+		reply->deleteLater();
+		if (token_ != requestToken) return;
+		if (mutation) panel->setEnabled(true);
+		const QJsonObject response = QJsonDocument::fromJson(reply->readAll()).object();
+		if (reply->error() != QNetworkReply::NoError || !response.value(QStringLiteral("ok")).toBool()) {
+			handleAuthFailure(reply);
+			const bool countdown = path.contains(QStringLiteral("countdown"));
+			const QString error = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 404 && !mutation
+				? QStringLiteral("Install the companion API update on Bacons Helper, then Refresh.")
+				: response.value(QStringLiteral("error")).toString(QStringLiteral("Request failed. Refresh and try again."));
+			(countdown ? countdownOptionsStatus_ : discordStatus_)->setText(error);
+			if (!token_.isEmpty()) setStatus(error, false);
+			return;
+		}
+		onSuccess(response);
+	});
+}
+
+void BaconsHelperDock::refreshStreamControls(bool includeCountdown)
+{
+	discordOptionsPanel_->setEnabled(false);
+	if (includeCountdown) {
+		countdownOptionsAvailable_ = false;
+		countdownOptionsPanel_->setEnabled(false);
+		streamControlRequest("GET", QStringLiteral("/api/obs-plugin/countdown/settings"), {}, [this](const QJsonObject &response) {
+			const QJsonObject options = response.value(QStringLiteral("settings")).toObject();
+			for (auto it = countdownChatToggles_.cbegin(); it != countdownChatToggles_.cend(); ++it)
+				it.value()->setChecked(options.value(it.key()).toBool(true));
+			countdownInterval_->setValue(options.value(QStringLiteral("intervalSeconds")).toInt());
+			countdownOptionsAvailable_ = true;
+			countdownOptionsPanel_->setEnabled(true);
+			countdownOptionsStatus_->setText(QStringLiteral("Saved chat defaults loaded. Changes apply to your next countdown."));
+		});
+	}
+	streamControlRequest("GET", QStringLiteral("/api/obs-plugin/discord-streams"), {}, [this](const QJsonObject &response) {
+		const QJsonObject settings = response.value(QStringLiteral("settings")).toObject();
+		for (auto it = discordToggles_.cbegin(); it != discordToggles_.cend(); ++it)
+			it.value()->setChecked(settings.value(it.key()).toBool());
+		discordRefresh_->setCurrentIndex(discordRefresh_->findData(settings.value(QStringLiteral("refreshMinutes")).toInt(10)));
+		const QString selected = discordStreamer_->currentData().toString();
+		discordStreamer_->clear();
+		for (const auto &value : response.value(QStringLiteral("entries")).toArray()) {
+			const QJsonObject entry = value.toObject();
+			QString displayName = entry.value(QStringLiteral("displayName")).toString().trimmed();
+			if (displayName.isEmpty() || QRegularExpression(QStringLiteral("^\\d+$")).match(displayName).hasMatch())
+				displayName = entry.value(QStringLiteral("login")).toString().trimmed();
+			if (displayName.isEmpty() || QRegularExpression(QStringLiteral("^\\d+$")).match(displayName).hasMatch())
+				displayName = QStringLiteral("Unknown Streamer");
+			discordStreamer_->addItem(QStringLiteral("%1 (%2)")
+				.arg(displayName,
+					entry.value(QStringLiteral("silent")).toBool() ? QStringLiteral("Silent") : QStringLiteral("Notifications On")),
+				entry.value(QStringLiteral("id")).toString());
+		}
+		const int index = discordStreamer_->findData(selected);
+		if (index >= 0) discordStreamer_->setCurrentIndex(index);
+		const QJsonObject destination = response.value(QStringLiteral("destination")).toObject();
+		QString guildName = destination.value(QStringLiteral("guildName")).toString().trimmed();
+		QString channelName = destination.value(QStringLiteral("channelName")).toString().trimmed();
+		if (guildName.isEmpty()) guildName = QStringLiteral("Server Name Unavailable");
+		if (channelName.isEmpty()) channelName = QStringLiteral("Channel Name Unavailable");
+		discordStatus_->setText(settings.value(QStringLiteral("channelId")).toString().isEmpty()
+			? QStringLiteral("Choose a Discord server and channel in the dashboard first.")
+			: QStringLiteral("Destination: %1 / #%2").arg(guildName, channelName));
+		discordOptionsPanel_->setEnabled(true);
+	});
 }

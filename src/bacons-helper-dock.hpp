@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+#include <QByteArray>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QString>
@@ -39,6 +41,22 @@ private:
 	QPushButton *refreshButton_ = nullptr;
 	QLabel *status_ = nullptr;
 	QLabel *channel_ = nullptr;
+	QMap<QString, QCheckBox *> countdownChatToggles_;
+	QSpinBox *countdownInterval_ = nullptr;
+	QPushButton *countdownSaveDefaults_ = nullptr;
+	QLabel *countdownOptionsStatus_ = nullptr;
+	QWidget *countdownOptionsPanel_ = nullptr;
+	QWidget *discordOptionsPanel_ = nullptr;
+	QMap<QString, QCheckBox *> discordToggles_;
+	QComboBox *discordRefresh_ = nullptr;
+	QComboBox *discordStreamer_ = nullptr;
+	QLineEdit *discordAddLogin_ = nullptr;
+	QLabel *discordStatus_ = nullptr;
+	bool countdownOptionsAvailable_ = false;
+	QJsonObject countdownChatOptions() const;
+	void refreshStreamControls(bool includeCountdown = true);
+	void streamControlRequest(const QByteArray &method, const QString &path, const QJsonObject &payload,
+						  const std::function<void(const QJsonObject &)> &onSuccess);
 	QSpinBox *countdownSeconds_ = nullptr;
 	QLabel *countdownStatus_ = nullptr;
 	QPushButton *countdownStartButton_ = nullptr;
