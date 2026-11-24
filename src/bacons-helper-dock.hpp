@@ -1,12 +1,11 @@
 #pragma once
 
 #include <functional>
-#include <QByteArray>
-#include <QJsonArray>
+
 #include <QJsonObject>
+#include <QQueue>
 #include <QString>
 #include <QMap>
-#include <QPointer>
 #include <QUrl>
 #include <QWidget>
 
@@ -16,12 +15,9 @@ class QLabel;
 class QLineEdit;
 class QNetworkAccessManager;
 class QNetworkReply;
-class QPlainTextEdit;
 class QPushButton;
 class QSpinBox;
 class QTimer;
-class QTreeWidget;
-class QUrlQuery;
 
 class BaconsHelperDock final : public QWidget {
 	Q_OBJECT
@@ -31,9 +27,9 @@ public:
 	~BaconsHelperDock() override = default;
 
 private:
+	friend class DockTests;
+
 	QNetworkAccessManager *network_ = nullptr;
-	QPointer<QNetworkReply> pairReply_;
-	QMap<QString, QTimer *> overlaySaveTimers_;
 	QLineEdit *serverUrl_ = nullptr;
 	QLineEdit *pairCode_ = nullptr;
 	QPushButton *pairButton_ = nullptr;
@@ -41,22 +37,6 @@ private:
 	QPushButton *refreshButton_ = nullptr;
 	QLabel *status_ = nullptr;
 	QLabel *channel_ = nullptr;
-	QMap<QString, QCheckBox *> countdownChatToggles_;
-	QSpinBox *countdownInterval_ = nullptr;
-	QPushButton *countdownSaveDefaults_ = nullptr;
-	QLabel *countdownOptionsStatus_ = nullptr;
-	QWidget *countdownOptionsPanel_ = nullptr;
-	QWidget *discordOptionsPanel_ = nullptr;
-	QMap<QString, QCheckBox *> discordToggles_;
-	QComboBox *discordRefresh_ = nullptr;
-	QComboBox *discordStreamer_ = nullptr;
-	QLineEdit *discordAddLogin_ = nullptr;
-	QLabel *discordStatus_ = nullptr;
-	bool countdownOptionsAvailable_ = false;
-	QJsonObject countdownChatOptions() const;
-	void refreshStreamControls(bool includeCountdown = true);
-	void streamControlRequest(const QByteArray &method, const QString &path, const QJsonObject &payload,
-						  const std::function<void(const QJsonObject &)> &onSuccess);
 	QSpinBox *countdownSeconds_ = nullptr;
 	QLabel *countdownStatus_ = nullptr;
 	QPushButton *countdownStartButton_ = nullptr;
@@ -86,42 +66,6 @@ private:
 	QSpinBox *creditsScrollSpeed_ = nullptr;
 	QLineEdit *creditsBannerText_ = nullptr;
 	QComboBox *creditsBannerPosition_ = nullptr;
-	QComboBox *deathCounterSelect_ = nullptr;
-	QLabel *deathCounterValue_ = nullptr;
-	QSpinBox *deathCounterSetValue_ = nullptr;
-	QPushButton *deathCounterMinusButton_ = nullptr;
-	QPushButton *deathCounterPlusButton_ = nullptr;
-	QPushButton *deathCounterSetButton_ = nullptr;
-	QPushButton *deathCounterResetButton_ = nullptr;
-	QCheckBox *loyaltyEnabled_ = nullptr;
-	QLineEdit *loyaltyCurrency_ = nullptr;
-	QSpinBox *loyaltyAmount_ = nullptr;
-	QSpinBox *loyaltyInterval_ = nullptr;
-	QSpinBox *loyaltyTicketCost_ = nullptr;
-	QSpinBox *loyaltyMaxTickets_ = nullptr;
-	QSpinBox *loyaltyRafflePoints_ = nullptr;
-	QSpinBox *loyaltyRaffleDuration_ = nullptr;
-	QLabel *loyaltySummary_ = nullptr;
-	QLabel *giveawayStatus_ = nullptr;
-	QLineEdit *giveawayName_ = nullptr;
-	QSpinBox *giveawayWinnerCount_ = nullptr;
-	QPushButton *loyaltySaveButton_ = nullptr;
-	QPushButton *giveawayStartButton_ = nullptr;
-	QPushButton *giveawayPauseButton_ = nullptr;
-	QPushButton *giveawayResumeButton_ = nullptr;
-	QPushButton *giveawayEndButton_ = nullptr;
-	QPushButton *giveawayPickButton_ = nullptr;
-	QPushButton *raffleStartButton_ = nullptr;
-	QPushButton *raffleCancelButton_ = nullptr;
-	QComboBox *walkOnSelect_ = nullptr;
-	QLabel *walkOnSummary_ = nullptr;
-	QCheckBox *walkOnEnabled_ = nullptr;
-	QCheckBox *walkOnOverlay_ = nullptr;
-	QCheckBox *walkOnShoutout_ = nullptr;
-	QCheckBox *walkOnAnnouncement_ = nullptr;
-	QComboBox *walkOnColor_ = nullptr;
-	QPushButton *walkOnSaveButton_ = nullptr;
-	QPushButton *walkOnTestButton_ = nullptr;
 	QTimer *refreshTimer_ = nullptr;
 	QTimer *countdownTickTimer_ = nullptr;
 	QMap<QString, QCheckBox *> channelToggles_;
@@ -129,36 +73,28 @@ private:
 	QMap<QString, QUrl> dashboardLinks_;
 	QMap<QString, QUrl> browserSourceUrls_;
 	QMap<QString, QJsonObject> overlaySettings_;
-	QMap<QString, QJsonObject> deathCounters_;
-	QMap<QString, QJsonObject> walkOns_;
-	QJsonObject loyaltyState_;
 	QComboBox *testEventType_ = nullptr;
 	QPushButton *testEventButton_ = nullptr;
 	QLabel *sourceStatus_ = nullptr;
-	QComboBox *historyFilter_ = nullptr;
-	QLineEdit *historySearch_ = nullptr;
-	QPushButton *historyRefreshButton_ = nullptr;
-	QTreeWidget *historyTree_ = nullptr;
-	QLabel *historyStatus_ = nullptr;
-	QLineEdit *commandHistorySearch_ = nullptr;
-	QPushButton *commandHistoryLatest_ = nullptr;
-	QPushButton *commandHistoryOlder_ = nullptr;
-	QTreeWidget *commandHistoryTree_ = nullptr;
-	QPlainTextEdit *commandHistoryOutput_ = nullptr;
-	QLabel *commandHistoryStatus_ = nullptr;
-	QString commandHistoryBefore_;
-	QString commandHistoryNextBefore_;
 	QMap<QString, QPushButton *> sourceInstallButtons_;
 	QString token_;
 	QString credentialStorageWarning_;
 	qint64 countdownEndTime_ = 0;
 	bool applyingState_ = false;
-	bool botIsModerator_ = false;
-	bool refreshInFlight_ = false;
-	bool historyRefreshInFlight_ = false;
-	bool historyRefreshQueued_ = false;
-	bool commandHistoryInFlight_ = false;
-	bool commandHistorySelected_ = false;
+	bool ready_ = false;
+	bool pairing_ = false;
+	bool refreshPending_ = false;
+	quint64 editRevision_ = 0;
+	QNetworkReply *activeReply_ = nullptr;
+
+	using JsonCallback = std::function<void(const QJsonObject &, bool, int, const QString &)>;
+	struct Request {
+		QByteArray method;
+		QString path;
+		QJsonObject payload;
+		JsonCallback callback;
+	};
+	QQueue<Request> requests_;
 
 	void buildUi();
 	void loadLocalSettings();
@@ -166,37 +102,22 @@ private:
 	void setStatus(const QString &message, bool connected);
 	void setControlsEnabled(bool enabled);
 	QUrl endpoint(const QString &path) const;
-	QNetworkReply *sendJson(const QByteArray &method, const QString &path,
-						 const QJsonObject &payload = {}, const QUrlQuery *query = nullptr);
+	void sendJson(const QByteArray &method, const QString &path, const QJsonObject &payload,
+				  JsonCallback callback);
+	void startNextRequest();
 	bool validateServerUrl();
-	void handleAuthFailure(QNetworkReply *reply);
+	void clearSession();
 	void pair();
 	void disconnectAccount();
 	void refresh();
-	void refreshEventHistory(bool queueIfBusy = false);
-	void applyEventHistory(const QJsonArray &events);
-	void filterEventHistory();
-	void refreshCommandHistory(const QString &before = {});
-	void applyCommandHistory(const QJsonArray &commands);
-	void filterCommandHistory();
-	void clearHistories();
 	void applySettingsPayload(const QJsonObject &payload);
 	void saveChannelToggle(const QString &key, bool checked);
 	void saveStreamEvent(const QString &key, bool checked);
 	void saveOverlaySettings(const QString &key);
-	void submitOverlaySettings(const QString &key);
 	void testStreamEvent();
 	void installBrowserSource(const QString &key);
 	void syncExistingBrowserSources();
-	void updateDeathCounterSelection();
-	void runDeathCounterAction(const QString &action, int value = -1);
-	void applyLoyaltyState(const QJsonObject &loyalty);
-	void saveLoyaltySettings();
-	void setLoyaltyActive(bool enabled);
-	void runGiveawayAction(const QString &action);
-	void updateWalkOnSelection();
-	void saveWalkOnSettings();
-	void testWalkOn();
+	static bool sameOverlay(const QUrl &current, const QUrl &updated);
 	void updateCountdownStatus();
 	void startCountdown();
 	void startCountdownPreset(int seconds);

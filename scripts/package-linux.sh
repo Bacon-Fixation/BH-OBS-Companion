@@ -9,45 +9,8 @@ cmake --version
 ninja --version
 pkg-config --version
 
-echo "Installed OBS/Qt/libsecret packages:"
-dpkg-query -W -f='${Package} ${Version}\n' libobs-dev libobs0t64 obs-studio qt6-base-dev libsecret-1-dev 2>/dev/null || true
-
-libobs_config="$(dpkg -L libobs-dev 2>/dev/null | grep '/libobsConfig\.cmake$' | head -n1 || true)"
-frontend_config="$(dpkg -L libobs-dev 2>/dev/null | grep '/obs-frontend-apiConfig\.cmake$' | head -n1 || true)"
-qt6_config="$(dpkg -L qt6-base-dev 2>/dev/null | grep '/Qt6Config\.cmake$' | head -n1 || true)"
-
-if [[ -z "$libobs_config" || ! -f "$libobs_config" ]]; then
-  echo "libobsConfig.cmake was not found in libobs-dev." >&2
-  dpkg -L libobs-dev 2>/dev/null | grep -E '/cmake/|libobs' || true
-  exit 1
-fi
-if [[ -z "$frontend_config" || ! -f "$frontend_config" ]]; then
-  echo "obs-frontend-apiConfig.cmake was not found in libobs-dev." >&2
-  dpkg -L libobs-dev 2>/dev/null | grep -E 'frontend|/cmake/' || true
-  exit 1
-fi
-if [[ -z "$qt6_config" || ! -f "$qt6_config" ]]; then
-  echo "Qt6Config.cmake was not found in qt6-base-dev." >&2
-  dpkg -L qt6-base-dev 2>/dev/null | grep -E 'Qt6Config\.cmake|/cmake/Qt6' || true
-  exit 1
-fi
-
-libobs_dir="$(dirname "$libobs_config")"
-frontend_dir="$(dirname "$frontend_config")"
-qt6_dir="$(dirname "$qt6_config")"
-
-echo "Resolved Linux CMake packages:"
-echo "  libobs_DIR=$libobs_dir"
-echo "  obs-frontend-api_DIR=$frontend_dir"
-echo "  Qt6_DIR=$qt6_dir"
-
-pkg-config --modversion libsecret-1
-
-cmake --preset ubuntu-x86_64 --fresh \
-  -DBH_OBS_INSTALL_LAYOUT=BUNDLE \
-  -Dlibobs_DIR="$libobs_dir" \
-  -Dobs-frontend-api_DIR="$frontend_dir" \
-  -DQt6_DIR="$qt6_dir"
+# Use the SDK installed on this system or passed in via CMAKE_PREFIX_PATH.
+cmake --preset ubuntu-x86_64 --fresh "$@"
 
 cmake --build --preset ubuntu-x86_64 --parallel
 rm -rf dist/linux-x86_64
@@ -61,20 +24,20 @@ if [[ -z "$plugin" ]]; then
   exit 1
 fi
 
-locale="$(find "$root/dist/linux-x86_64" -type f -path '*/bacons-helper/data/locale/en-US.ini' -print -quit)"
+locale="$(find "$root/dist/linux-x86_64" -type f -path '*/obs-plugins/bacons-helper/locale/en-US.ini' -print -quit)"
 if [[ -z "$locale" ]]; then
   find "$root/dist/linux-x86_64" -type f -print
   echo 'Expected en-US.ini was not staged.' >&2
   exit 1
 fi
 
-test -s "$root/dist/linux-x86_64/bacons-helper/data/manifest.json"
-cp scripts/install-linux.sh "$root/dist/linux-x86_64/install-linux.sh"
-chmod +x "$root/dist/linux-x86_64/install-linux.sh"
-cp OBS33-PLUGIN-MANAGER.md "$root/dist/linux-x86_64/OBS33-PLUGIN-MANAGER.md"
-
 # Show dynamic dependencies in CI so a bad link is obvious before packaging.
-ldd "$plugin" || true
+linked_libraries="$(ldd "$plugin")"
+printf '%s\n' "$linked_libraries"
+if [[ "$linked_libraries" == *"not found"* ]]; then
+  echo 'The staged plugin has missing shared libraries.' >&2
+  exit 1
+fi
 
 tar -C "$root/dist/linux-x86_64" -czf "$root/dist/bacons-helper-linux-x86_64.tar.gz" .
 printf 'Created %s\n' "$root/dist/bacons-helper-linux-x86_64.tar.gz"

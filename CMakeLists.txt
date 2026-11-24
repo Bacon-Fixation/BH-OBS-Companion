@@ -1,40 +1,24 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(bacons-helper-obs VERSION 0.7.6 LANGUAGES CXX)
+project(bacons-helper-obs VERSION 0.3.2 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_AUTOMOC ON)
 
-# On Windows, libobs and obs-frontend-api are development packages, not part of
-# the normal OBS installation. The packaging script bootstraps them from the
-# official OBS plugin template and passes their package directories here.
-if(WIN32 AND (NOT libobs_DIR OR NOT EXISTS "${libobs_DIR}/libobsConfig.cmake"))
-    message(FATAL_ERROR
-        "OBS development packages are not configured. "
-        "Run .\\scripts\\package-windows.ps1 from the repository root, "
-        "or provide libobs_DIR, obs-frontend-api_DIR, and Qt6_DIR manually."
-    )
-endif()
+find_package(libobs CONFIG REQUIRED)
+find_package(obs-frontend-api CONFIG REQUIRED)
+find_package(Qt6 CONFIG REQUIRED COMPONENTS Core Widgets Network)
 
-set(BH_OBS_REQUIRED_SDK_RANGE "" CACHE STRING "OBS SDK version range required when packaging")
-find_package(libobs ${BH_OBS_REQUIRED_SDK_RANGE} CONFIG REQUIRED)
-find_package(obs-frontend-api ${BH_OBS_REQUIRED_SDK_RANGE} CONFIG REQUIRED)
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets Network)
+# Package the TLS backend from the Qt SDK that CMake actually selected.
+get_filename_component(bh_qt_package_dir "${Qt6_CONFIG}" DIRECTORY)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/bh-qt-package-dir.txt" "${bh_qt_package_dir}\n")
 
 add_library(bacons-helper MODULE
     src/plugin-main.cpp
     src/bacons-helper-dock.cpp
     src/bacons-helper-dock.hpp
-    src/language-panel.cpp
-    src/language-panel.hpp
-    src/native-language-detector.cpp
-    src/native-language-detector.hpp
-    src/native-language-worker.cpp
-    src/language-feedback.cpp
-    src/language-feedback.hpp
-    src/native-language-worker.hpp
 )
 
 target_link_libraries(bacons-helper PRIVATE
@@ -66,6 +50,41 @@ set_target_properties(bacons-helper PROPERTIES
     OUTPUT_NAME "bacons-helper"
 )
 
-# Generate OBS manager metadata and stage the selected third-party layout.
-include(cmake/PluginInstall.cmake)
-bh_install_plugin(bacons-helper "${CMAKE_CURRENT_SOURCE_DIR}/data")
+# OBS treats plugin MODULE libraries as LIBRARY artifacts on all platforms,
+# including Windows. Keep platform-specific install layouts so a staged
+# prefix can be copied directly into an OBS installation.
+if(WIN32)
+    install(TARGETS bacons-helper LIBRARY DESTINATION obs-plugins/64bit)
+    install(DIRECTORY data/ DESTINATION data/obs-plugins/bacons-helper)
+elseif(APPLE)
+    install(TARGETS bacons-helper LIBRARY DESTINATION obs-plugins)
+    install(DIRECTORY data/ DESTINATION share/obs/obs-plugins/bacons-helper)
+else()
+    include(GNUInstallDirs)
+    install(TARGETS bacons-helper LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/obs-plugins)
+    install(DIRECTORY data/ DESTINATION ${CMAKE_INSTALL_DATADIR}/obs/obs-plugins/bacons-helper)
+endif()
+
+option(BH_BUILD_TESTS "Build OBS Companion dock tests" OFF)
+if(BH_BUILD_TESTS)
+    enable_testing()
+    find_package(Qt6 REQUIRED COMPONENTS Test)
+    add_executable(bacons-helper-dock-tests
+        tests/dock-tests.cpp
+        src/bacons-helper-dock.cpp
+        src/bacons-helper-dock.hpp
+        src/plugin-main.cpp
+    )
+    target_include_directories(bacons-helper-dock-tests PRIVATE src)
+    target_link_libraries(bacons-helper-dock-tests PRIVATE
+        OBS::libobs OBS::obs-frontend-api Qt6::Widgets Qt6::Network Qt6::Test
+    )
+    target_compile_definitions(bacons-helper-dock-tests PRIVATE
+        BH_OBS_VERSION="${PROJECT_VERSION}" QT_NO_KEYWORDS=1
+    )
+    if(WIN32)
+        target_link_libraries(bacons-helper-dock-tests PRIVATE Crypt32)
+    endif()
+    add_test(NAME dock-tests COMMAND bacons-helper-dock-tests)
+    set_tests_properties(dock-tests PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+endif()

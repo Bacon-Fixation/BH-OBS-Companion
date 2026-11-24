@@ -1,6 +1,3 @@
 #!/usr/bin/env zsh
 
-# Regular file: portable across Git checkouts without symlink support.
-typeset -g SCRIPT_HOME=${0:A:h}
-typeset -g FORMATTER_NAME=clang
-source "${SCRIPT_HOME}/.run-format.zsh" "$@"
+FORMATTER_NAME=clang exec "${0:A:h}/.run-format.zsh" "$@"
